@@ -950,6 +950,194 @@
         <source>Teilnehmende</source>
         <target state="translated">participants</target>
       </trans-unit>
+      <trans-unit id="1152646063694777869" datatype="html">
+        <source>Statistik</source>
+        <target state="translated">statistics</target>
+      </trans-unit>
+      <trans-unit id="1300218560232711810" datatype="html">
+        <source> Auffälligkeiten sind Hinweise für ein Gespräch, kein Urteil. Kleine Gruppen reagieren stark auf einzelne Bewertungen. </source>
+        <target state="translated">Notable results are hints for a conversation, not a verdict. Small groups react strongly to single gradings.</target>
+      </trans-unit>
+      <trans-unit id="1464971951136558636" datatype="html">
+        <source>Auffälligkeiten</source>
+        <target state="translated">notable results</target>
+      </trans-unit>
+      <trans-unit id="1477629611819298713" datatype="html">
+        <source>Bewertungen</source>
+        <target state="translated">gradings</target>
+      </trans-unit>
+      <trans-unit id="2509868822060818045" datatype="html">
+        <source>Bewertungen gehen weit auseinander</source>
+        <target state="translated">Gradings differ widely</target>
+      </trans-unit>
+      <trans-unit id="2593679963204366945" datatype="html">
+        <source>Deutlich unter dem Gruppenschnitt</source>
+        <target state="translated">Clearly below group average</target>
+      </trans-unit>
+      <trans-unit id="2789987089474108530" datatype="html">
+        <source>vergebene Punktzahl</source>
+        <target state="translated">points given</target>
+      </trans-unit>
+      <trans-unit id="2857587999825290192" datatype="html">
+        <source>Art</source>
+        <target state="translated">type</target>
+      </trans-unit>
+      <trans-unit id="3205019797248123754" datatype="html">
+        <source>Rücklauf pro Gruppe</source>
+        <target state="translated">response rate per group</target>
+      </trans-unit>
+      <trans-unit id="3382778716749742152" datatype="html">
+        <source>Abweichung ab (Punkte)</source>
+        <target state="translated">deviation from (points)</target>
+      </trans-unit>
+      <trans-unit id="3667949571823271511" datatype="html">
+        <source>Max</source>
+        <target state="translated">max</target>
+      </trans-unit>
+      <trans-unit id="3749544555632389383" datatype="html">
+        <source>Die Daten konnten nicht geladen werden.</source>
+        <target state="translated">The data could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="3949111368959413225" datatype="html">
+        <source>laufend</source>
+        <target state="translated">running</target>
+      </trans-unit>
+      <trans-unit id="4096126393094240388" datatype="html">
+        <source>Selbstbewertung minus Fremdbewertung</source>
+        <target state="translated">self-assessment minus peer assessment</target>
+      </trans-unit>
+      <trans-unit id="4213921770119295545" datatype="html">
+        <source>Gibt allen dieselbe Punktzahl</source>
+        <target state="translated">Gives everyone the same points</target>
+      </trans-unit>
+      <trans-unit id="4259420107141838090" datatype="html">
+        <source>Person</source>
+        <target state="translated">person</target>
+      </trans-unit>
+      <trans-unit id="4391300969403387302" datatype="html">
+        <source>Streuung ab (Punkte)</source>
+        <target state="translated">spread from (points)</target>
+      </trans-unit>
+      <trans-unit id="4535751031165613881" datatype="html">
+        <source>Übersicht</source>
+        <target state="translated">overview</target>
+      </trans-unit>
+      <trans-unit id="4572150936012618017" datatype="html">
+        <source>Ø Fremdbewertung</source>
+        <target state="translated">Ø peer assessment</target>
+      </trans-unit>
+      <trans-unit id="4912803901980915876" datatype="html">
+        <source>Min</source>
+        <target state="translated">min</target>
+      </trans-unit>
+      <trans-unit id="5237581305659320382" datatype="html">
+        <source>Gruppen</source>
+        <target state="translated">groups</target>
+      </trans-unit>
+      <trans-unit id="5397820589468279191" datatype="html">
+        <source>Anzahl</source>
+        <target state="translated">count</target>
+      </trans-unit>
+      <trans-unit id="5422814021855947257" datatype="html">
+        <source>Wert</source>
+        <target state="translated">value</target>
+      </trans-unit>
+      <trans-unit id="5536383161182199773" datatype="html">
+        <source>Rücklauf</source>
+        <target state="translated">response rate</target>
+      </trans-unit>
+      <trans-unit id="5707132363670520308" datatype="html">
+        <source>Kampagne</source>
+        <target state="translated">campaign</target>
+      </trans-unit>
+      <trans-unit id="5729458597317169123" datatype="html">
+        <source>Selbstbild tiefer als Fremdbild</source>
+        <target state="translated">Self-assessment lower than peer assessment</target>
+      </trans-unit>
+      <trans-unit id="5876709353975667502" datatype="html">
+        <source>Keine Auffälligkeiten mit den gewählten Schwellenwerten.</source>
+        <target state="translated">No notable results with the selected thresholds.</target>
+      </trans-unit>
+      <trans-unit id="5918182257962699401" datatype="html">
+        <source>Häufigkeit der vergebenen Punkte</source>
+        <target state="translated">Frequency of the points given</target>
+      </trans-unit>
+      <trans-unit id="5971243944449070238" datatype="html">
+        <source>Abweichungen positiv</source>
+        <target state="translated">positive deviations</target>
+      </trans-unit>
+      <trans-unit id="6050880503623951553" datatype="html">
+        <source>Studierende</source>
+        <target state="translated">students</target>
+      </trans-unit>
+      <trans-unit id="6516848529056209440" datatype="html">
+        <source>Fremdbewertung minus Gruppenschnitt</source>
+        <target state="translated">peer assessment minus group average</target>
+      </trans-unit>
+      <trans-unit id="6543560787424484863" datatype="html">
+        <source>Deutlich über dem Gruppenschnitt</source>
+        <target state="translated">Clearly above group average</target>
+      </trans-unit>
+      <trans-unit id="6723383211174802747" datatype="html">
+        <source>Median</source>
+        <target state="translated">median</target>
+      </trans-unit>
+      <trans-unit id="6854564394678926088" datatype="html">
+        <source>offene Einzelbewertungen</source>
+        <target state="translated">open single gradings</target>
+      </trans-unit>
+      <trans-unit id="7041977123782691478" datatype="html">
+        <source>Selbstbild höher als Fremdbild</source>
+        <target state="translated">Self-assessment higher than peer assessment</target>
+      </trans-unit>
+      <trans-unit id="7314242916234575858" datatype="html">
+        <source>Noch keine Bewertungen vorhanden.</source>
+        <target state="translated">No gradings yet.</target>
+      </trans-unit>
+      <trans-unit id="7425719396044675848" datatype="html">
+        <source>Rücklauf pro Kampagne</source>
+        <target state="translated">response rate per campaign</target>
+      </trans-unit>
+      <trans-unit id="7545998245920178909" datatype="html">
+        <source>Noch offen</source>
+        <target state="translated">still open</target>
+      </trans-unit>
+      <trans-unit id="7765093904501120236" datatype="html">
+        <source>Differenz zwischen grosszügigster und strengster Bewertung</source>
+        <target state="translated">difference between the most generous and the strictest grading</target>
+      </trans-unit>
+      <trans-unit id="7869939501877253517" datatype="html">
+        <source>Streuung (SD)</source>
+        <target state="translated">spread (SD)</target>
+      </trans-unit>
+      <trans-unit id="7919399243026242234" datatype="html">
+        <source>Mittelwert</source>
+        <target state="translated">mean</target>
+      </trans-unit>
+      <trans-unit id="8259238864102475814" datatype="html">
+        <source>Skala</source>
+        <target state="translated">scale</target>
+      </trans-unit>
+      <trans-unit id="835725991517069533" datatype="html">
+        <source>Alle Kampagnen</source>
+        <target state="translated">all campaigns</target>
+      </trans-unit>
+      <trans-unit id="847787061539515921" datatype="html">
+        <source>Daten werden geladen …</source>
+        <target state="translated">Loading data …</target>
+      </trans-unit>
+      <trans-unit id="9041877669487218751" datatype="html">
+        <source>Abweichungen negativ</source>
+        <target state="translated">negative deviations</target>
+      </trans-unit>
+      <trans-unit id="9182952202800815493" datatype="html">
+        <source>Verteilung der Fremdbewertungen</source>
+        <target state="translated">distribution of peer assessments</target>
+      </trans-unit>
+      <trans-unit id="9187938685129405658" datatype="html">
+        <source> Abweichung = Fremdbewertung einer Person minus Gruppenschnitt (wie in der Auswertung für die Studierenden). Positiv: besser bewertet als der Schnitt der Gruppe. </source>
+        <target state="translated">Deviation = peer assessment of a person minus group average (as in the evaluation for the students). Positive: graded better than the group average.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

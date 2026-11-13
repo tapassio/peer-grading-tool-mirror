@@ -1,3 +1,4 @@
+import { StatisticsComponent } from './statistics/statistics.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AboutComponent } from './about/about.component';
@@ -24,6 +25,11 @@ const routes: Routes = [
   {
     path: 'admin-dashboard',
     component: AdminDashboardComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'statistics',
+    component: StatisticsComponent,
     canActivate: [authGuard],
   },
   {

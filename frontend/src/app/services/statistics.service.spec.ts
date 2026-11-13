@@ -1,0 +1,123 @@
+import {
+  RawCampaign,
+  RawGrading,
+  StatisticsService,
+  median,
+  standardDeviation,
+} from './statistics.service';
+
+/*
+ * Example group with 3 students (A=1, B=2, C=3), one criterion (weight 1),
+ * scale 1-8.
+ *
+ * Gradings (from -> to: points):
+ *   A: A 8, B 4, C 4      (A rates himself much higher)
+ *   B: A 4, B 5, C 5
+ *   C: A 4, B 5, C 5
+ *
+ * Third-party averages: A = (4+4)/2 = 4, B = (4+5)/2 = 4.5, C = 4.5
+ * Group average (third-party only): (4+4+4+5+4+5)/6 = 4.33
+ * Deviation: A = -0.33, B = +0.17, C = +0.17
+ * Self vs. others: A 8 - 4 = +4  -> finding "selfHigher"
+ * A gives B and C the same points (4) -> finding "sameForAll"
+ */
+function g(from: number, to: number, points: number): RawGrading {
+  return { fromPeerId: from, toPeerId: to, criteriaId: 1, points };
+}
+
+const peer = (peerId: number, firstName: string) => ({
+  peerId,
+  peer: { peerId, firstName, lastName: 'Test' },
+});
+
+const campaign: RawCampaign = {
+  campaignId: 1,
+  name: 'Demo',
+  maxPoints: 8,
+  openingDate: '2026-10-01',
+  closingDate: null,
+  criteria: [{ criteriaId: 1, name: 'Quality', weight: 1 }],
+  groups: [
+    {
+      groupId: 10,
+      number: 1,
+      peers: [peer(1, 'A'), peer(2, 'B'), peer(3, 'C')],
+      gradings: [
+        g(1, 1, 8), g(1, 2, 4), g(1, 3, 4),
+        g(2, 1, 4), g(2, 2, 5), g(2, 3, 5),
+        g(3, 1, 4), g(3, 2, 5), g(3, 3, 5),
+      ],
+    },
+  ],
+};
+
+describe('StatisticsService', () => {
+  const service = new StatisticsService();
+
+  it('helpers', () => {
+    expect(median([3, 1, 2])).toBe(2);
+    expect(median([1, 2, 3, 4])).toBe(2.5);
+    expect(standardDeviation([5])).toBe(0);
+    expect(standardDeviation([2, 4, 4, 4, 5, 5, 7, 9])).toBeCloseTo(2.14, 2);
+  });
+
+  it('absolute numbers and response rate', () => {
+    const { kpis } = service.calculate([campaign]);
+    expect(kpis.campaigns).toBe(1);
+    expect(kpis.runningCampaigns).toBe(1);
+    expect(kpis.students).toBe(3);
+    expect(kpis.groups).toBe(1);
+    expect(kpis.completedStudents).toBe(3);
+    expect(kpis.responseRate).toBe(100);
+    expect(kpis.openGradings).toBe(0);
+    expect(kpis.averagePoints).toBe(4.33);
+    expect(kpis.positiveDeviations).toBe(2); // B and C
+    expect(kpis.negativeDeviations).toBe(1); // A
+  });
+
+  it('averages per student (same definitions as the campaign overview)', () => {
+    const { peers } = service.calculate([campaign]);
+    const a = peers.find((p) => p.peerId === 1)!;
+    expect(a.selfAverage).toBe(8);
+    expect(a.thirdPartyAverage).toBe(4);
+    expect(a.groupAverage).toBe(4.33);
+    expect(a.deviation).toBe(-0.33);
+  });
+
+  it('findings', () => {
+    const { findings } = service.calculate([campaign]);
+    const types = findings.map((f) => `${f.student}:${f.type}`);
+    expect(types).toContain('A Test:selfHigher');
+    expect(types).toContain('A Test:sameForAll');
+    expect(findings[0].type).toBe('selfHigher'); // strongest first (4 points)
+  });
+
+  it('distribution and criteria table use third-party gradings only', () => {
+    const { distributions, criteria } = service.calculate([campaign]);
+    expect(distributions).toHaveLength(1);
+    expect(distributions[0].total).toBe(6);
+    expect(distributions[0].counts[3]).toBe(4); // four times 4 points
+    expect(distributions[0].counts[4]).toBe(2); // two times 5 points
+    expect(criteria[0]).toEqual(
+      expect.objectContaining({ name: 'Quality', n: 6, median: 4, min: 4, max: 5 })
+    );
+  });
+
+  it('missing gradings', () => {
+    const incomplete: RawCampaign = {
+      ...campaign,
+      groups: [
+        {
+          ...campaign.groups[0],
+          // C has not graded yet
+          gradings: campaign.groups[0].gradings.filter((x) => x.fromPeerId !== 3),
+        },
+      ],
+    };
+    const { kpis, responses } = service.calculate([incomplete], undefined, true);
+    expect(kpis.completedStudents).toBe(2);
+    expect(kpis.openGradings).toBe(3);
+    expect(responses[0].missing).toEqual(['C Test']);
+    expect(responses[0].rate).toBe(66.67);
+  });
+});

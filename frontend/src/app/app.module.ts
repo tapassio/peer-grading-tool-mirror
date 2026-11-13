@@ -13,6 +13,7 @@ import { CampaignGroupSummaryComponent } from './campaign-summary/campaign-group
 import { FormErrorComponent } from './form-error/form-error.component';
 import { LoginComponent } from './login/login.component';
 import { HeaderComponent } from './header/header.component';
+import { StatisticsComponent } from './statistics/statistics.component';
 import { ToolTipComponent } from './tool-tip/tool-tip.component';
 import { GroupComponent } from './create-campaign/group/group.component';
 import { DatePipe } from '@angular/common';
@@ -68,6 +69,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     FormErrorComponent,
     LoginComponent,
     HeaderComponent,
+    StatisticsComponent,
     ToolTipComponent,
     GroupComponent,
     AdminDashboardComponent,

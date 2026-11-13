@@ -1,0 +1,272 @@
+/* page layout (same as app.component.css, but normal tables:
+   the flex tables of the grading forms do not fit here) */
+main {
+  padding: 32px 5%;
+  font-size: 16px;
+}
+
+main section {
+  border-bottom: 1px solid var(--tc-border);
+  padding: 20px 0;
+}
+
+main section:last-child {
+  border: none;
+}
+
+h2 {
+  font-size: 1.25rem;
+  margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+h3 {
+  font-size: 1rem;
+  margin: 16px 0 4px;
+}
+
+.state {
+  color: var(--tc-grey-text);
+}
+
+.state.error {
+  color: var(--tc-error);
+}
+
+.hint,
+.muted {
+  color: var(--tc-grey-text);
+  font-size: 0.85rem;
+}
+
+/* ---- filters ---- */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--tc-surface);
+  border: 1px solid var(--tc-border);
+  border-radius: var(--tc-radius);
+}
+
+.filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.filters select,
+.filters input {
+  padding: 6px 8px;
+  border: 1px solid var(--tc-border-strong);
+  border-radius: 4px;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+.filters select {
+  min-width: 240px;
+}
+
+.filters input {
+  width: 90px;
+}
+
+/* ---- key figure tiles ---- */
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid var(--tc-border);
+  border-left: 4px solid var(--tc-purple);
+  border-radius: var(--tc-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tile .value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--tc-navy);
+  line-height: 1.1;
+}
+
+.tile .label {
+  font-size: 0.85rem;
+  color: var(--tc-grey-text);
+}
+
+.tile.positive {
+  border-left-color: #2e7d32;
+}
+
+.tile.negative {
+  border-left-color: var(--tc-error);
+}
+
+/* ---- response bars ---- */
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 30%) 1fr 60px;
+  align-items: center;
+  gap: 12px;
+}
+
+.bar-label {
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-track {
+  height: 14px;
+  background: var(--tc-surface-2);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--tc-purple);
+  border-radius: 7px;
+}
+
+.bar-value {
+  font-size: 0.9rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.missing {
+  margin: -4px 0 4px;
+  font-size: 0.8rem;
+  color: var(--tc-grey-text);
+}
+
+/* ---- histogram ---- */
+
+.histogram {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.hist-bar {
+  fill: var(--tc-purple);
+}
+
+.hist-bar:hover {
+  fill: var(--tc-purple-hover);
+}
+
+.hist-count,
+.hist-axis {
+  text-anchor: middle;
+  font-size: 12px;
+  fill: var(--tc-text);
+}
+
+.hist-axis {
+  fill: var(--tc-grey-text);
+}
+
+/* ---- tables ---- */
+
+.table-scroll {
+  overflow-x: auto;
+  margin-top: 12px;
+}
+
+.stats-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.stats-table th,
+.stats-table td {
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.stats-table tr:nth-child(even) {
+  background: var(--tc-surface);
+}
+
+.stats-table td {
+  font-variant-numeric: tabular-nums;
+  border-bottom: 1px solid var(--tc-surface-2);
+}
+
+.count-badge {
+  background: var(--tc-surface-2);
+  color: var(--tc-text);
+  border-radius: 12px;
+  padding: 1px 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.finding {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  background: var(--tc-surface-2);
+}
+
+.finding-selfHigher,
+.finding-belowGroup {
+  background: #ffebee;
+  color: #b71c1c;
+}
+
+.finding-selfLower,
+.finding-aboveGroup {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.finding-sameForAll,
+.finding-raterSpread {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+@media screen and (max-width: 480px) {
+  .filters select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .bar-row {
+    grid-template-columns: 1fr 50px;
+  }
+
+  .bar-label {
+    grid-column: 1 / -1;
+  }
+}
