@@ -13,6 +13,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
+    // Drop the JWT bookkeeping claims (iat/exp) and expose only the identity
+    // (email, roles, …) as req.user for the guards.
     let { iat, exp, ...rest } = payload;
     return {
       ...rest,

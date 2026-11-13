@@ -69,6 +69,9 @@ const routes: Routes = [
     component: CreateAdminUserComponent,
     canActivate: [authGuard],
   },
+  // Intentionally PUBLIC: peers never log in. The random 256-bit link (see
+  // backend AppService.generateLink) is the only credential, so these two
+  // routes must stay free of authGuard.
   {
     path: 'peer-grading/:url',
     component: GradingComponent,
