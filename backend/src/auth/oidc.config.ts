@@ -42,6 +42,10 @@ export function getOidcConfig(): DocPouchOidcConfig {
   const publicUrl = trimTrailingSlash(
     process.env['PGT_PUBLIC_URL'] || 'http://localhost:4200',
   );
+  // Fallbacks only: the localized frontend derives the effective redirect and
+  // post-logout URIs from its own <base href> (e.g. /tc/PeerGrading/de/), so
+  // they include the language prefix. These values are used when the browser
+  // cannot compute them.
   const redirectUri =
     process.env['PGT_OIDC_REDIRECT_URI'] || `${publicUrl}/auth/callback`;
   const postLogoutRedirectUri =

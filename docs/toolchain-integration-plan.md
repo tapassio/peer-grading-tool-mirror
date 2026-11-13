@@ -283,9 +283,13 @@ Wichtige Details:
 - **Logout:** erst PGT-Logout, dann `docpouchClient.logout()`. Die registrierte
   `post_logout_redirect_uri` muss exakt passen.
 - **Lokalisierte Builds:** `/en/` und `/de/` haben unterschiedliche `baseHref`.
-  Entweder für jede Sprache eine Callback-URI registrieren
-  (`/en/auth/callback`, `/de/auth/callback`) oder eine sprachneutrale Callback-Route
-  mit funktionierendem SPA-Fallback einrichten. Das muss im PoC getestet werden.
+  Umgesetzt: Das Frontend leitet `redirect_uri` und `post_logout_redirect_uri`
+  aus dem eigenen `<base href>` ab (`frontend/src/app/services/auth.service.ts`),
+  d.h. sprachspezifisch (`/en/auth/callback`, `/de/auth/callback`). Entsprechend
+  wird für jede Sprache eine Callback-URI beim DocPouch-Client registriert
+  (`PGT_LOCALES` in `docpouch-dev/setup-local.mjs`). Die Backend-Variablen
+  `PGT_OIDC_REDIRECT_URI` / `PGT_POST_LOGOUT_REDIRECT_URI` sind nur noch
+  Fallbacks.
 
 ### 3.5 DocPouch-Konfiguration
 
@@ -299,10 +303,12 @@ Content-Type: application/json
 {
   "client_name": "Peer Grading Tool",
   "redirect_uris": [
-    "https://pgt.example.com/auth/callback"
+    "https://pgt.example.com/de/auth/callback",
+    "https://pgt.example.com/en/auth/callback"
   ],
   "post_logout_redirect_uris": [
-    "https://pgt.example.com/"
+    "https://pgt.example.com/de/",
+    "https://pgt.example.com/en/"
   ],
   "grant_types": ["authorization_code", "refresh_token"],
   "response_types": ["code"],
@@ -522,6 +528,7 @@ DOCPOUCH_OIDC_ISSUER=https://docpouch.example.com/oidc
 DOCPOUCH_CLIENT_ID=<client-id>
 DOCPOUCH_TIMEOUT_MS=5000
 PGT_PUBLIC_URL=https://pgt.example.com
+# Fallback; das Frontend leitet die sprachspezifische URI selbst ab.
 PGT_OIDC_REDIRECT_URI=https://pgt.example.com/auth/callback
 PGT_BOOTSTRAP_SUPER_ADMINS=admin1@example.com,admin2@example.com
 PGT_ALLOW_DOCPOUCH_ADMINS=false

@@ -74,9 +74,9 @@ All variables are documented in `backend/.env.example`.
 | `DOCPOUCH_CLIENT_ID` | Client id from `/oidc/reg` | from setup script | registered client |
 | `DOCPOUCH_OIDC_SCOPE` | Requested scopes | `openid profile email offline_access` | same |
 | `DOCPOUCH_TIMEOUT_MS` | `whoami` timeout | `5000` | `5000` |
-| `PGT_PUBLIC_URL` | Public PGT URL | `http://localhost:4200` | `https://tapassio.pantek.ch/tc/PeerGrading` |
-| `PGT_OIDC_REDIRECT_URI` | OIDC redirect | `http://localhost:4200/auth/callback` | `https://tapassio.pantek.ch/tc/PeerGrading/auth/callback` |
-| `PGT_POST_LOGOUT_REDIRECT_URI` | Post-logout redirect | `http://localhost:4200/` | `https://tapassio.pantek.ch/tc/PeerGrading/` |
+| `PGT_PUBLIC_URL` | Public PGT URL (fallback base) | `http://localhost:4200` | `https://tapassio.pantek.ch/tc/PeerGrading` |
+| `PGT_OIDC_REDIRECT_URI` | Fallback OIDC redirect | `http://localhost:4200/auth/callback` | `https://tapassio.pantek.ch/tc/PeerGrading/auth/callback` |
+| `PGT_POST_LOGOUT_REDIRECT_URI` | Fallback post-logout redirect | `http://localhost:4200/` | `https://tapassio.pantek.ch/tc/PeerGrading/` |
 | `PGT_ACCESS_TOKEN_TTL` | PGT access token | `8h` in OIDC mode | `8h` |
 | `PGT_REFRESH_TOKEN_TTL` | PGT refresh token | `2d` | `2d` |
 | `APP_BASE_PATH` | Deployment sub-path | *(empty)* | `/tc/PeerGrading` |
@@ -85,6 +85,15 @@ All variables are documented in `backend/.env.example`.
 
 `GET /api/auth/config` exposes the non-secret OIDC parameters to the frontend,
 so the client id and issuer are never hardcoded in the build.
+
+> **Localized redirect URIs.** The frontend is built per language and served
+> under a language prefix (`…/de/`, `…/en/`). The browser therefore derives the
+> OIDC `redirect_uri` and `post_logout_redirect_uri` from its own `<base href>`
+> (`frontend/src/app/services/auth.service.ts`), so the effective values are
+> `…/de/auth/callback`, `…/en/auth/callback`, etc. The `PGT_OIDC_REDIRECT_URI` /
+> `PGT_POST_LOGOUT_REDIRECT_URI` variables are only fallbacks used when the
+> browser cannot compute them. **Every language variant must be registered as a
+> redirect / post-logout URI with DocPouch** (see §4.3).
 
 ---
 
@@ -127,20 +136,26 @@ AUTH_MODE=oidc
 DOCPOUCH_URL=http://localhost:3033
 DOCPOUCH_OIDC_ISSUER=http://localhost:3033/oidc
 DOCPOUCH_CLIENT_ID=<client_id from setup-local.mjs>
+# Fallbacks only — the browser derives the effective, language-prefixed URIs.
 PGT_PUBLIC_URL=http://localhost:4200
-PGT_OIDC_REDIRECT_URI=http://localhost:4200/auth/callback
-PGT_POST_LOGOUT_REDIRECT_URI=http://localhost:4200/
+PGT_OIDC_REDIRECT_URI=http://localhost:4200/en/auth/callback
+PGT_POST_LOGOUT_REDIRECT_URI=http://localhost:4200/en/
 ```
 
 Then:
 
 ```bash
 cd backend && npm run start:dev
-cd frontend && npm start
+cd frontend && npm start        # serves English at http://localhost:4200/en/
+# or: npx ng serve --configuration de   # serves German at /de/
 ```
 
-Open <http://localhost:4200>. Use **Mit DocPouch anmelden** and log in with
-`pgt-admin` / `peer-grading-test` (or the DocPouch `admin` account).
+Open <http://localhost:4200/en/> (or `/de/`). Use **Mit DocPouch anmelden** and
+log in with `pgt-admin` / `peer-grading-test` (or the DocPouch `admin` account).
+
+The setup script registers both language variants (`/en/auth/callback` and
+`/de/auth/callback`); add locales to `PGT_LOCALES` (comma separated) if the
+frontend is built for more.
 
 To keep using the legacy local login, leave `AUTH_MODE=local` (the default).
 
@@ -168,6 +183,7 @@ AUTH_MODE=oidc
 DOCPOUCH_URL=https://docpouch.pantek.app
 DOCPOUCH_OIDC_ISSUER=https://docpouch.pantek.app/oidc
 DOCPOUCH_CLIENT_ID=<production client id>
+# Fallbacks only — the browser derives the effective, language-prefixed URIs.
 PGT_PUBLIC_URL=https://tapassio.pantek.ch/tc/PeerGrading
 PGT_OIDC_REDIRECT_URI=https://tapassio.pantek.ch/tc/PeerGrading/auth/callback
 PGT_POST_LOGOUT_REDIRECT_URI=https://tapassio.pantek.ch/tc/PeerGrading/
@@ -223,10 +239,12 @@ Content-Type: application/json
 {
   "client_name": "Peer Grading Tool",
   "redirect_uris": [
-    "https://tapassio.pantek.ch/tc/PeerGrading/auth/callback"
+    "https://tapassio.pantek.ch/tc/PeerGrading/de/auth/callback",
+    "https://tapassio.pantek.ch/tc/PeerGrading/en/auth/callback"
   ],
   "post_logout_redirect_uris": [
-    "https://tapassio.pantek.ch/tc/PeerGrading/"
+    "https://tapassio.pantek.ch/tc/PeerGrading/de/",
+    "https://tapassio.pantek.ch/tc/PeerGrading/en/"
   ],
   "grant_types": ["authorization_code", "refresh_token"],
   "response_types": ["code"],
@@ -235,6 +253,10 @@ Content-Type: application/json
   "scope": "openid profile email offline_access"
 }
 ```
+
+- Every language the frontend is built for needs its own redirect and
+  post-logout URI (the app is served per locale). `docpouch-dev/setup-local.mjs`
+  does this automatically for local development via `PGT_LOCALES`.
 
 - `token_endpoint_auth_method: "none"` + PKCE = public SPA client, no secret in
   the browser.
@@ -297,7 +319,8 @@ versions because they become keys in `content.assignments` of the TDD.
 | `LOCAL_AUTH_DISABLED` | `AUTH_MODE=oidc`; use the DocPouch login button. |
 | `PGT_ACCESS_DENIED` after login | DocPouch role is `manager`/`member`; only `admin`/`superadmin` may use the PGT. |
 | `DOCPOUCH_UNAVAILABLE` / `DOCPOUCH_RATE_LIMITED` | DocPouch unreachable or rate limited; try again later. Existing PGT sessions keep working. |
-| Login redirects to `localhost` in production | `PGT_PUBLIC_URL` / redirect URIs not set to the Toolchain sub-path. |
+| Login redirects to `localhost` in production | Fallback redirect URIs not set to the Toolchain sub-path. |
+| `invalid_redirect_uri` from DocPouch | The language-specific callback URI (`…/de/auth/callback`, `…/en/auth/callback`) is not registered for the client. Register every locale (§4.3). |
 | 404 after login on a deep link | SPA fallback not active; set `PRODUCTION=true` and rebuild. |
 | Publish button missing | Not in OIDC mode, or no campaign loaded. |
 | `PGT_RESULT_STRUCTURE_MISSING` | Run `setup-local.mjs` (or provision production) to create the result structure. |
@@ -312,7 +335,7 @@ versions because they become keys in `content.assignments` of the TDD.
 - [ ] An existing PGT admin with the same e-mail keeps roles and campaigns.
 - [ ] Peer link works without login.
 - [ ] Logout ends both the PGT and the DocPouch session.
-- [ ] Deep link `/auth/callback` works (SPA fallback).
+- [ ] Deep link `/{de,en}/auth/callback` works (SPA fallback) and the language is preserved after login.
 - [ ] `manifest.json` is reachable and returns `Access-Control-Allow-Origin: *`.
 - [ ] Publishing creates a private document visible only to administrators.
 - [ ] No DocPouch request is made per API request (only at exchange).

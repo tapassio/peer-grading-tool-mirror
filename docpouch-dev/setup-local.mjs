@@ -23,6 +23,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, '..');
@@ -54,6 +55,13 @@ const USER = process.env.DP_USER || 'admin';
 const PASS = process.env.DP_PASSWORD || '';
 const REGISTRATION_TOKEN = process.env.DP_OIDC_REGISTRATION_TOKEN || '';
 const PGT_PUBLIC_URL = (process.env.PGT_PUBLIC_URL || 'http://localhost:4200').replace(/\/+$/, '');
+// Languages the frontend is built for. Each is served under its own base href
+// (`<PGT_PUBLIC_URL>/de/`, `/en/`), so every variant needs its own OIDC
+// redirect and post-logout URI.
+const PGT_LOCALES = (process.env.PGT_LOCALES || 'de,en')
+  .split(',')
+  .map((locale) => locale.trim())
+  .filter(Boolean);
 const CREATE_TEST_USERS = (process.env.DP_CREATE_TEST_USERS || 'true') !== 'false';
 const ADMIN_EMAIL = process.env.DP_ADMIN_EMAIL || 'admin@example.com';
 
@@ -229,8 +237,12 @@ async function ensureOidcClient() {
 
   const payload = {
     client_name: 'Peer Grading Tool',
-    redirect_uris: [`${PGT_PUBLIC_URL}/auth/callback`],
-    post_logout_redirect_uris: [`${PGT_PUBLIC_URL}/`],
+    redirect_uris: PGT_LOCALES.map(
+      (locale) => `${PGT_PUBLIC_URL}/${locale}/auth/callback`,
+    ),
+    post_logout_redirect_uris: PGT_LOCALES.map(
+      (locale) => `${PGT_PUBLIC_URL}/${locale}/`,
+    ),
     grant_types: ['authorization_code', 'refresh_token'],
     response_types: ['code'],
     token_endpoint_auth_method: 'none',
@@ -252,6 +264,34 @@ async function ensureOidcClient() {
   return registered;
 }
 
+/**
+ * Adds the freshly registered (or cached) client id to DocPouch's
+ * OIDC_AUTO_CONSENT_CLIENTS environment variable via docker-compose.yml and
+ * restarts the container, so subsequent logins skip the consent prompt.
+ * Idempotent: a no-op when the value already matches.
+ */
+async function ensureAutoConsent(client) {
+  if (!client?.client_id) return;
+  const composeFile = join(here, 'docker-compose.yml');
+  const desired = `      - OIDC_AUTO_CONSENT_CLIENTS=${client.client_id}`;
+  const current = readFileSync(composeFile, 'utf8');
+  const re = /^[ \t]*-[ \t]*OIDC_AUTO_CONSENT_CLIENTS=.*$/m;
+  const next = re.test(current)
+    ? current.replace(re, desired)
+    : current.replace(/^([ \t]*-[ \t]*OIDC_ISSUER=.*)$/m, `$1\n${desired}`);
+
+  if (next === current) {
+    console.log(`OIDC_AUTO_CONSENT_CLIENTS already enabled for ${client.client_id}`);
+    return;
+  }
+
+  writeFileSync(composeFile, next);
+  console.log('docker-compose.yml: OIDC_AUTO_CONSENT_CLIENTS updated, restarting DocPouch');
+  execSync(`docker compose -f "${composeFile}" up -d`, { stdio: 'inherit' });
+  // Give DocPouch a moment to come back up before any further requests.
+  await new Promise((r) => setTimeout(r, 6000));
+}
+
 async function main() {
   console.log(`DocPouch: ${BASE}`);
   const session = await login();
@@ -264,6 +304,7 @@ async function main() {
   await ensureTdd(token, structureId);
   await ensureTestUsers(token);
   const client = await ensureOidcClient();
+  await ensureAutoConsent(client);
 
   console.log('\nDone.');
   if (client?.client_id) {

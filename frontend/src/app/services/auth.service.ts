@@ -123,7 +123,7 @@ export class AuthService {
       const client = this.client;
       if (this.isOidcMode() && client && client.isAuthenticated()) {
         client
-          .logout({ redirectUri: this.config.postLogoutRedirectUri })
+          .logout({ redirectUri: this.postLogoutRedirectUri() })
           .catch(() => this.redirectToLogin());
         return;
       }
@@ -237,10 +237,35 @@ export class AuthService {
     return {
       issuer: this.config.issuer as string,
       clientId: this.config.clientId as string,
-      redirectUri: this.config.redirectUri as string,
+      redirectUri: this.oidcRedirectUri(),
       scope: this.config.scope,
-      postLogoutRedirectUri: this.config.postLogoutRedirectUri,
+      postLogoutRedirectUri: this.postLogoutRedirectUri(),
     };
+  }
+
+  /**
+   * The OIDC redirect URI has to include the current language prefix (`/de/`,
+   * `/en/`, …), because the localized Angular build serves each locale under
+   * its own base href. The backend cannot know the locale, so the URI is
+   * derived from `document.baseURI`, which already points at the locale root.
+   * Every locale variant must be registered as a redirect URI with DocPouch.
+   */
+  private oidcRedirectUri(): string {
+    if (typeof document === 'undefined' || !document.baseURI) {
+      return this.config.redirectUri as string;
+    }
+    return new URL('auth/callback', document.baseURI).toString();
+  }
+
+  /**
+   * Locale-aware post-logout redirect (the language root). Derived from
+   * `document.baseURI` for the same reason as {@link oidcRedirectUri}.
+   */
+  private postLogoutRedirectUri(): string {
+    if (typeof document === 'undefined' || !document.baseURI) {
+      return this.config.postLogoutRedirectUri as string;
+    }
+    return new URL('./', document.baseURI).toString();
   }
 
   private redirectToLogin(): void {
