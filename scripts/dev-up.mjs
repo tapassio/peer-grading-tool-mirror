@@ -192,6 +192,20 @@ const procAlive = (pid) => {
     return false;
   }
 };
+
+// Single-shot TCP probe (no retry loop) used by --status.
+const probePort = (port) =>
+  new Promise((resolve) => {
+    const sock = createConnection({ host: '127.0.0.1', port }, () => {
+      sock.destroy();
+      resolve(true);
+    });
+    sock.on('error', () => resolve(false));
+    sock.setTimeout(1500, () => {
+      sock.destroy();
+      resolve(false);
+    });
+  });
 function killTree(pid) {
   if (!pid) return;
   try {
@@ -441,12 +455,12 @@ async function status() {
   const frontendPid = readPid('frontend');
   const docpouchOut =
     compose('ps', '--format', '{{.Names}} {{.State}}').stdout?.toString().trim() || '';
-  const backendPort = Number(readFileIfExists(pidFile('backend.port')) || 3001);
+  const backendPort = Number(readFileIfExists(pidFile('backend.port')) || 3000);
   const frontendPort = Number(readFileIfExists(pidFile('frontend.port')) || 4200);
-  const backendUp =
-    procAlive(backendPid) && (await waitForPort(backendPort, 'backend', { timeoutMs: 600 }));
-  const frontendUp =
-    procAlive(frontendPid) && (await waitForPort(frontendPort, 'frontend', { timeoutMs: 600 }));
+  // Prefer the port probe as source of truth: detached ng serve re-execs, so
+  // the stored PID is not always the one that owns the socket.
+  const backendUp = await probePort(backendPort);
+  const frontendUp = await probePort(frontendPort);
 
   const row = (name, value) =>
     process.stdout.write(`  ${C.bold}${name.padEnd(15)}${C.reset} ${value}\n`);
