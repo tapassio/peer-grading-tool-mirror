@@ -100,9 +100,9 @@
       </div>
     </div>
     <p class="hint" i18n>
-      Abweichung = Fremdbewertung einer Person minus Gruppenschnitt (wie in der
-      Auswertung für die Studierenden). Positiv: besser bewertet als der
-      Schnitt der Gruppe.
+      Abweichung = Fremdbewertung einer Person minus Gruppenschnitt, auf halbe
+      Noten gerundet (wie in der Auswertung für die Studierenden). Positiv:
+      besser bewertet als der Schnitt der Gruppe.
     </p>
   </section>
 
@@ -155,37 +155,42 @@
     </h3>
     <svg
       class="histogram"
-      [attr.viewBox]="'0 0 ' + d.counts.length * 50 + ' ' + chartHeight"
+      [attr.viewBox]="'0 0 ' + d.steps.length * 50 + ' ' + chartHeight"
       preserveAspectRatio="xMinYMid meet"
-      [style.max-width.px]="d.counts.length * 60"
+      [style.max-width.px]="d.steps.length * 60"
       role="img"
       i18n-aria-label
       aria-label="Häufigkeit der vergebenen Punkte"
     >
-      @for (count of d.counts; track $index) {
+      @for (step of d.steps; track step.value) {
       <rect
         class="hist-bar"
+        [class.half]="step.value % 1 !== 0"
         [attr.x]="$index * 50 + 8"
-        [attr.y]="chartHeight - 18 - barHeight(d, count)"
+        [attr.y]="chartHeight - 18 - barHeight(d, step.count)"
         width="34"
-        [attr.height]="barHeight(d, count)"
+        [attr.height]="barHeight(d, step.count)"
         rx="3"
       >
-        <title>{{ $index + 1 }}: {{ count }} ({{ percent(d, count) }}%)</title>
+        <title>
+          {{ stepLabel(step.value) }}: {{ step.count }} ({{
+            percent(d, step.count)
+          }}%)
+        </title>
       </rect>
       <text
         class="hist-count"
         [attr.x]="$index * 50 + 25"
-        [attr.y]="chartHeight - 22 - barHeight(d, count)"
+        [attr.y]="chartHeight - 22 - barHeight(d, step.count)"
       >
-        {{ count }}
+        {{ step.count }}
       </text>
       <text
         class="hist-axis"
         [attr.x]="$index * 50 + 25"
         [attr.y]="chartHeight - 3"
       >
-        {{ $index + 1 }}
+        {{ stepLabel(step.value) }}
       </text>
       }
     </svg>
@@ -253,7 +258,7 @@
           <td>{{ f.campaign }}</td>
           <td>{{ f.group }}</td>
           <td [title]="findingHints[f.type]">
-            {{ f.type === 'sameForAll' ? f.value : signed(f.value) }}
+            {{ f.type === 'sameForAll' ? stepLabel(f.value) : signed(f.value) }}
           </td>
         </tr>
         }

@@ -1146,6 +1146,18 @@
         <source>Standard: Schweizer Notenskala 1–6 (6 = sehr gut, 4 = genügend)</source>
         <target state="translated">Default: Swiss grade scale 1–6 (6 = very good, 4 = sufficient)</target>
       </trans-unit>
+      <trans-unit id="7619461379753375169" datatype="html">
+        <source> Abweichung = Fremdbewertung einer Person minus Gruppenschnitt, auf halbe Noten gerundet (wie in der Auswertung für die Studierenden). Positiv: besser bewertet als der Schnitt der Gruppe. </source>
+        <target state="translated">Deviation = peer assessment of a person minus group average, rounded to half grades (as in the evaluation for the students). Positive: graded better than the group average.</target>
+      </trans-unit>
+      <trans-unit id="3591904190146133039" datatype="html">
+        <source>Gradings können nicht gesendet werden. Werte müssen zwischen 1 und <x id="PH" equiv-text="this.campaign().maxPoints"/> liegen (ganze oder halbe Punkte, z. B. 4.5).</source>
+        <target state="translated">Gradings cannot be sent. Values must be between 1 and <x id="PH" equiv-text="this.campaign().maxPoints"/> (whole or half points, e.g. 4.5).</target>
+      </trans-unit>
+      <trans-unit id="977578758307041695" datatype="html">
+        <source>Standard: Schweizer Notenskala 1–6 (6 = sehr gut, 4 = genügend). Halbe Noten wie 4.5 sind möglich.</source>
+        <target state="translated">Default: Swiss grade scale 1–6 (6 = very good, 4 = sufficient). Half grades such as 4.5 are possible.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

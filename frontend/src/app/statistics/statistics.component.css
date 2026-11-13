@@ -177,6 +177,12 @@ h3 {
   fill: var(--tc-purple);
 }
 
+.hist-bar.half {
+  fill: var(--tc-purple-light);
+  stroke: var(--tc-purple);
+  stroke-width: 1;
+}
+
 .hist-bar:hover {
   fill: var(--tc-purple-hover);
 }

@@ -81,7 +81,7 @@ model Grading {
   groupId    Int
   criteria   Criteria @relation(fields: [criteriaId], references: [criteriaId], onDelete: Cascade, onUpdate: Cascade)
   criteriaId Int
-  points     Int
+  points     Float // whole or half points, e.g. 4.5
 
   @@unique(fields: [fromPeerId, toPeerId, groupId, criteriaId], name: "GradingId")
 }

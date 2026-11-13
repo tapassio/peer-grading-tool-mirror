@@ -156,8 +156,8 @@ export class GradingComponent implements OnInit {
           : undefined;
 
         let critControl = new FormControl(points, [
-          // this validator guarantees that the input is a whole number
-          Validators.pattern('^\\d+$'),
+          // whole or half points, e.g. 4 or 4.5 (Swiss half grades)
+          Validators.pattern('^\\d+(\\.[05])?$'),
           Validators.min(1),
           Validators.max(this.campaign().maxPoints),
         ]);
@@ -293,7 +293,7 @@ export class GradingComponent implements OnInit {
       this.snackBarService.openSnackBar(
         $localize`Gradings können nicht gesendet werden. Werte müssen zwischen 1 und ${
           this.campaign().maxPoints
-        } liegen.`
+        } liegen (ganze oder halbe Punkte, z. B. 4.5).`
       );
       gradingForm.markAllAsTouched();
     }

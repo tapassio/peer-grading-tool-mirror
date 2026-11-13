@@ -101,7 +101,7 @@ export class StatisticsComponent implements OnInit {
   readonly chartHeight = 160;
 
   barHeight(d: Distribution, count: number): number {
-    const max = Math.max(...d.counts, 1);
+    const max = Math.max(...d.steps.map((s) => s.count), 1);
     return (count / max) * (this.chartHeight - 30);
   }
 
@@ -109,7 +109,12 @@ export class StatisticsComponent implements OnInit {
     return d.total ? Math.round((100 * count) / d.total) : 0;
   }
 
+  /** deviations are rounded to half points: +1.5, -0.5, 0 */
   signed(value: number): string {
-    return (value > 0 ? '+' : '') + value.toFixed(2);
+    return (value > 0 ? '+' : '') + value.toFixed(1).replace('.0', '');
+  }
+
+  stepLabel(value: number): string {
+    return Number.isInteger(value) ? `${value}` : value.toFixed(1);
   }
 }
