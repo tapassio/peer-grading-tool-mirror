@@ -48,6 +48,17 @@ If required, the command `npm run db:reset` can be used in the `/backend` folder
 
 If a change has been made to the database model, i.e. to the file `/backend/prisma/schema.prisma`, you can delete `dev.db` or use `npx prisma migrate dev --create-only`.
 
+## Tests
+
+```sh
+cd backend && npm test    # NestJS / Jest
+cd frontend && npm test   # Angular / Jest
+```
+
+Every pull request runs the GitHub Actions workflow `.github/workflows/ci.yml`:
+backend (Prisma client, type check, tests, build), frontend (type check, tests,
+production build) and the Docker image. Do not merge while a check is red.
+
 ## Local Deploy
 
 PGT uses Docker Compose to deploy. You can deploy it locally by using `docker compose up` in the root directory.
