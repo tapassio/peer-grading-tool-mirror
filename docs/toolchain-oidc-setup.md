@@ -46,6 +46,15 @@ Key decisions:
   (`AUTH_MODE=local`).
 - **Peer links stay public** (no login), because DocPouch documents require an
   authenticated user and the peer flow is deliberately anonymous.
+- **Accepted risk: no token audience check.** DocPouch's `GET /users/whoami`
+  does not reveal which OIDC client a token was issued to and also accepts
+  DocPouch JWTs and API keys, so the PGT cannot reject a token minted for a
+  *different* Toolchain Family client (token substitution / confused deputy).
+  Tracked upstream in
+  [BFH-JTF/doc-pouch#140](https://github.com/BFH-JTF/doc-pouch/issues/140).
+  Once introspection or a client-aware `whoami` exists, validate the token's
+  `client_id` against `DOCPOUCH_CLIENT_ID` in
+  `backend/src/auth/oidc.service.ts` (see the `whoami()` comment).
 
 ### Role mapping
 

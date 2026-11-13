@@ -99,6 +99,15 @@ export class OidcService {
    * Resolves a DocPouch access token to an identity. This is only called
    * during the token exchange (login / re-exchange), never on every PGT
    * API request, to stay well below DocPouch's rate limits.
+   *
+   * Known limitation (accepted risk, tracked upstream): DocPouch's
+   * `/users/whoami` does not expose which OIDC client a token was issued to
+   * and accepts any valid credential (DocPouch JWT, any client's OIDC access
+   * token, or an API key). We therefore cannot reject a token that was issued
+   * to a different Toolchain Family client (token substitution / confused
+   * deputy). See https://github.com/BFH-JTF/doc-pouch/issues/140 — once
+   * introspection or a client-aware `whoami` is available, validate the token's
+   * `client_id` against `DOCPOUCH_CLIENT_ID` here.
    */
   async whoami(token: string, clientIp?: string): Promise<DocPouchIdentity> {
     const { docPouchUrl, timeoutMs } = getOidcConfig();
