@@ -76,15 +76,33 @@ export class ToolchainService {
     return this.authService.isOidcMode();
   }
 
+  /** random number 0..1 (crypto); replaceable in tests */
+  random: () => number = () =>
+    crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
+
+  /** Fisher-Yates shuffle with crypto random numbers */
+  private shuffled<T>(items: T[]): T[] {
+    const copy = [...items];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(this.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
   /**
-   * Builds the anonymised result payload. Peers are replaced by a stable
-   * per-group label ("Peer 1", "Peer 2", ...), never by name or e-mail.
+   * Builds the anonymised result payload. Peers are replaced by a per-group
+   * label ("Peer 1", "Peer 2", ...), never by name or e-mail.
+   *
+   * The order is shuffled on every publication: otherwise "Peer 1" would be
+   * the first person of the class list (usually alphabetical) and anybody
+   * who knows the list could assign the results to the students.
    */
   buildResult(campaign: Campaign): PeerGradingResult {
     const results: PeerGradingResultRow[] = [];
 
     for (const group of campaign.groups) {
-      group.peers.forEach((peer, index) => {
+      this.shuffled(group.peers).forEach((peer, index) => {
         results.push({
           peerLabel: `Peer ${index + 1}`,
           groupNumber: group.number,

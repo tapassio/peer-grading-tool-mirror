@@ -881,6 +881,9 @@
       <trans-unit id="8437317496329586907" datatype="html">
         <source> Achtung: Kampagnen mit verschiedenen Skalen sind zusammengefasst. Für einen genauen Vergleich eine einzelne Kampagne wählen. </source>
       </trans-unit>
+      <trans-unit id="6592091172743993683" datatype="html">
+        <source>Diese E-Mail-Adresse gehört bereits zu einem anderen Konto. Bitte die Administration kontaktieren.</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

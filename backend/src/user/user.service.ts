@@ -62,9 +62,37 @@ export class UserService {
   }
 
   /**
+   * Finds the local user for a DocPouch identity:
+   * 1. by DocPouch id (the account was linked before)
+   * 2. by e-mail, but ONLY a lecturer account (ADMIN/SUPER) that is not yet
+   *    linked to another DocPouch account. This links existing local
+   *    lecturers on their first DocPouch login.
+   *
+   * Never linked by e-mail: accounts already linked to another DocPouch id
+   * and pure peer accounts (students). Otherwise a DocPouch account with the
+   * same e-mail address could take them over.
+   */
+  async findUserForDocPouchIdentity(identity: DocPouchIdentity) {
+    const byId = await this.prisma.user.findUnique({
+      where: { docPouchId: identity._id },
+      include: { roles: true },
+    });
+    if (byId) return byId;
+
+    return this.prisma.user.findFirst({
+      where: {
+        email: identity.email,
+        docPouchId: null,
+        roles: { some: { role: { in: ['ADMIN', 'SUPER'] } } },
+      },
+      include: { roles: true },
+    });
+  }
+
+  /**
    * Creates or updates the local PGT user for an authenticated DocPouch
-   * identity. Existing users are matched by DocPouch id first and by e-mail
-   * second, so existing campaigns/roles are preserved.
+   * identity. Existing campaigns are preserved. The roles come from DocPouch;
+   * a PEER role of the account (the person is also a student) is kept.
    */
   async upsertOidcUser(identity: DocPouchIdentity): Promise<any> {
     const roleNames = this.mapDocPouchRoles(identity);
@@ -81,20 +109,30 @@ export class UserService {
     const firstName = nameParts.shift() || '';
     const lastName = nameParts.join(' ') || '';
 
-    let user = await this.prisma.user.findFirst({
-      where: {
-        OR: [{ docPouchId: identity._id }, { email: identity.email }],
-      },
-      include: { roles: true },
-    });
+    const user = await this.findUserForDocPouchIdentity(identity);
 
-    const roleIds = await this.ensureRoles(roleNames);
+    // keep the PEER role, it is not managed by DocPouch
+    const keepPeer = !!user?.roles.some((r) => r.role === 'PEER');
+    const roleIds = await this.ensureRoles(
+      keepPeer ? [...roleNames, 'PEER'] : roleNames,
+    );
     const roleConnections = roleIds.map((roleId) => ({ roleId }));
 
-    // Effective e-mail after the upsert. Normally the DocPouch address.
-    let effectiveEmail = identity.email;
+    // the e-mail address may already belong to another local account that
+    // must not be taken over (see findUserForDocPouchIdentity)
+    const emailOwner = await this.prisma.user.findUnique({
+      where: { email: identity.email },
+    });
+    const emailTakenByOther =
+      !!emailOwner && emailOwner.userId !== user?.userId;
 
     if (!user) {
+      if (emailTakenByOther) {
+        this.logger.warn(
+          `DocPouch login refused: e-mail ${identity.email} belongs to another local account`,
+        );
+        throw new ForbiddenException('DOCPOUCH_EMAIL_IN_USE');
+      }
       await this.prisma.user.create({
         data: {
           email: identity.email,
@@ -105,30 +143,24 @@ export class UserService {
           roles: { connect: roleConnections },
         },
       });
-    } else {
-      // A DocPouch account may change its e-mail. Only update it when the
-      // new address is not already used by another local user.
-      if (user.email !== identity.email) {
-        const conflict = await this.prisma.user.findUnique({
-          where: { email: identity.email },
-        });
-        if (conflict) {
-          effectiveEmail = user.email;
-        }
-      }
-
-      await this.prisma.user.update({
-        where: { userId: user.userId },
-        data: {
-          email: effectiveEmail,
-          firstName,
-          lastName,
-          docPouchId: identity._id,
-          authSource: 'oidc',
-          roles: { set: roleConnections },
-        },
-      });
+      return this.getUser(identity.email);
     }
+
+    // A DocPouch account may change its e-mail. Only take over the new
+    // address when it is not used by another local account.
+    const effectiveEmail = emailTakenByOther ? user.email : identity.email;
+
+    await this.prisma.user.update({
+      where: { userId: user.userId },
+      data: {
+        email: effectiveEmail,
+        firstName,
+        lastName,
+        docPouchId: identity._id,
+        authSource: 'oidc',
+        roles: { set: roleConnections },
+      },
+    });
 
     return this.getUser(effectiveEmail);
   }

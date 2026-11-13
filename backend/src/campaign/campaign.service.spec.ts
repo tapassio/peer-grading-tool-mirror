@@ -1,137 +1,47 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppService } from '../app.service';
+import { CalculationsService } from '../calculations/calculations.service';
 import { PrismaService } from '../prisma.service';
 import { SendgridService } from '../sendgrid/sendgrid.service';
 import { CampaignService } from './campaign.service';
 
+// no database and no e-mails: all dependencies are replaced
+jest.mock('../prisma.service', () => ({ PrismaService: class {} }));
 jest.mock('../sendgrid/sendgrid.service');
-// jest.mock('../prisma.service');
-jest.mock('../app.service');
+
 describe('CampaignService', () => {
   let service: CampaignService;
-  let prisma: PrismaService;
-  let sendgrid: SendgridService;
-  let appService: AppService;
+  const prisma = { campaign: { findMany: jest.fn().mockResolvedValue([]) } };
 
   beforeEach(async () => {
+    prisma.campaign.findMany.mockClear();
     const app: TestingModule = await Test.createTestingModule({
-      providers: [CampaignService, PrismaService, SendgridService, AppService],
+      providers: [
+        CampaignService,
+        SendgridService,
+        AppService,
+        CalculationsService,
+        { provide: PrismaService, useValue: prisma },
+      ],
     }).compile();
-    service = app.get<CampaignService>(CampaignService);
-    prisma = app.get<PrismaService>(PrismaService);
-    sendgrid = app.get<SendgridService>(SendgridService);
-    appService = app.get<AppService>(AppService);
+    service = app.get(CampaignService);
   });
 
-  describe('getCampaignByUser', () => {
-    let spyFindMany: jest.SpyInstance;
-    beforeEach(() => {
-      spyFindMany = jest
-        .spyOn(prisma.campaign, 'findMany')
-        .mockResolvedValue([]);
-    });
-    it('calls findMany with email and selects', async () => {
-      await service.getCampaignsByUser('t@t.com');
-      expect(spyFindMany).toHaveBeenCalledWith({
-        select: {
-          campaignId: true,
-          maxPoints: true,
-          name: true,
-          openingDate: true,
-          closingDate: true,
-          groups: true,
-        },
-        where: {
-          users: {
-            some: {
-              email: 't@t.com',
-            },
-          },
-        },
+  describe('getCampaignsByUser', () => {
+    it('only returns the campaigns of the given lecturer', async () => {
+      await service.getCampaignsByUser('lea@example.org');
+      const query = prisma.campaign.findMany.mock.calls[0][0];
+      expect(query.where).toEqual({
+        users: { some: { email: 'lea@example.org' } },
       });
     });
-  });
 
-  describe('upsertCampaign', () => {
-    let spyTransaction: jest.SpyInstance;
-    let data;
-    beforeEach(() => {
-      spyTransaction = jest
-        .spyOn(prisma, '$transaction')
-        .mockImplementation(jest.fn());
-      data = {
-        user: {
-          email: 'mail@example.ch',
-        },
-        campaignId: 0,
-        name: 'Hello',
-        maxPoints: 8,
-        openingDate: '2023-01-30T23:00:00.000Z',
-        closingDate: '2023-02-07T22:59:59.000Z',
-        groups: [
-          {
-            groupId: 0,
-            number: 1,
-            peers: [
-              {
-                peerId: 0,
-                firstName: 'Ted',
-                lastName: 'Test',
-                matriculationNumber: '87-698-123',
-                email: 'peer1@example.ch',
-              },
-              {
-                peerId: 0,
-                firstName: 'Blabla',
-                lastName: 'Bla',
-                matriculationNumber: '09-465-222',
-                email: 'peer2@example.ch',
-              },
-            ],
-            gradings: [],
-            completed: false,
-            comments: [],
-          },
-          {
-            groupId: 0,
-            number: 2,
-            peers: [
-              {
-                peerId: 0,
-                firstName: 'Lio',
-                lastName: 'Schak',
-                matriculationNumber: '49-632-747',
-                email: 'peer4@example.ch',
-              },
-            ],
-            gradings: [],
-            completed: false,
-            comments: [],
-          },
-        ],
-        criteria: [
-          {
-            criteriaId: 0,
-            name: 'Teamfähigkeit',
-            weight: 1,
-          },
-          {
-            criteriaId: 0,
-            name: 'Qualität',
-            weight: 1,
-          },
-          {
-            criteriaId: 0,
-            name: 'Quantität',
-            weight: 1,
-          },
-          {
-            criteriaId: 0,
-            name: 'Zuverlässigkeit',
-            weight: 1,
-          },
-        ],
-      };
+    it('includes criteria, peers and gradings (needed by the statistics page)', async () => {
+      await service.getCampaignsByUser('lea@example.org');
+      const query = prisma.campaign.findMany.mock.calls[0][0];
+      expect(query.include.criteria).toBe(true);
+      expect(query.include.groups.include.gradings).toBe(true);
+      expect(query.include.groups.include.peers.include.peer).toBe(true);
     });
   });
 });

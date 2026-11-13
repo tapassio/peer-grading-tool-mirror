@@ -77,7 +77,7 @@ All variables are documented in `backend/.env.example`.
 
 | Variable | Meaning | Local dev | Production |
 |---|---|---|---|
-| `AUTH_MODE` | `local` or `oidc` | `local` | `oidc` |
+| `AUTH_MODE` | `local` or `oidc`. **Required with `PRODUCTION=true`**: the server does not start without it (missing would mean open registration) | `local` | `oidc` |
 | `DOCPOUCH_URL` | DocPouch base URL | `http://localhost:3033` | `https://docpouch.pantek.app` |
 | `DOCPOUCH_OIDC_ISSUER` | OIDC issuer | `http://localhost:3033/oidc` | `https://docpouch.pantek.app/oidc` |
 | `DOCPOUCH_CLIENT_ID` | Client id from `/oidc/reg` | from setup script | registered client |
@@ -302,7 +302,9 @@ section with a **In Toolchain veröffentlichen** button (only in OIDC mode).
 - The document is **private** (`public: false`): visible only to the owner and
   DocPouch administrators.
 - Only **aggregated, anonymised** data is published: per-peer running numbers
-  (`Peer 1`, `Peer 2`, …), per-criteria averages, self score and weighted score.
+  (`Peer 1`, `Peer 2`, …, **in random order on every publication**, so the
+  numbers do not follow the class list), per-criteria averages, self score and
+  weighted score.
   **No names, e-mail addresses or free-text comments.**
 - The target structure is resolved in this order:
   1. `PGT_RESULT_STRUCTURE_ID` (backend configuration, recommended for
@@ -337,6 +339,7 @@ versions because they become keys in `content.assignments` of the TDD.
 | Symptom | Cause / fix |
 |---|---|
 | `LOCAL_AUTH_DISABLED` | `AUTH_MODE=oidc`; use the DocPouch login button. |
+| `DOCPOUCH_EMAIL_IN_USE` after login | The DocPouch e-mail belongs to a local account that is not linked automatically: a student (peer) account or an account already linked to another DocPouch user. Only unlinked lecturer accounts (ADMIN/SUPER) are linked by e-mail. Check the accounts in the database. |
 | `PGT_ACCESS_DENIED` after login | DocPouch role is `manager`/`member`; only `admin`/`superadmin` may use the PGT. |
 | `DOCPOUCH_UNAVAILABLE` / `DOCPOUCH_RATE_LIMITED` | DocPouch unreachable or rate limited; try again later. Existing PGT sessions keep working. |
 | Login redirects to `localhost` in production | Fallback redirect URIs not set to the Toolchain sub-path. |

@@ -1,12 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { SingleRowComponent } from './single-row.component';
+import { testImports, testSchemas, testCampaign, testGradingsForm } from '../../testing/test-helpers';
 import { GradingComponent } from '../grading.component';
-import { HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialogModule } from '@angular/material/dialog';
+import { SingleRowComponent } from './single-row.component';
 
 describe('SingleRowComponent', () => {
   let component: SingleRowComponent;
@@ -14,20 +9,23 @@ describe('SingleRowComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        HttpClientModule,
-        MatSnackBarModule,
-        RouterModule.forRoot([]),
-        MatDialogModule,
-        FormsModule,
-        ReactiveFormsModule,
-      ],
+      imports: [...testImports],
       declarations: [SingleRowComponent],
-      providers: [GradingComponent],
+      providers: [
+        // the row asks the grading page for the entered points
+        { provide: GradingComponent, useValue: { generateGradings: () => [] } },
+      ],
+      schemas: testSchemas,
     }).compileComponents();
 
     fixture = TestBed.createComponent(SingleRowComponent);
     component = fixture.componentInstance;
+    const campaign = testCampaign();
+    const peers = campaign.groups[0].peers;
+    component.campaign = campaign;
+    component.peer = peers[0];
+    component.toPeer = peers[1];
+    component.gradingsFormGroup = testGradingsForm(campaign, peers);
     fixture.detectChanges();
   });
 

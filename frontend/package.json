@@ -17,6 +17,13 @@
     ],
     "transformIgnorePatterns": [
       "  '/node_modules/(?!d3-(interpolate|color))'"
+    ],
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/src/$1"
+    },
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/src/test.ts"
     ]
   },
   "private": true,

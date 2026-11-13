@@ -100,6 +100,11 @@ export class LoginComponent implements OnInit {
           $localize`Zugriff nur für Administratoren gestattet`
         );
         break;
+      case 'DOCPOUCH_EMAIL_IN_USE':
+        this.snackBarService.openSnackBar(
+          $localize`Diese E-Mail-Adresse gehört bereits zu einem anderen Konto. Bitte die Administration kontaktieren.`
+        );
+        break;
       case 'DOCPOUCH_UNAVAILABLE':
       case 'DOCPOUCH_RATE_LIMITED':
         this.snackBarService.openSnackBar(

@@ -1,9 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { testImports, testSchemas, testCampaign } from '../../testing/test-helpers';
 import { CriteriaComponent } from './criteria.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialogModule } from '@angular/material/dialog';
 
 describe('CriteriaComponent', () => {
   let component: CriteriaComponent;
@@ -11,18 +8,16 @@ describe('CriteriaComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        MatSnackBarModule,
-        MatDialogModule,
-      ],
+      imports: [...testImports],
       declarations: [CriteriaComponent],
+      providers: [],
+      schemas: testSchemas,
     }).compileComponents();
 
     fixture = TestBed.createComponent(CriteriaComponent);
     component = fixture.componentInstance;
+    component.campaign = testCampaign();
+    component.campaignStatus = 'erstellt' as any;
     fixture.detectChanges();
   });
 

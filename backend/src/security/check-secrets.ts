@@ -33,6 +33,16 @@ export function checkSecrets(production: boolean) {
     }
   }
 
+  // Without AUTH_MODE the PGT falls back to the local login with open
+  // registration: anybody with an e-mail address could become ADMIN.
+  // In production the mode has to be chosen on purpose.
+  const authMode = (process.env.AUTH_MODE || '').toLowerCase();
+  if (!authMode) {
+    problems.push('AUTH_MODE is missing (set "oidc" for DocPouch or "local")');
+  } else if (authMode !== 'oidc' && authMode !== 'local') {
+    problems.push(`AUTH_MODE "${process.env.AUTH_MODE}" is invalid (use "oidc" or "local")`);
+  }
+
   const values = REQUIRED_SECRETS.map((n) => process.env[n]).filter(Boolean);
   if (new Set(values).size !== values.length) {
     problems.push('the JWT secrets must all be different');

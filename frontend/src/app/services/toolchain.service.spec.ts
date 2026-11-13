@@ -80,3 +80,48 @@ describe('ToolchainService.resolveTarget', () => {
     );
   });
 });
+
+describe('ToolchainService.buildResult (anonymisation)', () => {
+  const peer = (peerId: number, lastName: string) =>
+    ({ peerId, firstName: 'X', lastName, email: `${lastName}@example.org` }) as any;
+
+  function campaignWithScores() {
+    const peers = [peer(1, 'Aebi'), peer(2, 'Bucher'), peer(3, 'Caflisch')];
+    return {
+      campaignId: 1,
+      name: 'Demo',
+      criteria: [{ criteriaId: 1, name: 'Quality', weight: 1 }],
+      groups: [{ number: 1, peers, gradings: [] }],
+    } as any;
+  }
+
+  // score = peerId, so we can see which person ended up as "Peer 1"
+  const campaignService: any = {
+    getPeersThirdPartyAverageByCriteria: (_c: any, _g: any, p: any) => p.peerId,
+    getPeersSelfAverage: (_g: any, p: any) => p.peerId,
+    getPeersThirdPartyAverage: (_g: any, p: any) => p.peerId,
+  };
+
+  it('contains no names or e-mails', () => {
+    const s = new ToolchainService({} as any, campaignService);
+    const json = JSON.stringify(s.buildResult(campaignWithScores()));
+    expect(json).not.toMatch(/Aebi|Bucher|Caflisch|example\.org/);
+    expect(json).toContain('Peer 1');
+  });
+
+  it('"Peer 1" is not always the first person of the class list', () => {
+    const s = new ToolchainService({} as any, campaignService);
+    s.random = () => 0; // shuffle with fixed numbers: order 2, 3, 1
+    const rows = s.buildResult(campaignWithScores()).results;
+    expect(rows.map((r) => r.peerLabel)).toEqual(['Peer 1', 'Peer 2', 'Peer 3']);
+    expect(rows[0].weightedScore).not.toBe(1); // first in list is not Peer 1
+    expect(rows.map((r) => r.weightedScore).sort()).toEqual([1, 2, 3]); // nobody lost
+  });
+
+  it('uses crypto random numbers by default', () => {
+    const s = new ToolchainService({} as any, campaignService);
+    const values = Array.from({ length: 20 }, () => s.random());
+    expect(values.every((v) => v >= 0 && v < 1)).toBe(true);
+    expect(new Set(values).size).toBeGreaterThan(1);
+  });
+});
