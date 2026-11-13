@@ -18,6 +18,18 @@ export interface DocPouchOidcConfig {
   timeoutMs: number;
   accessTokenTtl: string;
   refreshTokenTtl: string;
+  /** public URL of this installation, used to find its Tool Details Document */
+  publicUrl: string;
+  /**
+   * Optional: id of the DocPouch structure for published results. When set,
+   * it has priority over the lookup in the Tool Details Document.
+   */
+  resultStructureId: string;
+  /**
+   * Max. DocPouch requests (whoami) per 15 minutes for the whole PGT server.
+   * DocPouch allows 100 GET requests per 15 minutes per IP; keep a reserve.
+   */
+  docPouchRequestBudget: number;
 }
 
 function trimTrailingSlash(value: string): string {
@@ -64,8 +76,15 @@ export function getOidcConfig(): DocPouchOidcConfig {
       process.env['DOCPOUCH_OIDC_SCOPE'] ||
       'openid profile email offline_access',
     timeoutMs: Number(process.env['DOCPOUCH_TIMEOUT_MS'] || 5000),
+    // OIDC: short access token. When it expires the frontend exchanges a
+    // fresh DocPouch token, so blocked DocPouch accounts lose access quickly.
     accessTokenTtl:
-      process.env['PGT_ACCESS_TOKEN_TTL'] || (mode === 'oidc' ? '8h' : '10m'),
+      process.env['PGT_ACCESS_TOKEN_TTL'] || (mode === 'oidc' ? '1h' : '10m'),
     refreshTokenTtl: process.env['PGT_REFRESH_TOKEN_TTL'] || '2d',
+    publicUrl,
+    resultStructureId: process.env['PGT_RESULT_STRUCTURE_ID'] || '',
+    docPouchRequestBudget: Number(
+      process.env['DOCPOUCH_REQUEST_BUDGET'] || 60,
+    ),
   };
 }

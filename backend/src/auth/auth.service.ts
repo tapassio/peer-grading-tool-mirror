@@ -39,12 +39,12 @@ export class AuthService {
    * 401 in the frontend). DocPouch is not contacted on regular API requests,
    * which keeps us far below its rate limits.
    */
-  async exchangeOidcToken(docPouchToken: string) {
+  async exchangeOidcToken(docPouchToken: string, clientIp?: string) {
     if (!docPouchToken) {
       throw new BadRequestException('DOCPOUCH_TOKEN_REQUIRED');
     }
 
-    const identity = await this.oidcService.whoami(docPouchToken);
+    const identity = await this.oidcService.whoami(docPouchToken, clientIp);
     const user = await this.userService.upsertOidcUser(identity);
 
     this.logger.log('User ' + user.email + ' logged in via DocPouch');

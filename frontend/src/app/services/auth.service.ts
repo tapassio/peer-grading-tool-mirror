@@ -13,6 +13,12 @@ export interface PgtAuthConfig {
   redirectUri?: string;
   postLogoutRedirectUri?: string;
   scope?: string;
+  /** public URL of this installation (to find its Tool Details Document) */
+  publicUrl?: string;
+  /** fixed DocPouch structure for published results (optional) */
+  resultStructureId?: string;
+  /** dev only: allow "structure with the same name" as last fallback */
+  allowStructureNameFallback?: boolean;
 }
 
 interface TokenPair {
