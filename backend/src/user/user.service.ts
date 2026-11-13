@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -8,6 +9,7 @@ import { User, Prisma } from '@prisma/client';
 import { Md5 } from 'ts-md5';
 import { SendgridService } from '../sendgrid/sendgrid.service';
 import { throwError } from 'rxjs';
+import type { DocPouchIdentity } from '../auth/oidc.service';
 /**
  * this service handles requests regarding users
  */
@@ -19,6 +21,118 @@ export class UserService {
   ) {}
 
   private readonly logger = new Logger(UserService.name);
+
+  /**
+   * Maps a DocPouch identity to the PGT role model.
+   *
+   * Role source of truth is DocPouch (decision: "DocPouch-Rollen direkt
+   * übernehmen"). PGT only knows ADMIN and SUPER, therefore:
+   *
+   *   superadmin (isAdmin = true) -> SUPER + ADMIN
+   *   admin                       -> ADMIN
+   *   manager / member            -> no PGT access
+   */
+  private mapDocPouchRoles(identity: DocPouchIdentity): string[] {
+    if (identity.isAdmin || identity.role === 'superadmin') {
+      return ['SUPER', 'ADMIN'];
+    }
+    if (identity.role === 'admin') {
+      return ['ADMIN'];
+    }
+    return [];
+  }
+
+  private async ensureRoles(roleNames: string[]): Promise<number[]> {
+    const roleIds: number[] = [];
+
+    for (const roleName of roleNames) {
+      let role = await this.prisma.role.findFirst({
+        where: { role: roleName },
+      });
+
+      if (!role) {
+        role = await this.prisma.role.create({
+          data: { role: roleName },
+        });
+      }
+
+      roleIds.push(role.roleId);
+    }
+
+    return roleIds;
+  }
+
+  /**
+   * Creates or updates the local PGT user for an authenticated DocPouch
+   * identity. Existing users are matched by DocPouch id first and by e-mail
+   * second, so existing campaigns/roles are preserved.
+   */
+  async upsertOidcUser(identity: DocPouchIdentity): Promise<any> {
+    const roleNames = this.mapDocPouchRoles(identity);
+
+    if (roleNames.length === 0) {
+      throw new ForbiddenException('PGT_ACCESS_DENIED');
+    }
+
+    if (!identity.email) {
+      throw new ForbiddenException('DOCPOUCH_EMAIL_REQUIRED');
+    }
+
+    const nameParts = (identity.name || identity.email).trim().split(/\s+/);
+    const firstName = nameParts.shift() || '';
+    const lastName = nameParts.join(' ') || '';
+
+    let user = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ docPouchId: identity._id }, { email: identity.email }],
+      },
+      include: { roles: true },
+    });
+
+    const roleIds = await this.ensureRoles(roleNames);
+    const roleConnections = roleIds.map((roleId) => ({ roleId }));
+
+    // Effective e-mail after the upsert. Normally the DocPouch address.
+    let effectiveEmail = identity.email;
+
+    if (!user) {
+      await this.prisma.user.create({
+        data: {
+          email: identity.email,
+          firstName,
+          lastName,
+          docPouchId: identity._id,
+          authSource: 'oidc',
+          roles: { connect: roleConnections },
+        },
+      });
+    } else {
+      // A DocPouch account may change its e-mail. Only update it when the
+      // new address is not already used by another local user.
+      if (user.email !== identity.email) {
+        const conflict = await this.prisma.user.findUnique({
+          where: { email: identity.email },
+        });
+        if (conflict) {
+          effectiveEmail = user.email;
+        }
+      }
+
+      await this.prisma.user.update({
+        where: { userId: user.userId },
+        data: {
+          email: effectiveEmail,
+          firstName,
+          lastName,
+          docPouchId: identity._id,
+          authSource: 'oidc',
+          roles: { set: roleConnections },
+        },
+      });
+    }
+
+    return this.getUser(effectiveEmail);
+  }
 
   async getUser(email: string): Promise<any | undefined> {
     let query = await this.prisma.user.findUnique({
@@ -267,7 +381,8 @@ export class UserService {
    * @returns
    */
   async createAdmin(data: Prisma.UserCreateInput): Promise<any> {
-    data.password = Md5.hashStr(data.password);
+    // OIDC users have no local password; only hash it when one was provided.
+    if (data.password) data.password = Md5.hashStr(data.password);
 
     let admin: any = await this.prisma.user.findFirst({
       where: {

@@ -1,0 +1,8 @@
+# Runtime data of the local DocPouch container.
+db/
+log/
+.env
+
+# Result of the OIDC dynamic client registration (contains a registration
+# access token — never commit it).
+.oidc-client.json

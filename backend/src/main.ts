@@ -1,10 +1,73 @@
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+import { join } from 'path';
+import { existsSync } from 'fs';
 import { AppModule } from './app.module';
+import { toolchainManifest } from './toolchain/manifest';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
-  app.setGlobalPrefix('api');
+  const configService = app.get(ConfigService);
+
+  const corsOrigins = configService.get<string[]>('corsOrigins') || [];
+  if (corsOrigins.length > 0) {
+    app.enableCors({ origin: corsOrigins, credentials: true });
+  } else {
+    // Development default: allow every origin.
+    app.enableCors();
+  }
+
+  // e.g. APP_BASE_PATH=/tc/PeerGrading -> global prefix tc/PeerGrading/api
+  const basePath = configService.get<string>('basePath') || '';
+  const apiPath = `${basePath}/api`;
+  app.setGlobalPrefix(apiPath.replace(/^\/+/, ''));
+
+  // Raw Express routes have to be registered before `app.init()`: Nest adds its
+  // own catch-all not-found handler at the end of init, which would otherwise
+  // shadow anything registered afterwards.
+  const server = app.getHttpAdapter().getInstance();
+
+  // Toolchain Family manifest. Served with CORS so the Toolchain Tool Manager
+  // (TTM) can fetch and validate it from another origin. It lives outside the
+  // API global prefix.
+  server.get(`${basePath}/manifest.json`, (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Content-Type', 'application/json');
+    res.json(toolchainManifest);
+  });
+
+  // SPA fallback: deep links (e.g. the OIDC callback or peer grading links)
+  // are handled by Angular, not by the backend. The language-specific index
+  // files are served by ServeStaticModule; this only catches paths without a
+  // matching static file.
+  if (configService.get('production')) {
+    const frontendRoot = join(__dirname, '..', 'frontend');
+    const isGerman = (path: string) =>
+      path === `${basePath}/de` || path.startsWith(`${basePath}/de/`);
+
+    server.get('*', (req, res, next) => {
+      // Never swallow API calls or missing static assets.
+      if (req.path.startsWith(apiPath) || req.path.includes('.')) {
+        return next();
+      }
+
+      // Keep the language of the requested URL (German deep links must not
+      // fall back to the English index).
+      const indexFilePath = join(
+        frontendRoot,
+        isGerman(req.path) ? 'de' : 'en',
+        'index.html',
+      );
+
+      if (!existsSync(indexFilePath)) {
+        return next();
+      }
+      res.sendFile(indexFilePath);
+    });
+  }
+
+  // Initialize Nest (middleware + routes) after the raw routes above.
+  await app.init();
 
   await app.listen(process.env.PORT ? +process.env.PORT : 3000);
 }

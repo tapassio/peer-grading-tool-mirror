@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import type { ServeStaticModuleOptions } from '@nestjs/serve-static';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import config from './config';
@@ -31,27 +32,38 @@ import { SanitizeService } from './sanitize/sanitize.service';
     }),
     ServeStaticModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) =>
-        config.get('production')
-          ? [
-              {
-                rootPath: join(__dirname, '..', 'frontend', 'en'), // actual files of the english app
-                exclude: ['api'],
-                serveRoot: '/en',
-              },
-              {
-                rootPath: join(__dirname, '..', 'frontend', 'de'), // actual files of the german app
-                exclude: ['api'],
-                serveRoot: '/de', // on what url to find it
-              },
-              {
-                // fallback for when the url has neither /de or /en
-                rootPath: join(__dirname, '..', 'frontend', 'en'),
-                exclude: ['api'],
-                // important: this one has to be the last
-              },
-            ]
-          : [],
+      useFactory: (config: ConfigService) => {
+        if (!config.get('production')) {
+          return [];
+        }
+
+        const base = config.get<string>('basePath') || '';
+        const english = join(__dirname, '..', 'frontend', 'en');
+        const german = join(__dirname, '..', 'frontend', 'de');
+
+        const options: ServeStaticModuleOptions[] = [
+          {
+            rootPath: english, // actual files of the english app
+            exclude: ['api'],
+            serveRoot: `${base}/en`,
+          },
+          {
+            rootPath: german, // actual files of the german app
+            exclude: ['api'],
+            serveRoot: `${base}/de`, // on what url to find it
+          },
+        ];
+
+        // fallback for when the url has neither /de nor /en
+        options.push(
+          base
+            ? { rootPath: english, exclude: ['api'], serveRoot: base }
+            : { rootPath: english, exclude: ['api'] },
+        );
+
+        // important: the fallback has to be the last entry
+        return options;
+      },
       inject: [ConfigService],
     }),
     I18nModule.forRootAsync({

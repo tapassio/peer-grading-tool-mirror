@@ -18,6 +18,7 @@ import { authGuard } from './guards/auth.guard';
 import { pendingChangesGuard } from './guards/pending-changes.guard';
 import { RegisterComponent } from './register/register.component';
 import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
+import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
 
 const routes: Routes = [
   {
@@ -89,6 +90,7 @@ const routes: Routes = [
     component: HttpErrorComponent,
   },
   { path: 'login', component: LoginComponent },
+  { path: 'auth/callback', component: AuthCallbackComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'register/:token', component: ConfirmEmailComponent },
   { path: 'about', component: AboutComponent },

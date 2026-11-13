@@ -1,0 +1,12 @@
+{
+  "name": "Peer Grading Result",
+  "type": 100,
+  "subType": 0,
+  "description": "Aggregiertes, anonymisiertes Ergebnis einer Peer-Grading-Kampagne. Enthält pro Peer eine laufende Nummer (keine Namen, E-Mail-Adressen oder Kommentare).",
+  "fields": [
+    { "name": "campaignName", "displayName": "Campaign", "type": "string" },
+    { "name": "campaignId", "displayName": "Campaign ID", "type": "number" },
+    { "name": "publishedAt", "displayName": "Published at", "type": "string" },
+    { "name": "results", "displayName": "Results", "type": "array", "items": "object" }
+  ]
+}

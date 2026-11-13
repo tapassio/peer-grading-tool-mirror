@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule, Title } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -44,6 +44,8 @@ import { GroupCommentsComponent } from './campaign-summary/campaign-group-summar
 import { SingleCommentComponent } from './grading/single-comment/single-comment.component';
 import { RegisterComponent } from './register/register.component';
 import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
+import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
+import { AuthService } from './services/auth.service';
 
 // material imports
 import { MatDialogModule } from '@angular/material/dialog';
@@ -93,6 +95,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     SingleCommentComponent,
     RegisterComponent,
     ConfirmEmailComponent,
+    AuthCallbackComponent,
   ],
   imports: [
     BrowserModule,
@@ -114,6 +117,12 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   ],
   providers: [
     DatePipe,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (authService: AuthService) => () => authService.initialize(),
+      deps: [AuthService],
+      multi: true,
+    },
     { provide: HTTP_INTERCEPTORS, useClass: LangInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: MainInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

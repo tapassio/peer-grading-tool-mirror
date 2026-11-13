@@ -10,7 +10,21 @@
         </button>
       </div>
     </div>
-    @if (loginForm) {
+    @if (oidcMode) {
+    <div class="oidc-login">
+      <p i18n>Melden Sie sich mit Ihrem DocPouch-Konto an.</p>
+      <div class="login-buttons">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="loginWithDocPouch()"
+        >
+          <ng-container i18n>Mit DocPouch anmelden</ng-container>
+          <mat-icon>login</mat-icon>
+        </button>
+      </div>
+    </div>
+    } @else if (loginForm) {
     <form [formGroup]="loginForm">
       <label>
         <ng-container i18n>E-Mail</ng-container>:

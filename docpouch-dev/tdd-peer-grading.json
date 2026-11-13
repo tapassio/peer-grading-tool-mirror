@@ -1,0 +1,26 @@
+{
+  "_id": "",
+  "content": {
+    "name": "Peer Grading",
+    "description": "Peer-Grading für Gruppenarbeiten: Kriterien, Gewichtung, anonyme Bewertung und aggregierte Auswertung.",
+    "url": "http://localhost:4200/",
+    "responsible": "",
+    "icon": "",
+    "incomingDataStructureIDs": [],
+    "outgoingDataStructureIDs": [],
+    "assignments": {
+      "peerGradingResult": {
+        "structureId": "<result-structure-id>",
+        "type": 100,
+        "subType": 0
+      }
+    }
+  },
+  "owner": "",
+  "shareWithDepartment": false,
+  "shareWithGroup": false,
+  "subType": 0,
+  "title": "Tool details — Peer Grading",
+  "type": 0,
+  "public": true
+}

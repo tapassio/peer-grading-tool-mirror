@@ -650,6 +650,45 @@
       <trans-unit id="483171407861775435" datatype="html">
         <source>Durchschnitt aller Fremdeinschätzungen zum Teammitglied in der jeweiligen Spalte. (Durchschnitt der Werte ohne die Selbsteinschätzung in den blauen Zellen.)</source>
       </trans-unit>
+      <trans-unit id="293625845752713981" datatype="html">
+        <source>DocPouch ist derzeit nicht erreichbar. Bitte später erneut versuchen.</source>
+      </trans-unit>
+      <trans-unit id="4838277695528987569" datatype="html">
+        <source>Anmeldung wird abgeschlossen…</source>
+      </trans-unit>
+      <trans-unit id="4977953400198468924" datatype="html">
+        <source>Melden Sie sich mit Ihrem DocPouch-Konto an.</source>
+      </trans-unit>
+      <trans-unit id="7349590956897031378" datatype="html">
+        <source>Anmeldung über DocPouch fehlgeschlagen.</source>
+      </trans-unit>
+      <trans-unit id="8246226934773210416" datatype="html">
+        <source>Anmeldung fehlgeschlagen.</source>
+      </trans-unit>
+      <trans-unit id="8573125471283022031" datatype="html">
+        <source>Mit DocPouch anmelden</source>
+      </trans-unit>
+      <trans-unit id="2171790302740091079" datatype="html">
+        <source>Veröffentlicht.</source>
+      </trans-unit>
+      <trans-unit id="2793718944644644736" datatype="html">
+        <source>Ergebnisse wurden in der Toolchain veröffentlicht.</source>
+      </trans-unit>
+      <trans-unit id="2844752757743465791" datatype="html">
+        <source>Toolchain Family</source>
+      </trans-unit>
+      <trans-unit id="3771126227645612610" datatype="html">
+        <source>Veröffentlichung in der Toolchain fehlgeschlagen.</source>
+      </trans-unit>
+      <trans-unit id="4317635446293263438" datatype="html">
+        <source>In Toolchain veröffentlichen</source>
+      </trans-unit>
+      <trans-unit id="4732540120515687017" datatype="html">
+        <source> Veröffentlicht die aggregierten, anonymisierten Ergebnisse als privates DocPouch-Dokument. Sichtbar nur für Administratoren. </source>
+      </trans-unit>
+      <trans-unit id="70921454815613440" datatype="html">
+        <source>Wird veröffentlicht…</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

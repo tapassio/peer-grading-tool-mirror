@@ -9,12 +9,14 @@ import { JwtStrategy } from '../strategies/jwt.strategy';
 import { RefreshTokenStrategy } from '../strategies/refreshToken.strategy';
 import { SendgridService } from '../sendgrid/sendgrid.service';
 import { SanitizeService } from '../sanitize/sanitize.service';
+import { OidcService } from './oidc.service';
 
 @Module({
   imports: [UserModule, PassportModule, JwtModule],
   controllers: [AuthController],
   providers: [
     AuthService,
+    OidcService,
     LocalStrategy,
     JwtStrategy,
     RefreshTokenStrategy,

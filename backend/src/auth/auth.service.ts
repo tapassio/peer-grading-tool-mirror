@@ -11,6 +11,8 @@ import { Md5 } from 'ts-md5';
 import { User } from '@prisma/client';
 import { RegisterData } from 'src/interfaces';
 import { SendgridService } from '../sendgrid/sendgrid.service';
+import { getOidcConfig } from './oidc.config';
+import { OidcService } from './oidc.service';
 /**
  * the auth service covers everything regarding authentication
  */
@@ -22,7 +24,29 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     private sendgridService: SendgridService,
+    private oidcService: OidcService,
   ) {}
+
+  /**
+   * Exchanges a DocPouch access token for a PGT token pair.
+   *
+   * Called once after the OIDC login (and after a re-exchange triggered by a
+   * 401 in the frontend). DocPouch is not contacted on regular API requests,
+   * which keeps us far below its rate limits.
+   */
+  async exchangeOidcToken(docPouchToken: string) {
+    if (!docPouchToken) {
+      throw new BadRequestException('DOCPOUCH_TOKEN_REQUIRED');
+    }
+
+    const identity = await this.oidcService.whoami(docPouchToken);
+    const user = await this.userService.upsertOidcUser(identity);
+
+    this.logger.log('User ' + user.email + ' logged in via DocPouch');
+    const tokens = await this.getTokens(user);
+    await this.updateRefreshToken(user.email, tokens.refreshToken);
+    return tokens;
+  }
 
   /**
    * checks if a user can be found given his email and checks their password
@@ -171,20 +195,21 @@ export class AuthService {
   }
 
   async getTokens(user: User) {
+    const { accessTokenTtl, refreshTokenTtl } = getOidcConfig();
     const email = user.email == undefined ? undefined : user.email;
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         { email: email },
         {
           secret: process.env['JWT_SECRET'],
-          expiresIn: '10m',
+          expiresIn: accessTokenTtl,
         },
       ),
       this.jwtService.signAsync(
         { email: email },
         {
           secret: process.env['JWT_REFRESH_SECRET'],
-          expiresIn: '2d',
+          expiresIn: refreshTokenTtl,
         },
       ),
     ]);
