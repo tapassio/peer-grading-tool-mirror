@@ -181,3 +181,10 @@ span {
 
 @media screen and (max-width: 480px) {
 }
+
+.scale-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: var(--tc-grey-text);
+}

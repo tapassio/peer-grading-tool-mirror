@@ -23,6 +23,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { DEFAULT_CRITERIA } from './default-criteria';
 
+/** max. points of the Swiss school grade scale (1-6), default for new campaigns */
+export const SWISS_GRADE_SCALE_MAX = 6;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -97,7 +100,8 @@ export class CreateCampaignService {
   private createNewCampaign(): Campaign {
     const campaign = this.campaignService.campaignConstructor(
       '',
-      8,
+      // default: Swiss school grade scale 1-6 (6 = best, 4 = sufficient)
+      SWISS_GRADE_SCALE_MAX,
       'de',
       true,
       undefined,

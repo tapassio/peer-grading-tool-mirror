@@ -71,7 +71,7 @@ async function createCampaign(
   closingDate?: Date,
   language: 'de' | 'en' = 'de',
   allowCommentsForPeers: boolean = true,
-  maxPoints: number = 8,
+  maxPoints: number = 6, // Swiss school grade scale 1-6
 ) {
   return await prisma.campaign.create({
     data: {

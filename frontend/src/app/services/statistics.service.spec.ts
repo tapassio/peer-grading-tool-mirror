@@ -70,7 +70,7 @@ describe('StatisticsService', () => {
     expect(kpis.completedStudents).toBe(3);
     expect(kpis.responseRate).toBe(100);
     expect(kpis.openGradings).toBe(0);
-    expect(kpis.averagePoints).toBe(4.33);
+    expect(kpis.averages).toEqual([{ maxPoints: 8, average: 4.33 }]);
     expect(kpis.positiveDeviations).toBe(2); // B and C
     expect(kpis.negativeDeviations).toBe(1); // A
   });
@@ -101,6 +101,26 @@ describe('StatisticsService', () => {
     expect(criteria[0]).toEqual(
       expect.objectContaining({ name: 'Quality', n: 6, median: 4, min: 4, max: 5 })
     );
+  });
+
+  it('averages are calculated per scale, not mixed', () => {
+    const swiss: RawCampaign = {
+      ...campaign,
+      campaignId: 2,
+      maxPoints: 6,
+      groups: [
+        {
+          ...campaign.groups[0],
+          gradings: campaign.groups[0].gradings.map((x) => ({
+            ...x,
+            points: Math.min(x.points, 6),
+          })),
+        },
+      ],
+    };
+    const { kpis } = service.calculate([campaign, swiss]);
+    expect(kpis.averages.map((a) => a.maxPoints)).toEqual([6, 8]);
+    expect(kpis.averages[1].average).toBe(4.33);
   });
 
   it('missing gradings', () => {
