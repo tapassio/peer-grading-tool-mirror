@@ -1,3 +1,5 @@
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CreateCampaignComponent } from './create-campaign.component';
@@ -27,6 +29,8 @@ describe('CreateCampaignComponent', () => {
         MatDialogModule,
         MatIconModule,
         MatTooltipModule,
+        MatSlideToggleModule,
+        NoopAnimationsModule,
       ],
       declarations: [
         CreateCampaignComponent,

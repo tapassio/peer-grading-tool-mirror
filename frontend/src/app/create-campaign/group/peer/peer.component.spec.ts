@@ -1,12 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { testImports, testSchemas, testGroup, testPeer } from '../../../testing/test-helpers';
 import { PeerComponent } from './peer.component';
-import { HttpClientModule } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { FormErrorComponent } from '../../../form-error/form-error.component';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialogModule } from '@angular/material/dialog';
 
 describe('PeerComponent', () => {
   let component: PeerComponent;
@@ -14,19 +8,17 @@ describe('PeerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        HttpClientModule,
-        MatSnackBarModule,
-        MatDialogModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatIconModule,
-      ],
-      declarations: [PeerComponent, FormErrorComponent],
+      imports: [...testImports],
+      declarations: [PeerComponent],
+      providers: [],
+      schemas: testSchemas,
     }).compileComponents();
 
     fixture = TestBed.createComponent(PeerComponent);
     component = fixture.componentInstance;
+    component.group = testGroup();
+    component.peer = testPeer();
+    component.campaignStatus = 'erstellt' as any;
     fixture.detectChanges();
   });
 

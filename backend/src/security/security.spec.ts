@@ -37,10 +37,33 @@ describe('checkSecrets', () => {
     expect(() => checkSecrets(true)).toThrow(/different/);
   });
 
-  it('passes with strong, different secrets', () => {
+  const strongSecrets = () => {
     process.env.JWT_SECRET = strong('a');
     process.env.JWT_REFRESH_SECRET = strong('b');
     process.env.JWT_REGISTRATION_SECRET = strong('c');
+  };
+
+  it('passes with strong, different secrets and AUTH_MODE', () => {
+    strongSecrets();
+    process.env.AUTH_MODE = 'oidc';
+    expect(() => checkSecrets(true)).not.toThrow();
+  });
+
+  it('fails in production without AUTH_MODE (would mean open registration)', () => {
+    strongSecrets();
+    delete process.env.AUTH_MODE;
+    expect(() => checkSecrets(true)).toThrow(/AUTH_MODE is missing/);
+  });
+
+  it('fails in production with an invalid AUTH_MODE', () => {
+    strongSecrets();
+    process.env.AUTH_MODE = 'oicd';
+    expect(() => checkSecrets(true)).toThrow(/AUTH_MODE "oicd" is invalid/);
+  });
+
+  it('local mode is allowed when chosen explicitly', () => {
+    strongSecrets();
+    process.env.AUTH_MODE = 'local';
     expect(() => checkSecrets(true)).not.toThrow();
   });
 

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { testImports, testSchemas } from '../testing/test-helpers';
 import { RegisterComponent } from './register.component';
 
 describe('RegisterComponent', () => {
@@ -8,10 +8,12 @@ describe('RegisterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [RegisterComponent]
-    })
-    .compileComponents();
-    
+      imports: [...testImports],
+      declarations: [RegisterComponent],
+      providers: [],
+      schemas: testSchemas,
+    }).compileComponents();
+
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

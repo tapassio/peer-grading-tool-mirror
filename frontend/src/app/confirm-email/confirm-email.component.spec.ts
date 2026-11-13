@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { testImports, testSchemas } from '../testing/test-helpers';
 import { ConfirmEmailComponent } from './confirm-email.component';
 
 describe('ConfirmEmailComponent', () => {
@@ -8,10 +8,12 @@ describe('ConfirmEmailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ConfirmEmailComponent]
-    })
-    .compileComponents();
-    
+      imports: [...testImports],
+      declarations: [ConfirmEmailComponent],
+      providers: [],
+      schemas: testSchemas,
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ConfirmEmailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
