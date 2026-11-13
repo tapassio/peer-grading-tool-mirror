@@ -14,6 +14,7 @@ function resolveApiBase(): string {
 export const environment = {
   production: true,
   api: resolveApiBase(),
-  // Toolchain Dashboard (same default as the other Toolchain Family tools)
-  toolchainUrl: 'https://tapassio.pantek.ch/Dashboard/',
+  // Toolchain Dashboard — lives under the /tc/ sub-path of the Toolchain host
+  // (https://tapassio.pantek.ch/Dashboard/ is 404).
+  toolchainUrl: 'https://tapassio.pantek.ch/tc/Dashboard/',
 };
