@@ -77,8 +77,10 @@ All variables are documented in `backend/.env.example`.
 | `PGT_PUBLIC_URL` | Public PGT URL (fallback base) | `http://localhost:4200` | `https://tapassio.pantek.ch/tc/PeerGrading` |
 | `PGT_OIDC_REDIRECT_URI` | Fallback OIDC redirect | `http://localhost:4200/auth/callback` | `https://tapassio.pantek.ch/tc/PeerGrading/auth/callback` |
 | `PGT_POST_LOGOUT_REDIRECT_URI` | Fallback post-logout redirect | `http://localhost:4200/` | `https://tapassio.pantek.ch/tc/PeerGrading/` |
-| `PGT_ACCESS_TOKEN_TTL` | PGT access token | `8h` in OIDC mode | `8h` |
-| `PGT_REFRESH_TOKEN_TTL` | PGT refresh token | `2d` | `2d` |
+| `PGT_ACCESS_TOKEN_TTL` | PGT access token. OIDC: renewed by a new DocPouch exchange, so DocPouch blocks take effect after this time | `1h` in OIDC mode | `1h` |
+| `PGT_REFRESH_TOKEN_TTL` | PGT refresh token (local mode only; `/auth/refresh` is disabled in OIDC mode) | `2d` | `2d` |
+| `DOCPOUCH_REQUEST_BUDGET` | Max. DocPouch `whoami` requests per 15 min for the whole server | `60` | `60` |
+| `PGT_RESULT_STRUCTURE_ID` | Fixed DocPouch structure for published results (recommended) | *(empty)* | id of the result structure |
 | `APP_BASE_PATH` | Deployment sub-path | *(empty)* | `/tc/PeerGrading` |
 | `CORS_ORIGINS` | Allowed origins (comma separated) | *(empty = all)* | `https://tapassio.pantek.ch` |
 | `PRODUCTION` | Enables SPA fallback + serves static frontend | `false` | `true` |
@@ -293,9 +295,18 @@ section with a **In Toolchain veröffentlichen** button (only in OIDC mode).
 - Only **aggregated, anonymised** data is published: per-peer running numbers
   (`Peer 1`, `Peer 2`, …), per-criteria averages, self score and weighted score.
   **No names, e-mail addresses or free-text comments.**
-- The result structure id is resolved from the TDD assignment
-  (`content.assignments.peerGradingResult.structureId`) and falls back to the
-  structure with type `100` / subType `0` or the name `Peer Grading Result`.
+- The target structure is resolved in this order:
+  1. `PGT_RESULT_STRUCTURE_ID` (backend configuration, recommended for
+     production: other DocPouch users cannot redirect it),
+  2. the Tool Details Document whose **`url`** is this installation
+     (`PGT_PUBLIC_URL`, language prefix ignored), role `peerGradingResult`.
+     The tool name may be renamed in the Tool Manager. If several documents
+     claim the same url, publishing stops (`PGT_TOOL_DOCUMENT_AMBIGUOUS`),
+  3. development only (`PRODUCTION` not `true`): the structure named
+     `Peer Grading Result`.
+- The document gets **`type`/`subType` of the assignment** (or of the
+  configured structure), not a fixed `100/0`: the Tool Manager gives newly
+  created structures the next free type.
 
 The publishing logic lives in
 `frontend/src/app/services/toolchain.service.ts`; the UI in
@@ -323,7 +334,10 @@ versions because they become keys in `content.assignments` of the TDD.
 | `invalid_redirect_uri` from DocPouch | The language-specific callback URI (`…/de/auth/callback`, `…/en/auth/callback`) is not registered for the client. Register every locale (§4.3). |
 | 404 after login on a deep link | SPA fallback not active; set `PRODUCTION=true` and rebuild. |
 | Publish button missing | Not in OIDC mode, or no campaign loaded. |
-| `PGT_RESULT_STRUCTURE_MISSING` | Run `setup-local.mjs` (or provision production) to create the result structure. |
+| `PGT_RESULT_STRUCTURE_MISSING` | No Tool Details Document with this url (`PGT_PUBLIC_URL`) and no `PGT_RESULT_STRUCTURE_ID`. Register the tool in the Tool Manager with exactly this url, or set the structure id. Locally: run `setup-local.mjs`. |
+| `PGT_TOOL_DOCUMENT_AMBIGUOUS` | Several Tool Details Documents have this url. Remove the duplicates in the Tool Manager, or set `PGT_RESULT_STRUCTURE_ID`. |
+| `PGT_RESULT_STRUCTURE_NOT_FOUND` | `PGT_RESULT_STRUCTURE_ID` does not exist or is not readable for the signed-in user. |
+| `DOCPOUCH_RATE_LIMITED` right away | The PGT budget (`DOCPOUCH_REQUEST_BUDGET`) is used up, or this IP sent 3 invalid tokens (blocked for 15 min). |
 | Language/assets 404 under the sub-path | Rebuild the frontend so the `/tc/PeerGrading/{de,en}/` base hrefs are applied. |
 
 ---

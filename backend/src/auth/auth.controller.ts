@@ -51,15 +51,31 @@ export class AuthController {
       redirectUri: cfg.redirectUri,
       postLogoutRedirectUri: cfg.postLogoutRedirectUri,
       scope: cfg.scope,
+      // for publishing results to DocPouch (see toolchain.service.ts)
+      publicUrl: cfg.publicUrl,
+      resultStructureId: cfg.resultStructureId || undefined,
+      // the lookup "structure with the same name" is only allowed in dev
+      allowStructureNameFallback: !this.isProduction(),
     };
+  }
+
+  private isProduction(): boolean {
+    return process.env['PRODUCTION'] === 'true';
   }
 
   /**
    * Exchanges a DocPouch access token for a PGT token pair. This is the only
    * place where the PGT backend talks to DocPouch during a session.
    */
+  // Every exchange costs one DocPouch request, and DocPouch allows only
+  // 100 GET requests per 15 minutes for the whole PGT server (same IP).
+  // Without this limit a few hundred bogus requests would block all logins.
+  @Throttle(5, 60)
   @Post('oidc/exchange')
-  async exchangeOidcToken(@Headers('authorization') authorization?: string) {
+  async exchangeOidcToken(
+    @Req() req,
+    @Headers('authorization') authorization?: string,
+  ) {
     const token = (authorization || '')
       .replace(/^Bearer\s+/i, '')
       .trim();
@@ -68,7 +84,8 @@ export class AuthController {
       throw new UnauthorizedException('DOCPOUCH_TOKEN_REQUIRED');
     }
 
-    return this.authService.exchangeOidcToken(token);
+    // req.ip is the real client IP when TRUST_PROXY is set behind a proxy
+    return this.authService.exchangeOidcToken(token, req.ip);
   }
 
   // max. 5 login attempts per minute and IP (brute force protection)
@@ -119,6 +136,10 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
   refreshTokens(@Req() req) {
+    // OIDC: sessions are only renewed via /auth/oidc/exchange, so DocPouch
+    // decides on every renewal (blocked accounts / removed roles take effect
+    // when the access token expires, not only after the refresh token).
+    this.assertLocalAuthEnabled();
     const email = req.user.email;
     const refreshToken = req.user['refreshToken'];
     return this.authService.refreshTokens(email, refreshToken);
