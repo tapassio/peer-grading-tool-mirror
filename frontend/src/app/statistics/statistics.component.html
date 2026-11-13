@@ -1,0 +1,258 @@
+<main>
+  <h1 i18n>Statistik</h1>
+
+  @if (loading()) {
+  <p class="state" i18n>Daten werden geladen …</p>
+  } @else if (loadError()) {
+  <p class="state error" i18n>Die Daten konnten nicht geladen werden.</p>
+  } @else if (campaigns().length === 0) {
+  <p class="state" i18n>Noch keine Kampagnen erfasst.</p>
+  } @else {
+
+  <!-- filter -->
+  <div class="filters">
+    <label>
+      <span i18n>Kampagne</span>
+      <select (change)="onCampaignChange($any($event.target).value)">
+        <option value="0" i18n>Alle Kampagnen</option>
+        @for (c of campaigns(); track c.campaignId) {
+        <option [value]="c.campaignId">{{ c.name }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      <span i18n>Abweichung ab (Punkte)</span>
+      <input
+        type="number"
+        min="0"
+        step="0.5"
+        [value]="deviationThreshold()"
+        (input)="onThreshold('deviation', $any($event.target).value)"
+      />
+    </label>
+    <label>
+      <span i18n>Streuung ab (Punkte)</span>
+      <input
+        type="number"
+        min="0"
+        step="0.5"
+        [value]="spreadThreshold()"
+        (input)="onThreshold('spread', $any($event.target).value)"
+      />
+    </label>
+  </div>
+
+  <!-- 1. key figures -->
+  <section>
+    <h2 i18n>Übersicht</h2>
+    <div class="tiles">
+      <div class="tile">
+        <span class="value">{{ stats().kpis.campaigns }}</span>
+        <span class="label"
+          ><ng-container i18n>Kampagnen</ng-container> ({{
+            stats().kpis.runningCampaigns
+          }}
+          <ng-container i18n>laufend</ng-container>)</span
+        >
+      </div>
+      <div class="tile">
+        <span class="value">{{ stats().kpis.students }}</span>
+        <span class="label" i18n>Studierende</span>
+      </div>
+      <div class="tile">
+        <span class="value">{{ stats().kpis.groups }}</span>
+        <span class="label" i18n>Gruppen</span>
+      </div>
+      <div class="tile">
+        <span class="value">{{ stats().kpis.responseRate }}%</span>
+        <span class="label"
+          ><ng-container i18n>Rücklauf</ng-container> ({{
+            stats().kpis.completedStudents
+          }}/{{ stats().kpis.students }})</span
+        >
+      </div>
+      <div class="tile">
+        <span class="value">{{ stats().kpis.openGradings }}</span>
+        <span class="label" i18n>offene Einzelbewertungen</span>
+      </div>
+      <div class="tile">
+        <span class="value">{{ stats().kpis.averagePoints ?? '–' }}</span>
+        <span class="label" i18n>Ø Fremdbewertung</span>
+      </div>
+      <div class="tile positive">
+        <span class="value">{{ stats().kpis.positiveDeviations }}</span>
+        <span class="label" i18n>Abweichungen positiv</span>
+      </div>
+      <div class="tile negative">
+        <span class="value">{{ stats().kpis.negativeDeviations }}</span>
+        <span class="label" i18n>Abweichungen negativ</span>
+      </div>
+    </div>
+    <p class="hint" i18n>
+      Abweichung = Fremdbewertung einer Person minus Gruppenschnitt (wie in der
+      Auswertung für die Studierenden). Positiv: besser bewertet als der
+      Schnitt der Gruppe.
+    </p>
+  </section>
+
+  <!-- 2. response rate -->
+  <section>
+    <h2>
+      @if (perGroup()) {
+      <ng-container i18n>Rücklauf pro Gruppe</ng-container>
+      } @else {
+      <ng-container i18n>Rücklauf pro Kampagne</ng-container>
+      }
+    </h2>
+    <div class="bars">
+      @for (r of stats().responses; track $index) {
+      <div class="bar-row">
+        <span class="bar-label">
+          @if (perGroup()) {
+          <ng-container i18n>Gruppe</ng-container>
+          }
+          {{ r.label }}
+        </span>
+        <div
+          class="bar-track"
+          role="img"
+          [attr.aria-label]="r.completed + '/' + r.total"
+        >
+          <div class="bar-fill" [style.width.%]="r.rate"></div>
+        </div>
+        <span class="bar-value">{{ r.completed }}/{{ r.total }}</span>
+      </div>
+      @if (perGroup() && r.missing.length > 0) {
+      <p class="missing">
+        <ng-container i18n>Noch offen</ng-container>: {{ r.missing.join(', ') }}
+      </p>
+      } }
+    </div>
+  </section>
+
+  <!-- 3. distribution -->
+  <section>
+    <h2 i18n>Verteilung der Fremdbewertungen</h2>
+    @if (stats().distributions.length === 0) {
+    <p class="state" i18n>Noch keine Bewertungen vorhanden.</p>
+    } @for (d of stats().distributions; track d.maxPoints) {
+    <h3>
+      <ng-container i18n>Skala</ng-container> 1 – {{ d.maxPoints }} ({{
+        d.total
+      }}
+      <ng-container i18n>Bewertungen</ng-container>)
+    </h3>
+    <svg
+      class="histogram"
+      [attr.viewBox]="'0 0 ' + d.counts.length * 50 + ' ' + chartHeight"
+      preserveAspectRatio="xMinYMid meet"
+      [style.max-width.px]="d.counts.length * 60"
+      role="img"
+      i18n-aria-label
+      aria-label="Häufigkeit der vergebenen Punkte"
+    >
+      @for (count of d.counts; track $index) {
+      <rect
+        class="hist-bar"
+        [attr.x]="$index * 50 + 8"
+        [attr.y]="chartHeight - 18 - barHeight(d, count)"
+        width="34"
+        [attr.height]="barHeight(d, count)"
+        rx="3"
+      >
+        <title>{{ $index + 1 }}: {{ count }} ({{ percent(d, count) }}%)</title>
+      </rect>
+      <text
+        class="hist-count"
+        [attr.x]="$index * 50 + 25"
+        [attr.y]="chartHeight - 22 - barHeight(d, count)"
+      >
+        {{ count }}
+      </text>
+      <text
+        class="hist-axis"
+        [attr.x]="$index * 50 + 25"
+        [attr.y]="chartHeight - 3"
+      >
+        {{ $index + 1 }}
+      </text>
+      }
+    </svg>
+    }
+
+    @if (stats().criteria.length > 0) {
+    <div class="table-scroll">
+      <table class="stats-table">
+        <tr>
+          <th i18n>Kriterium</th>
+          <th i18n>Anzahl</th>
+          <th i18n>Mittelwert</th>
+          <th i18n>Median</th>
+          <th i18n>Streuung (SD)</th>
+          <th i18n>Min</th>
+          <th i18n>Max</th>
+        </tr>
+        @for (c of stats().criteria; track c.name + c.maxPoints) {
+        <tr>
+          <td>
+            {{ c.name }}
+            @if (stats().distributions.length > 1) {
+            <span class="muted">(1–{{ c.maxPoints }})</span>
+            }
+          </td>
+          <td>{{ c.n }}</td>
+          <td>{{ c.mean }}</td>
+          <td>{{ c.median }}</td>
+          <td>{{ c.sd }}</td>
+          <td>{{ c.min }}</td>
+          <td>{{ c.max }}</td>
+        </tr>
+        }
+      </table>
+    </div>
+    }
+  </section>
+
+  <!-- 4. notable results -->
+  <section>
+    <h2>
+      <ng-container i18n>Auffälligkeiten</ng-container>
+      <span class="count-badge">{{ stats().findings.length }}</span>
+    </h2>
+    @if (stats().findings.length === 0) {
+    <p class="state" i18n>Keine Auffälligkeiten mit den gewählten Schwellenwerten.</p>
+    } @else {
+    <div class="table-scroll">
+      <table class="stats-table findings">
+        <tr>
+          <th i18n>Art</th>
+          <th i18n>Person</th>
+          <th i18n>Kampagne</th>
+          <th i18n>Gruppe</th>
+          <th i18n>Wert</th>
+        </tr>
+        @for (f of stats().findings; track $index) {
+        <tr>
+          <td>
+            <span class="finding" [class]="'finding finding-' + f.type">{{
+              findingLabels[f.type]
+            }}</span>
+          </td>
+          <td>{{ f.student }}</td>
+          <td>{{ f.campaign }}</td>
+          <td>{{ f.group }}</td>
+          <td [title]="findingHints[f.type]">
+            {{ f.type === 'sameForAll' ? f.value : signed(f.value) }}
+          </td>
+        </tr>
+        }
+      </table>
+    </div>
+    }
+    <p class="hint" i18n>
+      Auffälligkeiten sind Hinweise für ein Gespräch, kein Urteil. Kleine
+      Gruppen reagieren stark auf einzelne Bewertungen.
+    </p>
+  </section>
+  }
+</main>
