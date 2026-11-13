@@ -22,15 +22,15 @@ async function bootstrap() {
   const apiPath = `${basePath}/api`;
   app.setGlobalPrefix(apiPath.replace(/^\/+/, ''));
 
-  // Initialize Nest (middleware + routes) before adding the SPA fallback, so
-  // the fallback only runs when no static file or route matched.
-  await app.init();
+  // Raw Express routes have to be registered before `app.init()`: Nest adds its
+  // own catch-all not-found handler at the end of init, which would otherwise
+  // shadow anything registered afterwards.
+  const server = app.getHttpAdapter().getInstance();
 
   // Toolchain Family manifest. Served with CORS so the Toolchain Tool Manager
-  // (TTM) can fetch and validate it from another origin. Registered on the
-  // raw HTTP adapter because it lives outside the API global prefix.
-  const manifestPath = `${basePath}/manifest.json`;
-  app.getHttpAdapter().get(manifestPath, (req, res) => {
+  // (TTM) can fetch and validate it from another origin. It lives outside the
+  // API global prefix.
+  server.get(`${basePath}/manifest.json`, (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
     res.json(toolchainManifest);
@@ -41,26 +41,33 @@ async function bootstrap() {
   // files are served by ServeStaticModule; this only catches paths without a
   // matching static file.
   if (configService.get('production')) {
-    const indexFilePath = join(
-      __dirname,
-      '..',
-      'frontend',
-      'en',
-      'index.html',
-    );
-    const server = app.getHttpAdapter().getInstance();
+    const frontendRoot = join(__dirname, '..', 'frontend');
+    const isGerman = (path: string) =>
+      path === `${basePath}/de` || path.startsWith(`${basePath}/de/`);
 
     server.get('*', (req, res, next) => {
       // Never swallow API calls or missing static assets.
       if (req.path.startsWith(apiPath) || req.path.includes('.')) {
         return next();
       }
+
+      // Keep the language of the requested URL (German deep links must not
+      // fall back to the English index).
+      const indexFilePath = join(
+        frontendRoot,
+        isGerman(req.path) ? 'de' : 'en',
+        'index.html',
+      );
+
       if (!existsSync(indexFilePath)) {
         return next();
       }
       res.sendFile(indexFilePath);
     });
   }
+
+  // Initialize Nest (middleware + routes) after the raw routes above.
+  await app.init();
 
   await app.listen(process.env.PORT ? +process.env.PORT : 3000);
 }
