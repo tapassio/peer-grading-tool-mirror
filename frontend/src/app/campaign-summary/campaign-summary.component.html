@@ -8,6 +8,31 @@
       (reloadEvent)="onReloadEvent($event)"
     ></pgt-campaign>
   </section>
+  @if (canPublish) {
+  <section class="toolchain-publish">
+    <h2 i18n>Toolchain Family</h2>
+    <p i18n>
+      Veröffentlicht die aggregierten, anonymisierten Ergebnisse als privates
+      DocPouch-Dokument. Sichtbar nur für Administratoren.
+    </p>
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="publishing()"
+      (click)="publishToToolchain()"
+    >
+      @if (publishing()) {
+      <ng-container i18n>Wird veröffentlicht…</ng-container>
+      } @else {
+      <ng-container i18n>In Toolchain veröffentlichen</ng-container>
+      }
+      <mat-icon>cloud_upload</mat-icon>
+    </button>
+    @if (published()) {
+    <p class="published" i18n>Veröffentlicht.</p>
+    }
+  </section>
+  }
   @for (group of campaign?.groups; track group) {
   <pgt-campaign-group-summary
     [group]="group"

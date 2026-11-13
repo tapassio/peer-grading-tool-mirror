@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injector, Injectable } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -10,6 +10,7 @@ import {
 import {
   BehaviorSubject,
   catchError,
+  from,
   Observable,
   Subject,
   Subscription,
@@ -17,6 +18,7 @@ import {
   throwError,
 } from 'rxjs';
 import { TokenService } from '../services/token.service';
+import { AuthService } from '../services/auth.service';
 import { environment } from '../../environments/environment';
 
 @Injectable()
@@ -24,7 +26,11 @@ export class ErrorInterceptor implements HttpInterceptor {
   static accessTokenError: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(false);
 
-  constructor(private http: HttpClient, private tokenService: TokenService) {}
+  constructor(
+    private http: HttpClient,
+    private tokenService: TokenService,
+    private injector: Injector
+  ) {}
 
   intercept(
     request: HttpRequest<unknown>,
@@ -33,10 +39,35 @@ export class ErrorInterceptor implements HttpInterceptor {
     const isRefresh = request.url.endsWith('auth/refresh');
     const isLogin = request.url.endsWith('auth/login');
     const isRegister = request.url.endsWith('auth/register');
+    const isExchange = request.url.endsWith('auth/oidc/exchange');
+    const isAuthConfig = request.url.endsWith('auth/config');
 
     return next.handle(request).pipe(
       catchError((err: HttpErrorResponse) => {
-        if (err.status === 401 && !isRefresh && !isLogin && !isRegister) {
+        if (
+          err.status === 401 &&
+          !isRefresh &&
+          !isLogin &&
+          !isRegister &&
+          !isExchange &&
+          !isAuthConfig
+        ) {
+          const authService = this.injector.get(AuthService);
+
+          // In OIDC mode the PGT access token can be renewed by exchanging a
+          // fresh DocPouch token. This needs no extra DocPouch request beyond
+          // the one exchange call.
+          if (authService.isOidcMode()) {
+            return from(authService.renewPgtSession()).pipe(
+              switchMap((renewed) =>
+                renewed
+                  ? next.handle(this.withAccessToken(request))
+                  : this.failAuthentication(err)
+              ),
+              catchError(() => this.failAuthentication(err))
+            );
+          }
+
           return this.refreshToken(next, request);
         }
         // this.router.navigate(['/error/' + err.status]);
@@ -65,20 +96,12 @@ export class ErrorInterceptor implements HttpInterceptor {
 
           ErrorInterceptor.accessTokenError.next(false);
           // Clone the request with new Access Token
-          const newRequest = request.clone({
-            setHeaders: {
-              Authorization: `Bearer ${this.tokenService.getToken()}`,
-            },
-          });
-          return next.handle(newRequest);
+          return next.handle(this.withAccessToken(request));
         }),
         catchError((err: HttpErrorResponse) => {
           // in case even the refresh failed
           ErrorInterceptor.accessTokenError.next(false);
-          this.tokenService.signOut();
-          // reloading the location without tokens will fire the auth guard to return to login
-          location.reload();
-          return throwError(() => err);
+          return this.failAuthentication(err);
         })
       );
     } else {
@@ -86,15 +109,25 @@ export class ErrorInterceptor implements HttpInterceptor {
       return this.awaitNewTokens().pipe(
         switchMap(() => {
           // Clone the request with new Access Token
-          const newRequest = request.clone({
-            setHeaders: {
-              Authorization: `Bearer ${this.tokenService.getToken()}`,
-            },
-          });
-          return next.handle(newRequest);
+          return next.handle(this.withAccessToken(request));
         })
       );
     }
+  }
+
+  private withAccessToken(request: HttpRequest<any>): HttpRequest<any> {
+    return request.clone({
+      setHeaders: {
+        Authorization: `Bearer ${this.tokenService.getToken()}`,
+      },
+    });
+  }
+
+  private failAuthentication(err: HttpErrorResponse): Observable<never> {
+    this.tokenService.signOut();
+    // reloading the location without tokens will fire the auth guard to return to login
+    location.reload();
+    return throwError(() => err);
   }
 
   /**

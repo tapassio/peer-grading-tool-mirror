@@ -7,6 +7,7 @@
 */.env
 */document.pdf
 *.db
+*.db-journal
 .env.compose
 
 backend/prisma/seed.ts

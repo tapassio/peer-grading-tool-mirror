@@ -1,0 +1,258 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import DocPouchClient, { I_OidcConfig } from 'docpouch-client';
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { TokenService } from './token.service';
+
+export interface PgtAuthConfig {
+  mode: 'local' | 'oidc';
+  docPouchUrl?: string;
+  issuer?: string;
+  clientId?: string;
+  redirectUri?: string;
+  postLogoutRedirectUri?: string;
+  scope?: string;
+}
+
+interface TokenPair {
+  accessToken: string;
+  refreshToken: string;
+}
+
+const RETURN_URL_KEY = 'pgt_return_url';
+const RETURN_BASE_KEY = 'pgt_return_base';
+
+/**
+ * Handles the DocPouch OIDC flow and the exchange of the DocPouch access token
+ * for a PGT token pair. In local mode (`AUTH_MODE=local`) the legacy e-mail /
+ * password login is used and this service stays inert.
+ */
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthService {
+  private config: PgtAuthConfig = { mode: 'local' };
+  private client: DocPouchClient | null = null;
+  private initPromise: Promise<void> | null = null;
+  private callbackHandled = false;
+  private callbackError: string | null = null;
+
+  constructor(
+    private http: HttpClient,
+    private tokenService: TokenService
+  ) {}
+
+  /**
+   * Called from APP_INITIALIZER. Loads the public auth configuration and
+   * completes a pending OIDC callback or restores an existing session.
+   */
+  initialize(): Promise<void> {
+    if (!this.initPromise) {
+      this.initPromise = this.doInitialize();
+    }
+    return this.initPromise;
+  }
+
+  isOidcMode(): boolean {
+    return this.config.mode === 'oidc';
+  }
+
+  getConfig(): PgtAuthConfig {
+    return this.config;
+  }
+
+  /**
+   * Returns the DocPouch client (OIDC mode only). Used to publish results to
+   * DocPouch with the signed-in administrator's own permissions.
+   */
+  getDocPouchClient(): DocPouchClient | null {
+    return this.isOidcMode() ? this.client : null;
+  }
+
+  /**
+   * Starts the OIDC login. The browser is redirected to DocPouch; the return
+   * URL is remembered so the callback can send the user back.
+   */
+  async loginWithDocPouch(returnUrl?: string): Promise<void> {
+    if (!this.isOidcMode()) {
+      return;
+    }
+
+    sessionStorage.setItem(RETURN_URL_KEY, returnUrl || '/admin-dashboard');
+    sessionStorage.setItem(RETURN_BASE_KEY, document.baseURI);
+
+    await this.docPouchClient().loginWithOidc(this.oidcConfig());
+  }
+
+  /**
+   * Called by the callback component after APP_INITIALIZER completed. Sends
+   * the browser back to the originally requested page, preserving the
+   * language prefix (full reload, the PGT token is already stored).
+   */
+  finishOidcLogin(): void {
+    if (this.callbackError) {
+      const loginUrl = new URL('login', document.baseURI);
+      loginUrl.searchParams.set('loginError', this.callbackError);
+      sessionStorage.removeItem(RETURN_URL_KEY);
+      sessionStorage.removeItem(RETURN_BASE_KEY);
+      window.location.replace(loginUrl.toString());
+      return;
+    }
+
+    const returnUrl = sessionStorage.getItem(RETURN_URL_KEY);
+    const returnBase = sessionStorage.getItem(RETURN_BASE_KEY);
+    sessionStorage.removeItem(RETURN_URL_KEY);
+    sessionStorage.removeItem(RETURN_BASE_KEY);
+
+    const target =
+      returnBase && returnUrl
+        ? new URL(returnUrl.replace(/^\//, ''), returnBase).toString()
+        : new URL('admin-dashboard', document.baseURI).toString();
+
+    window.location.replace(target);
+  }
+
+  /**
+   * Clears the PGT session and, in OIDC mode, ends the DocPouch session.
+   */
+  logout(): void {
+    const finish = () => {
+      this.tokenService.signOut();
+
+      const client = this.client;
+      if (this.isOidcMode() && client && client.isAuthenticated()) {
+        client
+          .logout({ redirectUri: this.config.postLogoutRedirectUri })
+          .catch(() => this.redirectToLogin());
+        return;
+      }
+
+      this.redirectToLogin();
+    };
+
+    this.http.post(environment.api + '/auth/logout', {}).subscribe({
+      complete: finish,
+      error: finish,
+    });
+  }
+
+  /**
+   * Used by the error interceptor: obtains a fresh DocPouch access token and
+   * exchanges it for a new PGT token pair. Returns false when this is not
+   * possible, so the caller can fall back to a full logout.
+   */
+  async renewPgtSession(): Promise<boolean> {
+    if (!this.isOidcMode()) {
+      return false;
+    }
+
+    try {
+      await this.exchange();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private async doInitialize(): Promise<void> {
+    try {
+      this.config = await firstValueFrom(
+        this.http.get<PgtAuthConfig>(environment.api + '/auth/config')
+      );
+    } catch {
+      // Backend not reachable: keep local behaviour, requests will fail
+      // with their usual error handling.
+      this.config = { mode: 'local' };
+      return;
+    }
+
+    if (!this.isOidcMode()) {
+      return;
+    }
+
+    const client = this.docPouchClient();
+    client.setOidcConfig(this.oidcConfig());
+
+    // 1. Returning from the DocPouch login redirect.
+    const search = new URLSearchParams(window.location.search);
+    if (search.has('code') || search.has('error')) {
+      try {
+        const handled = await client.handleOidcCallback();
+        if (handled) {
+          await this.exchange();
+          this.callbackHandled = true;
+        }
+      } catch (error) {
+        this.callbackError = this.extractErrorCode(error);
+        console.error('DocPouch OIDC callback failed', error);
+      }
+      return;
+    }
+
+    // 2. PGT session already exists (page reload). Restore the DocPouch
+    //    session in the background so logout/refresh keep working.
+    if (this.tokenService.hasToken()) {
+      client.restoreOidcSession();
+      return;
+    }
+
+    // 3. DocPouch session exists: silent re-login.
+    if (client.restoreOidcSession()) {
+      try {
+        await this.exchange();
+      } catch (error) {
+        this.callbackError = this.extractErrorCode(error);
+        console.error('Silent DocPouch login failed', error);
+      }
+    }
+  }
+
+  private async exchange(): Promise<void> {
+    const token = await this.docPouchClient().ensureValidOidcToken();
+
+    const tokens = await firstValueFrom(
+      this.http.post<TokenPair>(environment.api + '/auth/oidc/exchange', null, {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+          // Prevent the main interceptor from overwriting the DocPouch token
+          // with the PGT access token.
+          skipAuth: 'true',
+        }),
+      })
+    );
+
+    this.tokenService.setAccessToken(tokens.accessToken);
+    this.tokenService.setRefreshToken(tokens.refreshToken);
+  }
+
+  private docPouchClient(): DocPouchClient {
+    if (!this.client) {
+      this.client = new DocPouchClient(this.config.docPouchUrl || '', 0);
+    }
+    return this.client;
+  }
+
+  private oidcConfig(): I_OidcConfig {
+    return {
+      issuer: this.config.issuer as string,
+      clientId: this.config.clientId as string,
+      redirectUri: this.config.redirectUri as string,
+      scope: this.config.scope,
+      postLogoutRedirectUri: this.config.postLogoutRedirectUri,
+    };
+  }
+
+  private redirectToLogin(): void {
+    window.location.replace(new URL('login', document.baseURI).toString());
+  }
+
+  private extractErrorCode(error: any): string {
+    return (
+      error?.error?.message ||
+      error?.error?.error ||
+      error?.message ||
+      'OIDC_LOGIN_FAILED'
+    );
+  }
+}
