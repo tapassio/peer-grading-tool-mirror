@@ -73,7 +73,11 @@ export interface Kpis {
   completedStudents: number;
   responseRate: number; // 0..100
   openGradings: number;
-  averagePoints: number | null;
+  /**
+   * weighted average of the third-party gradings, one entry per scale
+   * (campaigns can have different max. points, they are not mixed)
+   */
+  averages: { maxPoints: number; average: number }[];
   positiveDeviations: number;
   negativeDeviations: number;
 }
@@ -205,7 +209,7 @@ export class StatisticsService {
     const peers: PeerResult[] = [];
     const histograms = new Map<number, number[]>();
     const criteriaPoints = new Map<string, { maxPoints: number; points: number[] }>();
-    const allThirdParty: { points: number; weight: number }[] = [];
+    const thirdPartyByScale = new Map<number, { sum: number; weight: number }>();
 
     let students = 0;
     let groups = 0;
@@ -326,7 +330,11 @@ export class StatisticsService {
           entry.points.push(g.points);
           criteriaPoints.set(key, entry);
 
-          allThirdParty.push({ points: g.points, weight: weights.get(g.criteriaId) ?? 1 });
+          const w = weights.get(g.criteriaId) ?? 1;
+          const scale = thirdPartyByScale.get(c.maxPoints) ?? { sum: 0, weight: 0 };
+          scale.sum += g.points * w;
+          scale.weight += w;
+          thirdPartyByScale.set(c.maxPoints, scale);
         }
 
         completedStudents += groupCompleted;
@@ -355,7 +363,6 @@ export class StatisticsService {
       }
     }
 
-    const weightSum = allThirdParty.reduce((s, g) => s + g.weight, 0);
     const kpis: Kpis = {
       campaigns: campaigns.length,
       runningCampaigns: campaigns.filter((c) => campaignStatus(c) === 'running').length,
@@ -364,9 +371,12 @@ export class StatisticsService {
       completedStudents,
       responseRate: students ? round2((100 * completedStudents) / students) : 0,
       openGradings,
-      averagePoints: weightSum
-        ? round2(allThirdParty.reduce((s, g) => s + g.points * g.weight, 0) / weightSum)
-        : null,
+      averages: [...thirdPartyByScale.entries()]
+        .sort((a, b) => a[0] - b[0])
+        .map(([maxPoints, { sum, weight }]) => ({
+          maxPoints,
+          average: round2(sum / weight),
+        })),
       positiveDeviations: peers.filter((p) => (p.deviation ?? 0) > 0).length,
       negativeDeviations: peers.filter((p) => (p.deviation ?? 0) < 0).length,
     };

@@ -75,10 +75,21 @@
         <span class="value">{{ stats().kpis.openGradings }}</span>
         <span class="label" i18n>offene Einzelbewertungen</span>
       </div>
+      @for (a of stats().kpis.averages; track a.maxPoints) {
       <div class="tile">
-        <span class="value">{{ stats().kpis.averagePoints ?? '–' }}</span>
+        <span class="value">{{ a.average }}</span>
+        <span class="label"
+          ><ng-container i18n>Ø Fremdbewertung</ng-container> ({{
+            a.maxPoints === 6 ? swissLabel : '1–' + a.maxPoints
+          }})</span
+        >
+      </div>
+      } @empty {
+      <div class="tile">
+        <span class="value">–</span>
         <span class="label" i18n>Ø Fremdbewertung</span>
       </div>
+      }
       <div class="tile positive">
         <span class="value">{{ stats().kpis.positiveDeviations }}</span>
         <span class="label" i18n>Abweichungen positiv</span>

@@ -1138,6 +1138,14 @@
         <source> Abweichung = Fremdbewertung einer Person minus Gruppenschnitt (wie in der Auswertung für die Studierenden). Positiv: besser bewertet als der Schnitt der Gruppe. </source>
         <target state="translated">Deviation = peer assessment of a person minus group average (as in the evaluation for the students). Positive: graded better than the group average.</target>
       </trans-unit>
+      <trans-unit id="266993209743998509" datatype="html">
+        <source>Notenskala 1–6</source>
+        <target state="translated">grade scale 1–6</target>
+      </trans-unit>
+      <trans-unit id="3585493459499709516" datatype="html">
+        <source>Standard: Schweizer Notenskala 1–6 (6 = sehr gut, 4 = genügend)</source>
+        <target state="translated">Default: Swiss grade scale 1–6 (6 = very good, 4 = sufficient)</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

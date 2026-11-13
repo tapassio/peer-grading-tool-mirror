@@ -48,6 +48,8 @@ export class StatisticsComponent implements OnInit {
     )
   );
 
+  readonly swissLabel = $localize`Notenskala 1–6`;
+
   readonly findingLabels: Record<FindingType, string> = {
     selfHigher: $localize`Selbstbild höher als Fremdbild`,
     selfLower: $localize`Selbstbild tiefer als Fremdbild`,
