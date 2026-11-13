@@ -318,9 +318,12 @@ The publishing logic lives in
 
 ## 6. Toolchain manifest
 
-The manifest is served at `<base>/manifest.json` with
+The manifest is served at `<base>/manifest.json` (and, for URLs copied with
+the language, at `<base>/de/manifest.json` and `<base>/en/manifest.json`) with
 `Access-Control-Allow-Origin: *` (see `backend/src/toolchain/manifest.ts` and
-`backend/src/main.ts`). Role keys (`peerGradingResult`) must stay stable across
+`backend/src/main.ts`). It contains the Toolchain icon (128 × 128 PNG,
+`backend/src/toolchain/icon.ts`, within the Tool Manager limits of 40 KB /
+256 px) and the version `1.1.0` (half grades). Role keys (`peerGradingResult`) must stay stable across
 versions because they become keys in `content.assignments` of the TDD.
 
 ---

@@ -27,4 +27,6 @@ services:
       - ADMIN_INITIAL_PASSWORD=peer-grading-admin
     restart: unless-stopped
     ports:
-      - '3033:3030'
+      # only reachable from this computer: the admin password and the
+      # registration token above are public (development only)
+      - '127.0.0.1:3033:3030'
