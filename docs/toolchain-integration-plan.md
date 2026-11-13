@@ -669,7 +669,7 @@ Ergebnis-Publikation als schlanke Brücke zur Toolchain nutzen.
 | 2 | **Autorisierung** | DocPouch-Rollen **direkt übernehmen** (`superadmin`/`isAdmin` → `SUPER`+`ADMIN`, `admin` → `ADMIN`, sonst `403`). Keine PGT-lokale Allowlist. |
 | 3 | **Deployment** | **Unterpfad** auf dem Toolchain-Host: `https://tapassio.pantek.ch/tc/PeerGrading/`. |
 | 4 | **Ergebnis-Publikation** | Ja, aggregierte/anonymisierte Ergebnisse nach DocPouch, als **privates** Dokument (Owner + DocPouch-Admins). Keine Kommentare/E-Mails. |
-| 5 | **DocPouch-Instanz** | Produktion `https://docpouch.pantek.app/`; lokal per `docpouch-dev/docker-compose.yml` auf `:3031`. |
+| 5 | **DocPouch-Instanz** | Produktion `https://docpouch.pantek.app/`; lokal per `docpouch-dev/docker-compose.yml` auf `:3033`. |
 | 6 | **Refresh-Tokens** | `offline_access` wird angefragt; PGT-Access-Token 8 h, Refresh 2 Tage. Falls DocPouch den Scope nicht freigibt, Re-Login nach Ablauf. |
 | 7 | **Fachdaten** | Keine Vollmigration nach DocPouch (Phase 3 nicht umgesetzt). PGT-Backend bleibt System of Record. |
 

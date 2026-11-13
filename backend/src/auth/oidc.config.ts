@@ -37,7 +37,7 @@ export function isOidcMode(): boolean {
 export function getOidcConfig(): DocPouchOidcConfig {
   const mode = getAuthMode();
   const docPouchUrl = trimTrailingSlash(
-    process.env['DOCPOUCH_URL'] || 'http://localhost:3031',
+    process.env['DOCPOUCH_URL'] || 'http://localhost:3033',
   );
   const publicUrl = trimTrailingSlash(
     process.env['PGT_PUBLIC_URL'] || 'http://localhost:4200',

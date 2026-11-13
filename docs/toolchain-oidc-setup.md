@@ -69,8 +69,8 @@ All variables are documented in `backend/.env.example`.
 | Variable | Meaning | Local dev | Production |
 |---|---|---|---|
 | `AUTH_MODE` | `local` or `oidc` | `local` | `oidc` |
-| `DOCPOUCH_URL` | DocPouch base URL | `http://localhost:3031` | `https://docpouch.pantek.app` |
-| `DOCPOUCH_OIDC_ISSUER` | OIDC issuer | `http://localhost:3031/oidc` | `https://docpouch.pantek.app/oidc` |
+| `DOCPOUCH_URL` | DocPouch base URL | `http://localhost:3033` | `https://docpouch.pantek.app` |
+| `DOCPOUCH_OIDC_ISSUER` | OIDC issuer | `http://localhost:3033/oidc` | `https://docpouch.pantek.app/oidc` |
 | `DOCPOUCH_CLIENT_ID` | Client id from `/oidc/reg` | from setup script | registered client |
 | `DOCPOUCH_OIDC_SCOPE` | Requested scopes | `openid profile email offline_access` | same |
 | `DOCPOUCH_TIMEOUT_MS` | `whoami` timeout | `5000` | `5000` |
@@ -96,8 +96,9 @@ so the client id and issuer are never hardcoded in the build.
 docker compose -f docpouch-dev/docker-compose.yml up -d
 ```
 
-DocPouch then runs on <http://localhost:3031> (admin password `admin`, see
-`docpouch-dev/docker-compose.yml`).
+DocPouch then runs on <http://localhost:3033>. The image is pinned to `1.27.4`
+(roles + `ADMIN_INITIAL_PASSWORD`); on first start it creates the super-admin
+`admin` with the password from `ADMIN_INITIAL_PASSWORD` (`peer-grading-admin`).
 
 ### 3.2 Provision structures, TDD, test users and the OIDC client
 
@@ -123,8 +124,8 @@ The script is idempotent and creates:
 
 ```env
 AUTH_MODE=oidc
-DOCPOUCH_URL=http://localhost:3031
-DOCPOUCH_OIDC_ISSUER=http://localhost:3031/oidc
+DOCPOUCH_URL=http://localhost:3033
+DOCPOUCH_OIDC_ISSUER=http://localhost:3033/oidc
 DOCPOUCH_CLIENT_ID=<client_id from setup-local.mjs>
 PGT_PUBLIC_URL=http://localhost:4200
 PGT_OIDC_REDIRECT_URI=http://localhost:4200/auth/callback

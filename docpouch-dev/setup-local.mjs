@@ -49,12 +49,13 @@ function loadEnvFile(path) {
 loadEnvFile(join(repoRoot, '.env'));
 loadEnvFile(join(here, '.env'));
 
-const BASE = (process.env.DP_BASE || 'http://localhost:3031').replace(/\/+$/, '');
+const BASE = (process.env.DP_BASE || 'http://localhost:3033').replace(/\/+$/, '');
 const USER = process.env.DP_USER || 'admin';
 const PASS = process.env.DP_PASSWORD || '';
 const REGISTRATION_TOKEN = process.env.DP_OIDC_REGISTRATION_TOKEN || '';
 const PGT_PUBLIC_URL = (process.env.PGT_PUBLIC_URL || 'http://localhost:4200').replace(/\/+$/, '');
 const CREATE_TEST_USERS = (process.env.DP_CREATE_TEST_USERS || 'true') !== 'false';
+const ADMIN_EMAIL = process.env.DP_ADMIN_EMAIL || 'admin@example.com';
 
 const STRUCTURE_NAME = 'Peer Grading Result';
 const STRUCTURE_TYPE = 100;
@@ -115,7 +116,29 @@ async function login() {
     console.error('Login failed. Check DP_USER / DP_PASSWORD (see docpouch-dev/.env.example).');
     process.exit(1);
   }
-  return result.token;
+  return result;
+}
+
+/**
+ * The published DocPouch image creates the initial super-admin without an
+ * e-mail address, but the PGT token exchange requires one. Set a placeholder
+ * address so the local admin can sign in to the PGT.
+ */
+async function ensureAdminEmail(session) {
+  const me = await api('GET', '/users/whoami', { token: session.token });
+  if (me?.email) {
+    console.log(`admin email: ${me.email}`);
+    return;
+  }
+  const updated = await api('PATCH', `/users/update/${session._id}`, {
+    payload: { email: ADMIN_EMAIL },
+    token: session.token,
+  });
+  if (updated) {
+    console.log(`admin email set: ${ADMIN_EMAIL}`);
+  } else {
+    console.error('failed to set the admin e-mail address');
+  }
 }
 
 async function ensureStructure(token) {
@@ -231,8 +254,11 @@ async function ensureOidcClient() {
 
 async function main() {
   console.log(`DocPouch: ${BASE}`);
-  const token = await login();
+  const session = await login();
+  const token = session.token;
   console.log(`logged in as ${USER}`);
+
+  await ensureAdminEmail(session);
 
   const structureId = await ensureStructure(token);
   await ensureTdd(token, structureId);

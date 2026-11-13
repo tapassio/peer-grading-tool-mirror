@@ -1,16 +1,16 @@
 # Local DocPouch instance for developing the Peer Grading Tool against a real
-# OIDC provider. Runs on port 3031 to avoid clashing with other DocPouch
+# OIDC provider. Runs on port 3033 to avoid clashing with other DocPouch
 # instances (e.g. the Toolchain host on 3030).
 #
 #   docker compose up -d
 #   node docpouch-dev/setup-local.mjs
 #
-# The admin password is taken from ADMIN_INITIAL_PASSWORD on first start. If it
-# is unset, DocPouch prints a generated password once in the container logs:
-#   docker compose logs docpouch | grep -i password
+# The image is pinned to a version that supports roles (`role` in
+# /users/whoami, needed for the PGT role mapping) and `ADMIN_INITIAL_PASSWORD`.
+# The floating `latest` tag is stale (1.25.1) and lacks both.
 services:
   docpouch:
-    image: ghcr.io/bfh-jtf/doc-pouch:latest
+    image: ghcr.io/bfh-jtf/doc-pouch:1.27.4
     volumes:
       - './db:/app/db'
       - './log:/app/log'
@@ -20,11 +20,11 @@ services:
       # Origins that may call the DocPouch API from the browser.
       - ALLOWED_ORIGINS=http://localhost:4200
       # OIDC issuer as seen by the PGT backend.
-      - OIDC_ISSUER=http://localhost:3031
+      - OIDC_ISSUER=http://localhost:3033
       # Enables dynamic client registration (POST /oidc/reg).
       - OIDC_REGISTRATION_TOKEN=peer-grading-dev-token-123
-      # Initial super-admin password (development only).
-      - ADMIN_INITIAL_PASSWORD=admin
+      # Initial super-admin password (development only, min. 8 characters).
+      - ADMIN_INITIAL_PASSWORD=peer-grading-admin
     restart: unless-stopped
     ports:
-      - '3031:3030'
+      - '3033:3030'

@@ -1,7 +1,7 @@
 # Local DocPouch for the Peer Grading Tool
 
 Runs a local [DocPouch](https://github.com/BFH-JTF/doc-pouch) instance on
-<http://localhost:3031> and provisions everything the PGT needs for OIDC login
+<http://localhost:3033> and provisions everything the PGT needs for OIDC login
 and result publishing.
 
 ## Quick start
@@ -24,7 +24,7 @@ The script prints the `client_id` at the end — put it into `backend/.env` as
 
 | File | Purpose |
 |---|---|
-| `docker-compose.yml` | Local DocPouch on port 3031 (admin password `admin`). |
+| `docker-compose.yml` | Local DocPouch on port 3033 (pinned to `1.27.4`; initial admin `admin` / `peer-grading-admin`). |
 | `.env.example` | Credentials and options read by the setup script. |
 | `setup-local.mjs` | Idempotent provisioning: structure, TDD, test users, OIDC client. |
 | `structure-peer-grading-result.json` | Result structure (`type 100` / `subType 0`). |
@@ -44,7 +44,10 @@ Set `DP_CREATE_TEST_USERS=false` to skip them.
 
 - DocPouch has a rate limit of 100 GET requests / 15 min / IP; the setup script
   paces its requests accordingly.
-- The admin password on first start comes from `ADMIN_INITIAL_PASSWORD` in
-  `docker-compose.yml`. If unset, DocPouch prints a generated password once:
-  `docker compose -f docpouch-dev/docker-compose.yml logs docpouch`.
+- The image is pinned to `1.27.4` because roles (`role` in `/users/whoami`) and
+  `ADMIN_INITIAL_PASSWORD` are required; the floating `latest` tag is stale
+  (1.25.1) and lacks both.
+- The initial super-admin is created without an e-mail address; the setup script
+  assigns `DP_ADMIN_EMAIL` (default `admin@example.com`) because the PGT token
+  exchange needs one.
 - Full setup and deployment instructions: [`../docs/toolchain-oidc-setup.md`](../docs/toolchain-oidc-setup.md).
