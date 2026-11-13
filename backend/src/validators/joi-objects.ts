@@ -36,7 +36,8 @@ export const createGradingSchema = (max: number) =>
     criteriaId: Joi.number().integer(),
     fromPeerId: Joi.number().integer(),
     toPeerId: Joi.number().integer(),
-    points: Joi.number().integer().required().min(1).max(max),
+    // whole or half points (Swiss grade scale: 4.5 is valid)
+    points: Joi.number().multiple(0.5).required().min(1).max(max),
   });
 
 const userSchema = Joi.object({

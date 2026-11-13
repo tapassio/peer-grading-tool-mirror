@@ -12,6 +12,16 @@ import {
  * the calculations service contains the logic for pgt objects
  * much like the frontend campaign service
  */
+/**
+ * Rounds to the nearest half (commercial rounding, symmetric around 0):
+ * 0.24 -> 0, 0.25 -> 0.5, 0.74 -> 0.5, 0.75 -> 1, -0.25 -> -0.5
+ */
+export function roundToHalf(value: number): number {
+  // the small epsilon avoids errors like 0.7499999999 for 0.75
+  const rounded = Math.round(Math.abs(value) * 2 + 1e-9) / 2;
+  return rounded === 0 ? 0 : Math.sign(value) * rounded;
+}
+
 @Injectable()
 export class CalculationsService {
   peerEquals(peer1: Peer, peer2: Peer): boolean {
@@ -78,13 +88,13 @@ export class CalculationsService {
     return Math.round((sum / count) * 100) / 100;
   }
 
+  /**
+   * Deviation of a peer = third-party average - group average,
+   * rounded to half points (like Swiss half grades: 0.25 -> 0.5).
+   */
   getPeerReviewDifference(group: Group, peer: Peer): number {
-    return (
-      Math.round(
-        (this.getPeersThirdPartyAverage(group, peer) -
-          this.getGroupAverage(group)) *
-          100,
-      ) / 100
+    return roundToHalf(
+      this.getPeersThirdPartyAverage(group, peer) - this.getGroupAverage(group),
     );
   }
 

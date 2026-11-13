@@ -165,6 +165,35 @@ h3 {
   color: var(--tc-grey-text);
 }
 
+/* ---- two charts side by side (stacked on small screens) ---- */
+
+.charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.chart-card {
+  padding: 16px;
+  border: 1px solid var(--tc-border);
+  border-radius: var(--tc-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  min-width: 0;
+}
+
+.chart-card h2 {
+  font-size: 1.05rem;
+}
+
+.chart-card h3 {
+  margin-top: 0;
+}
+
+.hint.warn {
+  color: #e65100;
+}
+
 /* ---- histogram ---- */
 
 .histogram {
@@ -177,8 +206,30 @@ h3 {
   fill: var(--tc-purple);
 }
 
+.hist-bar.half {
+  fill: var(--tc-purple-light);
+  stroke: var(--tc-purple);
+  stroke-width: 1;
+}
+
 .hist-bar:hover {
   fill: var(--tc-purple-hover);
+}
+
+.dev-bar {
+  fill: var(--tc-border-strong);
+}
+
+.dev-bar.neg {
+  fill: #e57373;
+}
+
+.dev-bar.pos {
+  fill: #66bb6a;
+}
+
+.hist-axis.zero {
+  font-weight: 700;
 }
 
 .hist-count,

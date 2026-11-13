@@ -48,6 +48,8 @@ export class StatisticsComponent implements OnInit {
     )
   );
 
+  readonly swissLabel = $localize`Notenskala 1–6`;
+
   readonly findingLabels: Record<FindingType, string> = {
     selfHigher: $localize`Selbstbild höher als Fremdbild`,
     selfLower: $localize`Selbstbild tiefer als Fremdbild`,
@@ -96,18 +98,46 @@ export class StatisticsComponent implements OnInit {
 
   // ---- helpers for the SVG bar chart ----
 
-  readonly chartHeight = 160;
+  // all charts have the same size; the bars share the width
+  readonly chartWidth = 440;
+  readonly chartHeight = 180;
+
+  private slot(n: number): number {
+    return this.chartWidth / Math.max(n, 1);
+  }
+
+  barWidth(n: number): number {
+    return this.slot(n) * 0.7;
+  }
+
+  barX(n: number, i: number): number {
+    return i * this.slot(n) + this.slot(n) * 0.15;
+  }
+
+  barCenter(n: number, i: number): number {
+    return i * this.slot(n) + this.slot(n) / 2;
+  }
 
   barHeight(d: Distribution, count: number): number {
-    const max = Math.max(...d.counts, 1);
-    return (count / max) * (this.chartHeight - 30);
+    const max = Math.max(...d.steps.map((s) => s.count), 1);
+    return (count / max) * (this.chartHeight - 42);
+  }
+
+  devBarHeight(steps: { count: number }[], count: number): number {
+    const max = Math.max(...steps.map((s) => s.count), 1);
+    return (count / max) * (this.chartHeight - 42);
   }
 
   percent(d: Distribution, count: number): number {
     return d.total ? Math.round((100 * count) / d.total) : 0;
   }
 
+  /** deviations are rounded to half points: +1.5, -0.5, 0 */
   signed(value: number): string {
-    return (value > 0 ? '+' : '') + value.toFixed(2);
+    return (value > 0 ? '+' : '') + value.toFixed(1).replace('.0', '');
+  }
+
+  stepLabel(value: number): string {
+    return Number.isInteger(value) ? `${value}` : value.toFixed(1);
   }
 }

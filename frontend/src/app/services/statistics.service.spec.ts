@@ -18,6 +18,7 @@ import {
  * Third-party averages: A = (4+4)/2 = 4, B = (4+5)/2 = 4.5, C = 4.5
  * Group average (third-party only): (4+4+4+5+4+5)/6 = 4.33
  * Deviation: A = -0.33, B = +0.17, C = +0.17
+ *   rounded to half points: A = -0.5, B = 0, C = 0
  * Self vs. others: A 8 - 4 = +4  -> finding "selfHigher"
  * A gives B and C the same points (4) -> finding "sameForAll"
  */
@@ -70,8 +71,9 @@ describe('StatisticsService', () => {
     expect(kpis.completedStudents).toBe(3);
     expect(kpis.responseRate).toBe(100);
     expect(kpis.openGradings).toBe(0);
-    expect(kpis.averagePoints).toBe(4.33);
-    expect(kpis.positiveDeviations).toBe(2); // B and C
+    expect(kpis.averages).toEqual([{ maxPoints: 8, average: 4.33 }]);
+    // B and C (+0.17) are rounded to 0 -> no deviation
+    expect(kpis.positiveDeviations).toBe(0);
     expect(kpis.negativeDeviations).toBe(1); // A
   });
 
@@ -81,7 +83,7 @@ describe('StatisticsService', () => {
     expect(a.selfAverage).toBe(8);
     expect(a.thirdPartyAverage).toBe(4);
     expect(a.groupAverage).toBe(4.33);
-    expect(a.deviation).toBe(-0.33);
+    expect(a.deviation).toBe(-0.5); // -0.33 rounded to half points
   });
 
   it('findings', () => {
@@ -96,11 +98,64 @@ describe('StatisticsService', () => {
     const { distributions, criteria } = service.calculate([campaign]);
     expect(distributions).toHaveLength(1);
     expect(distributions[0].total).toBe(6);
-    expect(distributions[0].counts[3]).toBe(4); // four times 4 points
-    expect(distributions[0].counts[4]).toBe(2); // two times 5 points
+    // only whole points used -> no half steps shown
+    expect(distributions[0].steps.map((s) => s.value)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(distributions[0].steps[3].count).toBe(4); // four times 4 points
+    expect(distributions[0].steps[4].count).toBe(2); // two times 5 points
     expect(criteria[0]).toEqual(
       expect.objectContaining({ name: 'Quality', n: 6, median: 4, min: 4, max: 5 })
     );
+  });
+
+  it('averages are calculated per scale, not mixed', () => {
+    const swiss: RawCampaign = {
+      ...campaign,
+      campaignId: 2,
+      maxPoints: 6,
+      groups: [
+        {
+          ...campaign.groups[0],
+          gradings: campaign.groups[0].gradings.map((x) => ({
+            ...x,
+            points: Math.min(x.points, 6),
+          })),
+        },
+      ],
+    };
+    const { kpis } = service.calculate([campaign, swiss]);
+    expect(kpis.averages.map((a) => a.maxPoints)).toEqual([6, 8]);
+    expect(kpis.averages[1].average).toBe(4.33);
+  });
+
+  it('histogram of the deviations (one value per student)', () => {
+    const d = service.calculate([campaign]).deviationDistribution!;
+    expect(d.scales).toEqual([8]);
+    expect(d.total).toBe(3);
+    // range at least -1 .. +1 in half steps
+    expect(d.steps.map((s) => s.value)).toEqual([-1, -0.5, 0, 0.5, 1]);
+    // A: -0.5, B and C: 0
+    expect(d.steps.find((s) => s.value === -0.5)!.count).toBe(1);
+    expect(d.steps.find((s) => s.value === 0)!.count).toBe(2);
+  });
+
+  it('half grades: histogram with half steps', () => {
+    const halves: RawCampaign = {
+      ...campaign,
+      maxPoints: 6,
+      groups: [
+        {
+          ...campaign.groups[0],
+          gradings: [g(1, 2, 4.5), g(2, 1, 5.5), g(3, 1, 4), g(1, 3, 6)],
+        },
+      ],
+    };
+    const { distributions } = service.calculate([halves]);
+    const steps = distributions[0].steps;
+    expect(steps.map((s) => s.value)).toEqual([
+      1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6,
+    ]);
+    expect(steps.find((s) => s.value === 4.5)!.count).toBe(1);
+    expect(steps.find((s) => s.value === 5.5)!.count).toBe(1);
   });
 
   it('missing gradings', () => {

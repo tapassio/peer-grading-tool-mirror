@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { roundToHalf } from './campaign.service';
 
 /*
  * Statistics for the dashboard ("Statistik" page).
@@ -14,6 +15,8 @@ import { Injectable } from '@angular/core';
  *   OTHER members of the group (self-grading excluded)
  * - "group average" = average of all third-party gradings in the group
  * - "deviation" = third-party average - group average
+ * - all deviations / differences are rounded to half points (roundToHalf),
+ *   like the Swiss half grades; points can be whole or half (4.5)
  */
 
 // ---- input types (shape of the API response) ----
@@ -73,7 +76,11 @@ export interface Kpis {
   completedStudents: number;
   responseRate: number; // 0..100
   openGradings: number;
-  averagePoints: number | null;
+  /**
+   * weighted average of the third-party gradings, one entry per scale
+   * (campaigns can have different max. points, they are not mixed)
+   */
+  averages: { maxPoints: number; average: number }[];
   positiveDeviations: number;
   negativeDeviations: number;
 }
@@ -88,7 +95,19 @@ export interface ResponseRow {
 
 export interface Distribution {
   maxPoints: number;
-  counts: number[]; // index 0 = 1 point
+  /** one entry per possible value: 1, 1.5, 2, ... (halves only if used) */
+  steps: { value: number; count: number }[];
+  total: number;
+}
+
+/**
+ * Histogram of the deviations (third-party average - group average,
+ * rounded to half points): one count per student, symmetric around 0.
+ * All selected campaigns together; `scales` lists the max. points involved.
+ */
+export interface DeviationDistribution {
+  scales: number[];
+  steps: { value: number; count: number }[];
   total: number;
 }
 
@@ -122,6 +141,7 @@ export interface Finding {
 
 export interface PeerResult {
   campaign: string;
+  maxPoints: number;
   group: number;
   peerId: number;
   name: string;
@@ -135,6 +155,7 @@ export interface Statistics {
   kpis: Kpis;
   responses: ResponseRow[];
   distributions: Distribution[];
+  deviationDistribution: DeviationDistribution | null;
   criteria: CriteriaStats[];
   findings: Finding[];
   peers: PeerResult[];
@@ -203,9 +224,10 @@ export class StatisticsService {
     const responses: ResponseRow[] = [];
     const findings: Finding[] = [];
     const peers: PeerResult[] = [];
+    // per scale: counts per half step (index 0 = 1 point, 1 = 1.5, ...)
     const histograms = new Map<number, number[]>();
     const criteriaPoints = new Map<string, { maxPoints: number; points: number[] }>();
-    const allThirdParty: { points: number; weight: number }[] = [];
+    const thirdPartyByScale = new Map<number, { sum: number; weight: number }>();
 
     let students = 0;
     let groups = 0;
@@ -250,11 +272,12 @@ export class StatisticsService {
           const thirdPartyAverage = weightedAverage(received, weights);
           const deviation =
             thirdPartyAverage !== null && groupAverage !== null
-              ? round2(thirdPartyAverage - groupAverage)
+              ? roundToHalf(thirdPartyAverage - groupAverage)
               : null;
 
           peers.push({
             campaign: c.name,
+            maxPoints: c.maxPoints,
             group: group.number,
             peerId: p.peerId,
             name,
@@ -268,7 +291,7 @@ export class StatisticsService {
 
           // self image vs. image of the others
           if (selfAverage !== null && thirdPartyAverage !== null) {
-            const diff = round2(selfAverage - thirdPartyAverage);
+            const diff = roundToHalf(selfAverage - thirdPartyAverage);
             if (diff >= thresholds.deviation)
               findings.push({ ...base, type: 'selfHigher', value: diff });
             if (diff <= -thresholds.deviation)
@@ -307,7 +330,9 @@ export class StatisticsService {
             if (avg !== null) raterAverages.push(avg);
           }
           if (raterAverages.length >= 2) {
-            const spread = round2(Math.max(...raterAverages) - Math.min(...raterAverages));
+            const spread = roundToHalf(
+              Math.max(...raterAverages) - Math.min(...raterAverages)
+            );
             if (spread >= thresholds.spread)
               findings.push({ ...base, type: 'raterSpread', value: spread });
           }
@@ -316,8 +341,9 @@ export class StatisticsService {
         // distribution and per-criteria values (third-party gradings only)
         for (const g of thirdParty) {
           const hist =
-            histograms.get(c.maxPoints) ?? new Array(c.maxPoints).fill(0);
-          if (g.points >= 1 && g.points <= c.maxPoints) hist[g.points - 1]++;
+            histograms.get(c.maxPoints) ?? new Array(2 * c.maxPoints - 1).fill(0);
+          const index = Math.round((g.points - 1) * 2);
+          if (index >= 0 && index < hist.length) hist[index]++;
           histograms.set(c.maxPoints, hist);
 
           const crName = criteriaNames.get(g.criteriaId) ?? '?';
@@ -326,7 +352,11 @@ export class StatisticsService {
           entry.points.push(g.points);
           criteriaPoints.set(key, entry);
 
-          allThirdParty.push({ points: g.points, weight: weights.get(g.criteriaId) ?? 1 });
+          const w = weights.get(g.criteriaId) ?? 1;
+          const scale = thirdPartyByScale.get(c.maxPoints) ?? { sum: 0, weight: 0 };
+          scale.sum += g.points * w;
+          scale.weight += w;
+          thirdPartyByScale.set(c.maxPoints, scale);
         }
 
         completedStudents += groupCompleted;
@@ -355,7 +385,6 @@ export class StatisticsService {
       }
     }
 
-    const weightSum = allThirdParty.reduce((s, g) => s + g.weight, 0);
     const kpis: Kpis = {
       campaigns: campaigns.length,
       runningCampaigns: campaigns.filter((c) => campaignStatus(c) === 'running').length,
@@ -364,20 +393,49 @@ export class StatisticsService {
       completedStudents,
       responseRate: students ? round2((100 * completedStudents) / students) : 0,
       openGradings,
-      averagePoints: weightSum
-        ? round2(allThirdParty.reduce((s, g) => s + g.points * g.weight, 0) / weightSum)
-        : null,
+      averages: [...thirdPartyByScale.entries()]
+        .sort((a, b) => a[0] - b[0])
+        .map(([maxPoints, { sum, weight }]) => ({
+          maxPoints,
+          average: round2(sum / weight),
+        })),
       positiveDeviations: peers.filter((p) => (p.deviation ?? 0) > 0).length,
       negativeDeviations: peers.filter((p) => (p.deviation ?? 0) < 0).length,
     };
 
     const distributions: Distribution[] = [...histograms.entries()]
       .sort((a, b) => a[0] - b[0])
-      .map(([maxPoints, counts]) => ({
-        maxPoints,
-        counts,
-        total: counts.reduce((a, b) => a + b, 0),
-      }));
+      .map(([maxPoints, counts]) => {
+        // show half steps only if half points were given on this scale
+        const usesHalves = counts.some((n, i) => i % 2 === 1 && n > 0);
+        return {
+          maxPoints,
+          steps: counts
+            .map((count, i) => ({ value: 1 + i / 2, count }))
+            .filter((_, i) => usesHalves || i % 2 === 0),
+          total: counts.reduce((a, b) => a + b, 0),
+        };
+      });
+
+    // one histogram for all selected campaigns; symmetric, at least -1 .. +1
+    const withDeviation = peers.filter((p) => p.deviation !== null);
+    let deviationDistribution: DeviationDistribution | null = null;
+    if (withDeviation.length > 0) {
+      const values = withDeviation.map((p) => p.deviation as number);
+      const range = Math.max(1, ...values.map((v) => Math.abs(v)));
+      const steps: { value: number; count: number }[] = [];
+      for (let v = -range; v <= range + 1e-9; v += 0.5) {
+        const value = Math.round(v * 2) / 2 || 0; // avoid -0
+        steps.push({ value, count: values.filter((d) => d === value).length });
+      }
+      deviationDistribution = {
+        scales: [...new Set(withDeviation.map((p) => p.maxPoints))].sort(
+          (a, b) => a - b
+        ),
+        steps,
+        total: values.length,
+      };
+    }
 
     const criteria: CriteriaStats[] = [...criteriaPoints.entries()]
       .map(([key, { maxPoints, points }]) => ({
@@ -407,6 +465,14 @@ export class StatisticsService {
         Math.abs(b.value) - Math.abs(a.value)
     );
 
-    return { kpis, responses, distributions, criteria, findings, peers };
+    return {
+      kpis,
+      responses,
+      distributions,
+      deviationDistribution,
+      criteria,
+      findings,
+      peers,
+    };
   }
 }
