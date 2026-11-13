@@ -105,6 +105,11 @@ export class StatisticsComponent implements OnInit {
     return (count / max) * (this.chartHeight - 30);
   }
 
+  devBarHeight(steps: { count: number }[], count: number): number {
+    const max = Math.max(...steps.map((s) => s.count), 1);
+    return (count / max) * (this.chartHeight - 30);
+  }
+
   percent(d: Distribution, count: number): number {
     return d.total ? Math.round((100 * count) / d.total) : 0;
   }

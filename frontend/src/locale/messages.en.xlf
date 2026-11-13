@@ -1158,6 +1158,18 @@
         <source>Standard: Schweizer Notenskala 1–6 (6 = sehr gut, 4 = genügend). Halbe Noten wie 4.5 sind möglich.</source>
         <target state="translated">Default: Swiss grade scale 1–6 (6 = very good, 4 = sufficient). Half grades such as 4.5 are possible.</target>
       </trans-unit>
+      <trans-unit id="4435055682334394988" datatype="html">
+        <source> Jede Person zählt einmal: Fremdbewertung minus Gruppenschnitt, auf halbe Noten gerundet. Rot: unter dem Schnitt der Gruppe, grün: darüber. </source>
+        <target state="translated">Each person counts once: peer assessment minus group average, rounded to half grades. Red: below the group average, green: above.</target>
+      </trans-unit>
+      <trans-unit id="5156464165139691669" datatype="html">
+        <source>Verteilung der Abweichungen vom Gruppenschnitt</source>
+        <target state="translated">distribution of deviations from the group average</target>
+      </trans-unit>
+      <trans-unit id="8944222884572627908" datatype="html">
+        <source>Häufigkeit der Abweichungen vom Gruppenschnitt</source>
+        <target state="translated">Frequency of deviations from the group average</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

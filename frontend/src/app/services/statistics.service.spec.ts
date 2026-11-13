@@ -127,6 +127,18 @@ describe('StatisticsService', () => {
     expect(kpis.averages[1].average).toBe(4.33);
   });
 
+  it('histogram of the deviations (one value per student)', () => {
+    const { deviationDistributions } = service.calculate([campaign]);
+    expect(deviationDistributions).toHaveLength(1);
+    const d = deviationDistributions[0];
+    expect(d.total).toBe(3);
+    // range at least -1 .. +1 in half steps
+    expect(d.steps.map((s) => s.value)).toEqual([-1, -0.5, 0, 0.5, 1]);
+    // A: -0.5, B and C: 0
+    expect(d.steps.find((s) => s.value === -0.5)!.count).toBe(1);
+    expect(d.steps.find((s) => s.value === 0)!.count).toBe(2);
+  });
+
   it('half grades: histogram with half steps', () => {
     const halves: RawCampaign = {
       ...campaign,

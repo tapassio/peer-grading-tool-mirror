@@ -869,6 +869,15 @@
       <trans-unit id="977578758307041695" datatype="html">
         <source>Standard: Schweizer Notenskala 1–6 (6 = sehr gut, 4 = genügend). Halbe Noten wie 4.5 sind möglich.</source>
       </trans-unit>
+      <trans-unit id="4435055682334394988" datatype="html">
+        <source> Jede Person zählt einmal: Fremdbewertung minus Gruppenschnitt, auf halbe Noten gerundet. Rot: unter dem Schnitt der Gruppe, grün: darüber. </source>
+      </trans-unit>
+      <trans-unit id="5156464165139691669" datatype="html">
+        <source>Verteilung der Abweichungen vom Gruppenschnitt</source>
+      </trans-unit>
+      <trans-unit id="8944222884572627908" datatype="html">
+        <source>Häufigkeit der Abweichungen vom Gruppenschnitt</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

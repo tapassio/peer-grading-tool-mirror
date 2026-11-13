@@ -100,6 +100,16 @@ export interface Distribution {
   total: number;
 }
 
+/**
+ * Histogram of the deviations (third-party average - group average,
+ * rounded to half points): one count per student, symmetric around 0.
+ */
+export interface DeviationDistribution {
+  maxPoints: number;
+  steps: { value: number; count: number }[];
+  total: number;
+}
+
 export interface CriteriaStats {
   name: string;
   maxPoints: number;
@@ -130,6 +140,7 @@ export interface Finding {
 
 export interface PeerResult {
   campaign: string;
+  maxPoints: number;
   group: number;
   peerId: number;
   name: string;
@@ -143,6 +154,7 @@ export interface Statistics {
   kpis: Kpis;
   responses: ResponseRow[];
   distributions: Distribution[];
+  deviationDistributions: DeviationDistribution[];
   criteria: CriteriaStats[];
   findings: Finding[];
   peers: PeerResult[];
@@ -264,6 +276,7 @@ export class StatisticsService {
 
           peers.push({
             campaign: c.name,
+            maxPoints: c.maxPoints,
             group: group.number,
             peerId: p.peerId,
             name,
@@ -403,6 +416,31 @@ export class StatisticsService {
         };
       });
 
+    // deviations per scale; range symmetric around 0, at least -1 .. +1
+    const deviationsByScale = new Map<number, number[]>();
+    for (const p of peers) {
+      if (p.deviation === null) continue;
+      const list = deviationsByScale.get(p.maxPoints) ?? [];
+      list.push(p.deviation);
+      deviationsByScale.set(p.maxPoints, list);
+    }
+    const deviationDistributions: DeviationDistribution[] = [
+      ...deviationsByScale.entries(),
+    ]
+      .sort((a, b) => a[0] - b[0])
+      .map(([maxPoints, values]) => {
+        const range = Math.max(1, ...values.map((v) => Math.abs(v)));
+        const steps: { value: number; count: number }[] = [];
+        for (let v = -range; v <= range + 1e-9; v += 0.5) {
+          const value = Math.round(v * 2) / 2 || 0; // avoid -0
+          steps.push({
+            value,
+            count: values.filter((d) => d === value).length,
+          });
+        }
+        return { maxPoints, steps, total: values.length };
+      });
+
     const criteria: CriteriaStats[] = [...criteriaPoints.entries()]
       .map(([key, { maxPoints, points }]) => ({
         name: key.split('|')[0],
@@ -431,6 +469,14 @@ export class StatisticsService {
         Math.abs(b.value) - Math.abs(a.value)
     );
 
-    return { kpis, responses, distributions, criteria, findings, peers };
+    return {
+      kpis,
+      responses,
+      distributions,
+      deviationDistributions,
+      criteria,
+      findings,
+      peers,
+    };
   }
 }

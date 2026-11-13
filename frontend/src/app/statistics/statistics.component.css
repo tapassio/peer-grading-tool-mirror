@@ -187,6 +187,22 @@ h3 {
   fill: var(--tc-purple-hover);
 }
 
+.dev-bar {
+  fill: var(--tc-border-strong);
+}
+
+.dev-bar.neg {
+  fill: #e57373;
+}
+
+.dev-bar.pos {
+  fill: #66bb6a;
+}
+
+.hist-axis.zero {
+  font-weight: 700;
+}
+
 .hist-count,
 .hist-axis {
   text-anchor: middle;
