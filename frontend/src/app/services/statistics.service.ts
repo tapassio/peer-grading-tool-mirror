@@ -103,9 +103,10 @@ export interface Distribution {
 /**
  * Histogram of the deviations (third-party average - group average,
  * rounded to half points): one count per student, symmetric around 0.
+ * All selected campaigns together; `scales` lists the max. points involved.
  */
 export interface DeviationDistribution {
-  maxPoints: number;
+  scales: number[];
   steps: { value: number; count: number }[];
   total: number;
 }
@@ -154,7 +155,7 @@ export interface Statistics {
   kpis: Kpis;
   responses: ResponseRow[];
   distributions: Distribution[];
-  deviationDistributions: DeviationDistribution[];
+  deviationDistribution: DeviationDistribution | null;
   criteria: CriteriaStats[];
   findings: Finding[];
   peers: PeerResult[];
@@ -416,30 +417,25 @@ export class StatisticsService {
         };
       });
 
-    // deviations per scale; range symmetric around 0, at least -1 .. +1
-    const deviationsByScale = new Map<number, number[]>();
-    for (const p of peers) {
-      if (p.deviation === null) continue;
-      const list = deviationsByScale.get(p.maxPoints) ?? [];
-      list.push(p.deviation);
-      deviationsByScale.set(p.maxPoints, list);
+    // one histogram for all selected campaigns; symmetric, at least -1 .. +1
+    const withDeviation = peers.filter((p) => p.deviation !== null);
+    let deviationDistribution: DeviationDistribution | null = null;
+    if (withDeviation.length > 0) {
+      const values = withDeviation.map((p) => p.deviation as number);
+      const range = Math.max(1, ...values.map((v) => Math.abs(v)));
+      const steps: { value: number; count: number }[] = [];
+      for (let v = -range; v <= range + 1e-9; v += 0.5) {
+        const value = Math.round(v * 2) / 2 || 0; // avoid -0
+        steps.push({ value, count: values.filter((d) => d === value).length });
+      }
+      deviationDistribution = {
+        scales: [...new Set(withDeviation.map((p) => p.maxPoints))].sort(
+          (a, b) => a - b
+        ),
+        steps,
+        total: values.length,
+      };
     }
-    const deviationDistributions: DeviationDistribution[] = [
-      ...deviationsByScale.entries(),
-    ]
-      .sort((a, b) => a[0] - b[0])
-      .map(([maxPoints, values]) => {
-        const range = Math.max(1, ...values.map((v) => Math.abs(v)));
-        const steps: { value: number; count: number }[] = [];
-        for (let v = -range; v <= range + 1e-9; v += 0.5) {
-          const value = Math.round(v * 2) / 2 || 0; // avoid -0
-          steps.push({
-            value,
-            count: values.filter((d) => d === value).length,
-          });
-        }
-        return { maxPoints, steps, total: values.length };
-      });
 
     const criteria: CriteriaStats[] = [...criteriaPoints.entries()]
       .map(([key, { maxPoints, points }]) => ({
@@ -473,7 +469,7 @@ export class StatisticsService {
       kpis,
       responses,
       distributions,
-      deviationDistributions,
+      deviationDistribution,
       criteria,
       findings,
       peers,

@@ -98,16 +98,34 @@ export class StatisticsComponent implements OnInit {
 
   // ---- helpers for the SVG bar chart ----
 
-  readonly chartHeight = 160;
+  // all charts have the same size; the bars share the width
+  readonly chartWidth = 440;
+  readonly chartHeight = 180;
+
+  private slot(n: number): number {
+    return this.chartWidth / Math.max(n, 1);
+  }
+
+  barWidth(n: number): number {
+    return this.slot(n) * 0.7;
+  }
+
+  barX(n: number, i: number): number {
+    return i * this.slot(n) + this.slot(n) * 0.15;
+  }
+
+  barCenter(n: number, i: number): number {
+    return i * this.slot(n) + this.slot(n) / 2;
+  }
 
   barHeight(d: Distribution, count: number): number {
     const max = Math.max(...d.steps.map((s) => s.count), 1);
-    return (count / max) * (this.chartHeight - 30);
+    return (count / max) * (this.chartHeight - 42);
   }
 
   devBarHeight(steps: { count: number }[], count: number): number {
     const max = Math.max(...steps.map((s) => s.count), 1);
-    return (count / max) * (this.chartHeight - 30);
+    return (count / max) * (this.chartHeight - 42);
   }
 
   percent(d: Distribution, count: number): number {

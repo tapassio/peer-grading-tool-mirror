@@ -1170,6 +1170,10 @@
         <source>Häufigkeit der Abweichungen vom Gruppenschnitt</source>
         <target state="translated">Frequency of deviations from the group average</target>
       </trans-unit>
+      <trans-unit id="8437317496329586907" datatype="html">
+        <source> Achtung: Kampagnen mit verschiedenen Skalen sind zusammengefasst. Für einen genauen Vergleich eine einzelne Kampagne wählen. </source>
+        <target state="translated">Note: campaigns with different scales are combined. Select a single campaign for an exact comparison.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

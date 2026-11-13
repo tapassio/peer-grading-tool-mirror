@@ -141,60 +141,120 @@
     </div>
   </section>
 
-  <!-- 3. distribution -->
+  <!-- 3. distribution: points (left) and deviations (right) -->
   <section>
-    <h2 i18n>Verteilung der Fremdbewertungen</h2>
-    @if (stats().distributions.length === 0) {
-    <p class="state" i18n>Noch keine Bewertungen vorhanden.</p>
-    } @for (d of stats().distributions; track d.maxPoints) {
-    <h3>
-      <ng-container i18n>Skala</ng-container> 1 – {{ d.maxPoints }} ({{
-        d.total
-      }}
-      <ng-container i18n>Bewertungen</ng-container>)
-    </h3>
-    <svg
-      class="histogram"
-      [attr.viewBox]="'0 0 ' + d.steps.length * 50 + ' ' + chartHeight"
-      preserveAspectRatio="xMinYMid meet"
-      [style.max-width.px]="d.steps.length * 60"
-      role="img"
-      i18n-aria-label
-      aria-label="Häufigkeit der vergebenen Punkte"
-    >
-      @for (step of d.steps; track step.value) {
-      <rect
-        class="hist-bar"
-        [class.half]="step.value % 1 !== 0"
-        [attr.x]="$index * 50 + 8"
-        [attr.y]="chartHeight - 18 - barHeight(d, step.count)"
-        width="34"
-        [attr.height]="barHeight(d, step.count)"
-        rx="3"
-      >
-        <title>
-          {{ stepLabel(step.value) }}: {{ step.count }} ({{
-            percent(d, step.count)
-          }}%)
-        </title>
-      </rect>
-      <text
-        class="hist-count"
-        [attr.x]="$index * 50 + 25"
-        [attr.y]="chartHeight - 22 - barHeight(d, step.count)"
-      >
-        {{ step.count }}
-      </text>
-      <text
-        class="hist-axis"
-        [attr.x]="$index * 50 + 25"
-        [attr.y]="chartHeight - 3"
-      >
-        {{ stepLabel(step.value) }}
-      </text>
-      }
-    </svg>
-    }
+    <div class="charts">
+      <div class="chart-card">
+        <h2 i18n>Verteilung der Fremdbewertungen</h2>
+        @if (stats().distributions.length === 0) {
+        <p class="state" i18n>Noch keine Bewertungen vorhanden.</p>
+        } @for (d of stats().distributions; track d.maxPoints) {
+        <h3>
+          <ng-container i18n>Skala</ng-container> 1 – {{ d.maxPoints }} ({{
+            d.total
+          }}
+          <ng-container i18n>Bewertungen</ng-container>)
+        </h3>
+        <svg
+          class="histogram"
+          [attr.viewBox]="'0 0 ' + chartWidth + ' ' + chartHeight"
+          role="img"
+          i18n-aria-label
+          aria-label="Häufigkeit der vergebenen Punkte"
+        >
+          @for (step of d.steps; track step.value) {
+          <rect
+            class="hist-bar"
+            [class.half]="step.value % 1 !== 0"
+            [attr.x]="barX(d.steps.length, $index)"
+            [attr.y]="chartHeight - 18 - barHeight(d, step.count)"
+            [attr.width]="barWidth(d.steps.length)"
+            [attr.height]="barHeight(d, step.count)"
+            rx="3"
+          >
+            <title>
+              {{ stepLabel(step.value) }}: {{ step.count }} ({{
+                percent(d, step.count)
+              }}%)
+            </title>
+          </rect>
+          <text
+            class="hist-count"
+            [attr.x]="barCenter(d.steps.length, $index)"
+            [attr.y]="chartHeight - 22 - barHeight(d, step.count)"
+          >
+            {{ step.count }}
+          </text>
+          <text
+            class="hist-axis"
+            [attr.x]="barCenter(d.steps.length, $index)"
+            [attr.y]="chartHeight - 3"
+          >
+            {{ stepLabel(step.value) }}
+          </text>
+          }
+        </svg>
+        }
+      </div>
+
+      <div class="chart-card">
+        <h2 i18n>Verteilung der Abweichungen vom Gruppenschnitt</h2>
+        @if (stats().deviationDistribution; as d) {
+        <h3>
+          {{ d.total }} <ng-container i18n>Studierende</ng-container>
+        </h3>
+        <svg
+          class="histogram"
+          [attr.viewBox]="'0 0 ' + chartWidth + ' ' + chartHeight"
+          role="img"
+          i18n-aria-label
+          aria-label="Häufigkeit der Abweichungen vom Gruppenschnitt"
+        >
+          @for (step of d.steps; track step.value) {
+          <rect
+            class="dev-bar"
+            [class.neg]="step.value < 0"
+            [class.pos]="step.value > 0"
+            [attr.x]="barX(d.steps.length, $index)"
+            [attr.y]="chartHeight - 18 - devBarHeight(d.steps, step.count)"
+            [attr.width]="barWidth(d.steps.length)"
+            [attr.height]="devBarHeight(d.steps, step.count)"
+            rx="3"
+          >
+            <title>{{ signed(step.value) }}: {{ step.count }}</title>
+          </rect>
+          <text
+            class="hist-count"
+            [attr.x]="barCenter(d.steps.length, $index)"
+            [attr.y]="chartHeight - 22 - devBarHeight(d.steps, step.count)"
+          >
+            {{ step.count }}
+          </text>
+          <text
+            class="hist-axis"
+            [class.zero]="step.value === 0"
+            [attr.x]="barCenter(d.steps.length, $index)"
+            [attr.y]="chartHeight - 3"
+          >
+            {{ signed(step.value) }}
+          </text>
+          }
+        </svg>
+        <p class="hint" i18n>
+          Jede Person zählt einmal: Fremdbewertung minus Gruppenschnitt, auf halbe
+          Noten gerundet. Rot: unter dem Schnitt der Gruppe, grün: darüber.
+        </p>
+        @if (d.scales.length > 1) {
+        <p class="hint warn" i18n>
+          Achtung: Kampagnen mit verschiedenen Skalen sind zusammengefasst.
+          Für einen genauen Vergleich eine einzelne Kampagne wählen.
+        </p>
+        }
+        } @else {
+        <p class="state" i18n>Noch keine Bewertungen vorhanden.</p>
+        }
+      </div>
+    </div>
 
     @if (stats().criteria.length > 0) {
     <div class="table-scroll">
@@ -227,64 +287,6 @@
       </table>
     </div>
     }
-  </section>
-
-  <!-- 3b. distribution of the deviations -->
-  <section>
-    <h2 i18n>Verteilung der Abweichungen vom Gruppenschnitt</h2>
-    @if (stats().deviationDistributions.length === 0) {
-    <p class="state" i18n>Noch keine Bewertungen vorhanden.</p>
-    } @for (d of stats().deviationDistributions; track d.maxPoints) {
-    <h3>
-      <ng-container i18n>Skala</ng-container> 1 – {{ d.maxPoints }} ({{
-        d.total
-      }}
-      <ng-container i18n>Studierende</ng-container>)
-    </h3>
-    <svg
-      class="histogram"
-      [attr.viewBox]="'0 0 ' + d.steps.length * 50 + ' ' + chartHeight"
-      preserveAspectRatio="xMinYMid meet"
-      [style.max-width.px]="d.steps.length * 60"
-      role="img"
-      i18n-aria-label
-      aria-label="Häufigkeit der Abweichungen vom Gruppenschnitt"
-    >
-      @for (step of d.steps; track step.value) {
-      <rect
-        class="dev-bar"
-        [class.neg]="step.value < 0"
-        [class.pos]="step.value > 0"
-        [attr.x]="$index * 50 + 8"
-        [attr.y]="chartHeight - 18 - devBarHeight(d.steps, step.count)"
-        width="34"
-        [attr.height]="devBarHeight(d.steps, step.count)"
-        rx="3"
-      >
-        <title>{{ signed(step.value) }}: {{ step.count }}</title>
-      </rect>
-      <text
-        class="hist-count"
-        [attr.x]="$index * 50 + 25"
-        [attr.y]="chartHeight - 22 - devBarHeight(d.steps, step.count)"
-      >
-        {{ step.count }}
-      </text>
-      <text
-        class="hist-axis"
-        [class.zero]="step.value === 0"
-        [attr.x]="$index * 50 + 25"
-        [attr.y]="chartHeight - 3"
-      >
-        {{ signed(step.value) }}
-      </text>
-      }
-    </svg>
-    }
-    <p class="hint" i18n>
-      Jede Person zählt einmal: Fremdbewertung minus Gruppenschnitt, auf halbe
-      Noten gerundet. Rot: unter dem Schnitt der Gruppe, grün: darüber.
-    </p>
   </section>
 
   <!-- 4. notable results -->

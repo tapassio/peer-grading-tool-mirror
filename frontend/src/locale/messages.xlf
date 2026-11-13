@@ -878,6 +878,9 @@
       <trans-unit id="8944222884572627908" datatype="html">
         <source>Häufigkeit der Abweichungen vom Gruppenschnitt</source>
       </trans-unit>
+      <trans-unit id="8437317496329586907" datatype="html">
+        <source> Achtung: Kampagnen mit verschiedenen Skalen sind zusammengefasst. Für einen genauen Vergleich eine einzelne Kampagne wählen. </source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

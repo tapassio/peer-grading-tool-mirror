@@ -128,9 +128,8 @@ describe('StatisticsService', () => {
   });
 
   it('histogram of the deviations (one value per student)', () => {
-    const { deviationDistributions } = service.calculate([campaign]);
-    expect(deviationDistributions).toHaveLength(1);
-    const d = deviationDistributions[0];
+    const d = service.calculate([campaign]).deviationDistribution!;
+    expect(d.scales).toEqual([8]);
     expect(d.total).toBe(3);
     // range at least -1 .. +1 in half steps
     expect(d.steps.map((s) => s.value)).toEqual([-1, -0.5, 0, 0.5, 1]);
