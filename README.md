@@ -2,6 +2,24 @@
 
 The Peer Grading Tool (PGT) is used for mutual and individual evaluation of group work.
 
+## Origin and Attribution
+
+This project was originally developed by **Nick Soland**
+([@solandnick](https://github.com/solandnick)) at the
+**Digital Sustainability Lab** of the Bern University of Applied Sciences
+(BFH). It is released under the **MIT License** — see [`LICENSE`](./LICENSE).
+
+- Upstream repository (authoritative source):
+  <https://github.com/digital-sustainability-lab/peer-grading-tool-mirror>
+- This fork (`tapassio/peer-grading-tool-mirror`) additionally carries the
+  **DocPouch OIDC integration** and the **Toolchain Family hosting**
+  extensions — see
+  [`docs/toolchain-oidc-setup.md`](./docs/toolchain-oidc-setup.md) and
+  [`docs/toolchain-integration-plan.md`](./docs/toolchain-integration-plan.md).
+
+If you redistribute or build on this code, please retain the copyright
+notice in `LICENSE`.
+
 ## Initial setup
 
 1. First, the .env file must be set up for the backend. For this purpose, `.env.example` can be used as a template. (make sure to properly secure your environment variables when working in a productive environment)
@@ -41,3 +59,14 @@ This is useful for testing the localized build, because the angular server only 
 PGT is being open sourced. This is done through repository mirroring (push method) from Gitlab to GitHub. Only one branch is being tracked. It's called `open-source-mirror`. Make sure to not let your commits contain any sensitive data.
 
 You can use the `package.json` file in the **root directory** to update the mirroring branch with `npm run merge-squash`.
+
+### Fork differences
+
+- **`digital-sustainability-lab/peer-grading-tool-mirror`** — upstream
+  (canonical, see *Origin and Attribution* above).
+- **`tapassio/peer-grading-tool-mirror`** — this fork, which adds the
+  DocPouch OIDC integration and the Toolchain Family hosting features
+  (PRs #1 and #2). The `open-source-mirror` mirroring workflow is upstream's
+  and intentionally not used here.
+- **`open-source-mirror` branch** in this repository — a snapshot of the
+  last known good upstream state; see `package.json#scripts.merge-squash`.
