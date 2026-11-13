@@ -8,7 +8,7 @@ table tr:last-child {
 
 :host section {
   padding: 20px 0;
-  border-bottom: 1px solid var(--bfh-orange);
+  border-bottom: 1px solid var(--tc-purple);
 }
 
 :host:last-child section {
@@ -24,7 +24,7 @@ table th:first-child {
   background: linear-gradient(
     to top right,
     #fff0 calc(50% - 1px),
-    var(--bfh-grey),
+    rgba(255, 255, 255, 0.6),
     #fff0 calc(50% + 1px)
   );
 }

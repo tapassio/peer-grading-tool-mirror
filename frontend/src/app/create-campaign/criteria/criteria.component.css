@@ -14,7 +14,7 @@ label {
 }
 
 label input {
-  background-color: var(--bfh-lightgrey-4);
+  background-color: var(--tc-surface);
   border: none;
   padding: 7px;
   font-size: 18px;
@@ -34,11 +34,11 @@ label > div {
 }
 
 label input:focus {
-  outline: 1px solid var(--bfh-grey);
+  outline: 1px solid var(--tc-slate);
 }
 
 label input.ng-invalid.ng-touched {
-  outline: 1px solid var(--bfh-darkred);
+  outline: 1px solid var(--tc-error);
 }
 
 label button {

@@ -9,61 +9,42 @@
 @include mat.core();
 
 :root {
-  --bfh-text-color: #64788b;
-
-  /* lighter shades used for disabled buttons etc. or backgrounds */
-  --bfh-grey: #4b647d;
-  --bfh-lightgrey-1: #697d91;
-  --bfh-lightgrey-2: #a2aeb9;
-  --bfh-lightgrey-3: #c1c9d1;
-  --bfh-lightgrey-4: #e0e4e8;
-  --bfh-lightgrey-5: #eff1f3;
-
-  --bfh-darkgrey: #3c3c3c;
-
-  --bfh-orange: #ffbb02;
-  --bfh-lightorange-1: #ffcb3e;
-  --bfh-lightorange-2: #ffd666;
-
-  /* use these only in special cases
-  such as visualizations */
-  --bfh-darkgreen: #556455;
-  --bfh-green: #699673;
-  --bfh-lightgreen: #8caf82;
-
-  --bfh-darkblue: #506e96;
-  --bfh-blue: #699bbe;
-  --bfh-lightblue: #87b9c8;
-
-  --bfh-darkpurple: #645078;
-  --bfh-purple: #825a7d;
-  --bfh-lightpurple: #a087aa;
-
-  --bfh-darkocher: #786450;
-  --bfh-ocher: #96825f;
-  --bfh-lightocher: #b99164;
-
-  --bfh-darkred: #b41428;
-  --bfh-red: #d25a50;
-  --bfh-lightred: #e1917d;
+  /* Toolchain Family palette (same values as Toolchain Tool Manager, app.css) */
+  --tc-navy: #1a2a40; /* headings, table headers */
+  --tc-slate: #2c3e50; /* header, footer, secondary actions */
+  --tc-slate-2: #33485d; /* header gradient end */
+  --tc-purple: #6a0dad; /* primary actions, accents */
+  --tc-purple-hover: #5a0c9d;
+  --tc-purple-light: #efe4f8; /* highlights, e.g. own row in tables */
+  --tc-dashboard: #6f42c1; /* "TC Dashboard" link */
+  --tc-bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --tc-surface: #f8f9fa; /* menu bar, zebra rows, inputs */
+  --tc-surface-2: #e9ecef; /* user pill, darker rows */
+  --tc-border: #dee2e6;
+  --tc-border-strong: #adb5bd;
+  --tc-text: #333;
+  --tc-grey-text: #666;
+  --tc-secondary-btn: #6c757d;
+  --tc-error: #d32f2f;
+  --tc-radius: 8px;
 }
 
-$bfh-grey-palette: (
-  50: #edeff3,
-  100: #d1d8df,
-  200: #b4bec9,
-  300: #96a4b3,
-  400: #7f90a1,
-  500: #697d91,
-  600: #5c6e80,
-  700: #4c5a69,
-  800: #3c4853,
-  900: #2a333c,
+$tc-purple-palette: (
+  50: #f3e8fb,
+  100: #e0c4f3,
+  200: #cb9deb,
+  300: #b575e2,
+  400: #a356db,
+  500: #8f37d2,
+  600: #7f25c4,
+  700: #6a0dad,
+  800: #5a0c9d,
+  900: #430a7d,
   contrast: (
-    50: var(--bfh-text-color),
-    100: var(--bfh-text-color),
-    200: var(--bfh-text-color),
-    300: var(--bfh-text-color),
+    50: #333,
+    100: #333,
+    200: #333,
+    300: white,
     400: white,
     500: white,
     600: white,
@@ -73,22 +54,22 @@ $bfh-grey-palette: (
   ),
 );
 
-$bfh-orange-palette: (
-  50: #fef7df,
-  100: #fdeaae,
-  200: #fcdc7a,
-  300: #fbd041,
-  400: #fac400,
-  500: #f9ba00,
-  600: #faac00,
-  700: #fb9800,
-  800: #fb8700,
-  900: #fc6500,
+$tc-slate-palette: (
+  50: #e8ebef,
+  100: #c5ccd6,
+  200: #9faab9,
+  300: #79889c,
+  400: #5c6f87,
+  500: #3f5672,
+  600: #384d68,
+  700: #2c3e50,
+  800: #233242,
+  900: #1a2a40,
   contrast: (
-    50: var(--bfh-text-color),
-    100: var(--bfh-text-color),
-    200: var(--bfh-text-color),
-    300: var(--bfh-text-color),
+    50: #333,
+    100: #333,
+    200: #333,
+    300: white,
     400: white,
     500: white,
     600: white,
@@ -98,21 +79,21 @@ $bfh-orange-palette: (
   ),
 );
 
-$bfh-red-palette: (
-  50: #faebed,
-  100: #f3cccf,
-  200: #dc9a97,
-  300: #cc7571,
-  400: #d25b50,
-  500: #d44f39,
-  600: #c54738,
-  700: #b43e32,
-  800: #a7392c,
-  900: #992f21,
+$tc-red-palette: (
+  50: #ffebee,
+  100: #ffcdd2,
+  200: #ef9a9a,
+  300: #e57373,
+  400: #ef5350,
+  500: #f44336,
+  600: #e53935,
+  700: #d32f2f,
+  800: #c62828,
+  900: #b71c1c,
   contrast: (
-    50: var(--bfh-text-color),
-    100: var(--bfh-text-color),
-    200: white,
+    50: #333,
+    100: #333,
+    200: #333,
     300: white,
     400: white,
     500: white,
@@ -188,17 +169,17 @@ $dsl-typography-config: mat.define-typography-config(
   $body-2: $dsl-body-2,
   $caption: $dsl-caption,
   $button: $dsl-button,
-  $font-family: "Unit, Lucida Sans, sans-serif",
+  $font-family: "Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
 );
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$dsl-ci-cd-primary: mat.define-palette($bfh-grey-palette, 500);
-$dsl-ci-cd-accent: mat.define-palette($bfh-orange-palette, 400);
+$dsl-ci-cd-primary: mat.define-palette($tc-purple-palette, 700);
+$dsl-ci-cd-accent: mat.define-palette($tc-slate-palette, 700);
 
 // optional
-$dsl-ci-cd-warn: mat.define-palette($bfh-red-palette, 400);
+$dsl-ci-cd-warn: mat.define-palette($tc-red-palette, 700);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
@@ -223,11 +204,11 @@ $foreground: map-get(
 );
 
 // override text of foreground map
-$bfh-text-color: #4b647d;
+$tc-text-color: #333;
 $themed-foreground: map-merge(
   $foreground,
   (
-    text: $bfh-text-color,
+    text: $tc-text-color,
   )
 );
 

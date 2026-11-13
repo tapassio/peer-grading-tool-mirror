@@ -922,6 +922,34 @@
         <source>Veröffentlichung in der Toolchain fehlgeschlagen.</source>
         <target state="translated">Publishing to the Toolchain failed.</target>
       </trans-unit>
+      <trans-unit id="4036139244977900092" datatype="html">
+        <source>© 2026 Peer Grading Tool · Toolchain</source>
+        <target state="translated">© 2026 Peer Grading Tool · Toolchain</target>
+      </trans-unit>
+      <trans-unit id="5180342668087654036" datatype="html">
+        <source> Abmelden </source>
+        <target state="translated">Logout</target>
+      </trans-unit>
+      <trans-unit id="5181690192053543822" datatype="html">
+        <source>Anmelden</source>
+        <target state="translated">Login</target>
+      </trans-unit>
+      <trans-unit id="5629408520362199387" datatype="html">
+        <source>E-Mail bestätigen</source>
+        <target state="translated">Confirm e-mail</target>
+      </trans-unit>
+      <trans-unit id="5712005023760012171" datatype="html">
+        <source> Gruppenarbeiten fair bewerten: Kampagnen erstellen, Studierende bewerten sich gegenseitig, Ergebnisse auswerten. </source>
+        <target state="translated">Grade group work fairly: create campaigns, students grade each other, evaluate the results.</target>
+      </trans-unit>
+      <trans-unit id="7842597623910989718" datatype="html">
+        <source>Hilfe</source>
+        <target state="translated">Help</target>
+      </trans-unit>
+      <trans-unit id="8910738092876515625" datatype="html">
+        <source>Teilnehmende</source>
+        <target state="translated">participants</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

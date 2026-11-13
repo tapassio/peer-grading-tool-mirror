@@ -14,4 +14,6 @@ function resolveApiBase(): string {
 export const environment = {
   production: true,
   api: resolveApiBase(),
+  // Toolchain Dashboard (same default as the other Toolchain Family tools)
+  toolchainUrl: 'https://tapassio.pantek.ch/Dashboard/',
 };

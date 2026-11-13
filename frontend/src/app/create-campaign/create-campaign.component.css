@@ -16,7 +16,7 @@ section label {
 
 section label input,
 section label select {
-  background-color: var(--bfh-lightgrey-4);
+  background-color: var(--tc-surface);
   border: none;
   padding: 7px;
   font-size: 18px;
@@ -73,11 +73,11 @@ section label > div {
 }
 
 section label input:focus {
-  outline: 1px solid var(--bfh-grey);
+  outline: 1px solid var(--tc-slate);
 }
 
 section label input.ng-invalid.ng-touched {
-  outline: 1px solid var(--bfh-darkred);
+  outline: 1px solid var(--tc-error);
 }
 
 section label button {
@@ -98,7 +98,7 @@ section:last-child button {
 }
 
 .groupOverview .errors {
-  color: var(--bfh-darkred);
+  color: var(--tc-error);
   display: block;
   width: 100%;
 }
@@ -119,7 +119,7 @@ button a {
     width: 40%;
   }
 
-  background-color: var(--bfh-darkgrey);
+  background-color: var(--tc-text);
 }
 
 span {

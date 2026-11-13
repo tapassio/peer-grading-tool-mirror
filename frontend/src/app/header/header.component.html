@@ -1,30 +1,74 @@
-@if (user && user !== null) {
-<header>
-  <div>
-    <span class="title">Peer Grading Tool</span>
-    <div class="smallMobile buttons">
-      <button mat-raised-button color="primary" (click)="logout()">
-        <ng-container i18n>Abmelden</ng-container> <mat-icon>logout</mat-icon>
-      </button>
-      <pgt-language-switch></pgt-language-switch>
-    </div>
-    <div class="userInfo">
-      <div>
-        <ng-container i18n>Sie sind</ng-container>:
-        <b>
-          {{ user.firstName }} {{ user.lastName }}<br />({{
-            userService.userRolesToString(user)
-          }})
-        </b>
-      </div>
-      <div class="desktop buttons">
-        <pgt-language-switch></pgt-language-switch>
-        <button mat-raised-button color="primary" (click)="logout()">
-          <ng-container i18n>Abmelden</ng-container> <mat-icon>logout</mat-icon>
-        </button>
-      </div>
-    </div>
+<header class="app-header">
+  <div class="header-content">
+    <span class="app-logo" aria-hidden="true">🎓</span>
+    <h1>
+      <a class="app-title-btn" [routerLink]="homeLink">Peer Grading Tool</a>
+    </h1>
   </div>
-  <pgt-nav [user]="user"></pgt-nav>
+  <p class="app-subtitle" i18n>
+    Gruppenarbeiten fair bewerten: Kampagnen erstellen, Studierende bewerten
+    sich gegenseitig, Ergebnisse auswerten.
+  </p>
+  @if (isAdmin && campaignCount !== null) {
+  <p class="app-metrics">
+    📋 {{ campaignCount }} <ng-container i18n>Kampagnen</ng-container> · 👥
+    {{ participantCount }} <ng-container i18n>Teilnehmende</ng-container>
+  </p>
+  }
 </header>
-}
+
+<div class="app-controls">
+  <nav class="tool-actions">
+    @if (isAdmin) {
+    <a
+      class="tc-btn"
+      routerLink="/admin-dashboard"
+      routerLinkActive="active"
+      i18n
+      >Kampagnen</a
+    >
+    <a class="tc-btn" routerLink="/profile" routerLinkActive="active" i18n
+      >Profil</a
+    >
+    } @if (user?.roles?.includes(UserRole.SUPER)) {
+    <a class="tc-btn" routerLink="/user-list" routerLinkActive="active" i18n
+      >Admins</a
+    >
+    }
+  </nav>
+
+  <div class="doc-actions">
+    @if (isAdmin) {
+    <a
+      [href]="toolchainUrl"
+      target="_blank"
+      rel="noopener"
+      class="btn btn-dashboard"
+      title="Toolchain Dashboard"
+      >🖥️ TC Dashboard</a
+    >
+    }
+    <pgt-language-switch></pgt-language-switch>
+    <a
+      class="btn-help"
+      routerLink="/about"
+      title="Hilfe"
+      i18n-title
+      aria-label="Hilfe"
+      i18n-aria-label
+      >?</a
+    >
+    @if (user) {
+    <span class="user-pill">
+      👤 {{ user.firstName }} {{ user.lastName }}
+      <button type="button" class="auth-logout" (click)="logout()" i18n>
+        Abmelden
+      </button>
+    </span>
+    } @else if (!isPublicPage) {
+    <a class="tc-btn tc-btn-primary" routerLink="/login"
+      >🔐 <ng-container i18n>Anmelden</ng-container></a
+    >
+    }
+  </div>
+</div>

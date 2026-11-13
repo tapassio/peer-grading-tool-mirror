@@ -692,6 +692,27 @@
       <trans-unit id="70921454815613440" datatype="html">
         <source>Wird veröffentlicht…</source>
       </trans-unit>
+      <trans-unit id="4036139244977900092" datatype="html">
+        <source>© 2026 Peer Grading Tool · Toolchain</source>
+      </trans-unit>
+      <trans-unit id="5180342668087654036" datatype="html">
+        <source> Abmelden </source>
+      </trans-unit>
+      <trans-unit id="5181690192053543822" datatype="html">
+        <source>Anmelden</source>
+      </trans-unit>
+      <trans-unit id="5629408520362199387" datatype="html">
+        <source>E-Mail bestätigen</source>
+      </trans-unit>
+      <trans-unit id="5712005023760012171" datatype="html">
+        <source> Gruppenarbeiten fair bewerten: Kampagnen erstellen, Studierende bewerten sich gegenseitig, Ergebnisse auswerten. </source>
+      </trans-unit>
+      <trans-unit id="7842597623910989718" datatype="html">
+        <source>Hilfe</source>
+      </trans-unit>
+      <trans-unit id="8910738092876515625" datatype="html">
+        <source>Teilnehmende</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -7,7 +7,7 @@
 label input {
   border: none;
   padding: 7px;
-  outline: 1px solid var(--bfh-lightgrey-2);
+  outline: 1px solid var(--tc-border-strong);
   font-size: 18px;
   display: block;
 }

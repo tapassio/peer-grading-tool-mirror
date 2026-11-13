@@ -15,15 +15,15 @@ tr td input {
   width: calc(100% - 14px);
   font-size: 18px;
   padding: 5px;
-  border: 1px solid var(--bfh-grey);
+  border: 1px solid var(--tc-slate);
 }
 
 input:focus {
-  outline: 1px solid var(--bfh-grey);
+  outline: 1px solid var(--tc-slate);
 }
 
 input.ng-touched.ng-invalid {
-  outline: 1px solid var(--bfh-darkred);
+  outline: 1px solid var(--tc-error);
 }
 
 @media (max-width: 900px) {

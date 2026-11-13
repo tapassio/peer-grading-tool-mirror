@@ -9,7 +9,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GradingComponent } from './grading/grading.component';
 import { CampaignSummaryComponent } from './campaign-summary/campaign-summary.component';
 import { PeerGradingReviewComponent } from './grading-review/grading-review.component';
-import { NavComponent } from './header/nav/nav.component';
 import { CampaignGroupSummaryComponent } from './campaign-summary/campaign-group-summary/campaign-group-summary.component';
 import { FormErrorComponent } from './form-error/form-error.component';
 import { LoginComponent } from './login/login.component';
@@ -65,7 +64,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     GradingComponent,
     CampaignSummaryComponent,
     PeerGradingReviewComponent,
-    NavComponent,
     CampaignGroupSummaryComponent,
     FormErrorComponent,
     LoginComponent,

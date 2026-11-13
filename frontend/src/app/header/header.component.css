@@ -1,71 +1,178 @@
-header {
-  max-width: 1000px;
-  margin: 0 auto;
-  font-size: 18px;
-  background-color: #fff;
-  padding: 20px 20px 60px 20px;
+/* Same header and menu bar as the Toolchain Family tools
+   (reference: Toolchain-Family/toolmanager, src/app.css) */
+
+.app-header {
+  background: linear-gradient(90deg, var(--tc-slate) 0%, var(--tc-slate-2) 100%);
+  color: #fff;
+  padding: 20px 24px;
+  text-align: center;
 }
 
-header {
-  padding: 20px;
-  margin-bottom: 30px;
-}
-
-header > div {
+.header-content {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-bottom: 20px;
   align-items: center;
-  gap: 1em;
+  justify-content: center;
+  gap: 10px;
 }
 
-header .title {
-  font-size: 24px;
-  font-weight: bold;
+.app-logo {
+  font-size: 26px;
+  line-height: 1;
 }
 
-.userInfo {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
+.app-header h1 {
   margin: 0;
-  gap: 1em;
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
 }
 
-.buttons {
+.app-title-btn {
+  color: #fff;
+  text-decoration: none;
+}
+
+.app-title-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.app-subtitle {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+  margin: 4px 0 0;
+}
+
+.app-metrics {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  margin: 5px 0 0;
+}
+
+/* ---- menu bar ---- */
+
+.app-controls {
+  padding: 12px 30px;
+  background: var(--tc-surface);
+  border-bottom: 1px solid var(--tc-surface-2);
   display: flex;
-  gap: 0.5em;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
-/* must be after .buttons selector */
-.smallMobile {
-  display: none;
+.tool-actions,
+.doc-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-@media screen and (max-width: 810px) {
+.doc-actions {
+  margin-left: auto;
+}
+
+.tc-btn {
+  display: inline-block;
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: var(--tc-surface-2);
+  color: var(--tc-text);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.tc-btn:hover {
+  filter: brightness(0.95);
+}
+
+.tc-btn.active {
+  background: var(--tc-purple);
+  color: #fff;
+}
+
+.tc-btn-primary {
+  background: var(--tc-purple);
+  color: #fff;
+}
+
+.tc-btn-primary:hover {
+  background: var(--tc-purple-hover);
+  filter: none;
+}
+
+.btn {
+  display: inline-block;
+  padding: 8px 15px;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.btn-dashboard {
+  background: var(--tc-dashboard);
+}
+
+.btn-dashboard:hover {
+  filter: brightness(0.92);
+}
+
+.btn-help {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--tc-secondary-btn);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-help:hover {
+  filter: brightness(1.1);
+}
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--tc-surface-2);
+  border-radius: 20px;
+  padding: 4px 4px 4px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.auth-logout {
+  background: var(--tc-secondary-btn);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 5px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.auth-logout:hover {
+  filter: brightness(1.15);
 }
 
 @media screen and (max-width: 480px) {
-  header > div {
-    display: flex;
+  .app-controls {
+    padding: 10px 14px;
   }
 
-  .userInfo {
-    flex-direction: column-reverse;
-  }
-
-  .smallMobile {
-    display: block;
-  }
-
-  .buttons.smallMobile {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .desktop {
-    display: none;
+  .doc-actions {
+    margin-left: 0;
   }
 }
