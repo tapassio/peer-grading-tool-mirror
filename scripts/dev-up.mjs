@@ -37,6 +37,7 @@ import {
   readFileSync,
   writeFileSync,
   mkdirSync,
+  rmSync,
   statSync,
   appendFileSync,
   openSync,
@@ -323,9 +324,17 @@ async function buildBackend() {
     ok('backend dist up-to-date');
     return;
   }
-  const npmCmd = isWindows ? 'npm.cmd' : 'npm';
-  const result = spawnSync(npmCmd, ['run', 'build'], {
-    cwd: join(repoRoot, 'backend'),
+  // Replicate `npm run build` (prebuild: rimraf dist + build: nest build)
+  // without going through the npm wrapper, which cannot be spawned directly
+  // as a .cmd shim on Windows under Node 20+.
+  const backendDir = join(repoRoot, 'backend');
+  rmSync(join(backendDir, 'dist'), { recursive: true, force: true });
+  const nestJs = join(backendDir, 'node_modules', '@nestjs', 'cli', 'bin', 'nest.js');
+  if (!existsSync(nestJs)) {
+    throw new Error('nest CLI missing — run `npm install` in backend/ first');
+  }
+  const result = spawnSync(process.execPath, [nestJs, 'build'], {
+    cwd: backendDir,
     stdio: 'inherit',
     shell: false,
   });
