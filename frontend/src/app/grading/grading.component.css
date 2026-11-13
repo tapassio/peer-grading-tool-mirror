@@ -5,20 +5,20 @@ main form {
 }
 
 table .singleRow:nth-child(odd) {
-  background-color: var(--bfh-lightgrey-4);
+  background-color: var(--tc-surface);
 }
 
 input {
-  border: 1px solid var(--bfh-grey);
+  border: 1px solid var(--tc-slate);
   padding: 7px;
 }
 
 form input.ng-touched.ng-invalid {
-  outline: 1px solid var(--bfh-darkred);
+  outline: 1px solid var(--tc-error);
 }
 
 textarea:focus {
-  outline: 1px solid var(--bfh-grey);
+  outline: 1px solid var(--tc-slate);
 }
 
 @media (max-width: 900px) {

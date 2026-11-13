@@ -1,12 +1,12 @@
 <div class="button-super-container">
   <div class="button-container">
     @if (viewState == 'dashboard') {
-    <button mat-raised-button color="primary" (click)="toSummary()">
+    <button mat-raised-button class="tc-secondary" (click)="toSummary()">
       <ng-container i18n>Anschauen</ng-container>
       <mat-icon>remove_red_eye</mat-icon>
     </button>
     }
-    <button mat-raised-button color="primary" (click)="edit()">
+    <button mat-raised-button class="tc-secondary" (click)="edit()">
       <ng-container i18n>Bearbeiten</ng-container> <mat-icon>edit</mat-icon>
     </button>
     @if (viewState == 'summary') {
@@ -16,18 +16,18 @@
     }
     <button
       mat-raised-button
-      color="primary"
+      
       (click)="exportCampaignAsPdf()"
-      class="tablet"
+      class="tc-secondary tablet"
     >
       <ng-container i18n>Übersicht exportieren (pdf)</ng-container>
       <mat-icon>picture_as_pdf</mat-icon>
     </button>
     <button
       mat-raised-button
-      color="primary"
+      
       (click)="exportCampaignAsExcel()"
-      class="tablet"
+      class="tc-secondary tablet"
     >
       <ng-container i18n>Übersicht exportieren (xlsx)</ng-container>
       <mat-icon>table_chart</mat-icon>
@@ -84,18 +84,18 @@
   <div class="button-container">
     <button
       mat-raised-button
-      color="primary"
+      
       (click)="exportCampaignAsPdf()"
-      class="desktop-mobile"
+      class="tc-secondary desktop-mobile"
     >
       <ng-container i18n>Übersicht exportieren (pdf)</ng-container>
       <mat-icon>picture_as_pdf</mat-icon>
     </button>
     <button
       mat-raised-button
-      color="primary"
+      
       (click)="exportCampaignAsExcel()"
-      class="desktop-mobile"
+      class="tc-secondary desktop-mobile"
     >
       <ng-container i18n>Übersicht exportieren (xlsx)</ng-container>
       <mat-icon>table_chart</mat-icon>

@@ -1,13 +1,11 @@
+/* page content inside the white app card (see styles.css) */
 main {
-  max-width: 1000px;
-  margin: 0 auto;
-  font-size: 18px;
-  background-color: #fff;
-  padding: 20px 20px 60px 20px;
+  padding: 32px 5%;
+  font-size: 16px;
 }
 
 main section {
-  border-bottom: 1px solid var(--bfh-orange);
+  border-bottom: 1px solid var(--tc-border);
   padding: 20px 0;
 }
 
@@ -35,7 +33,7 @@ table tr ::ng-deep th {
 }
 
 table tr:nth-child(odd) {
-  background-color: var(--bfh-lightgrey-4);
+  background-color: var(--tc-surface);
 }
 
 .mobile {
@@ -53,12 +51,12 @@ table tr:nth-child(odd) {
 table tr ::ng-deep td input {
   display: block;
   width: calc(100% - 10px);
-  font-size: 18px;
+  font-size: 16px;
   padding: 5px;
 }
 
 .selfGrading {
-  background-color: var(--bfh-lightblue) !important;
+  background-color: var(--tc-purple-light) !important;
 }
 
 @media screen and (max-width: 810px) {

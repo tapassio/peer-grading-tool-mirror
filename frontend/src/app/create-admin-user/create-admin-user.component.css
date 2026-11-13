@@ -19,22 +19,20 @@
 .adminForm label div input {
   width: calc(100% - 14px);
 }
+/* page content inside the white app card (see styles.css) */
 main {
-  max-width: 1000px;
-  margin: 0 auto;
-  font-size: 18px;
-  background-color: #fff;
-  padding: 20px 20px 60px 20px;
+  padding: 32px 5%;
+  font-size: 16px;
 }
 input {
-  background-color: var(--bfh-lightgrey-4);
+  background-color: var(--tc-surface);
   border: none;
   padding: 7px;
   font-size: 18px;
   display: block;
 }
 .error {
-  color: var(--bfh-darkred);
+  color: var(--tc-error);
 }
 
 @media screen and (max-width: 810px) {

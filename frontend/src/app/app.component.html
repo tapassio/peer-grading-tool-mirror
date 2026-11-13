@@ -1,8 +1,14 @@
-@if ( router.url !== '/' && router.url !== '/about' &&
-!router.url.includes('/login') && !router.url.includes('/register') &&
-!router.url.includes('/auth/callback') &&
-!router.url.includes('/peer-grading') && !router.url.includes('/error') &&
-!router.url.includes('/pdf') ) {
-<pgt-header></pgt-header>
-}
+@if (router.url.includes('/pdf')) {
+<!-- PDF pages only generate a download, no app frame needed -->
 <router-outlet></router-outlet>
+} @else {
+<div class="app-container">
+  <pgt-header></pgt-header>
+  <div class="app-main">
+    <router-outlet></router-outlet>
+  </div>
+  <footer class="app-footer">
+    <p i18n>© 2026 Peer Grading Tool · Toolchain</p>
+  </footer>
+</div>
+}

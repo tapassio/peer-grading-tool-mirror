@@ -11,7 +11,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class ToolTipComponent implements OnInit {
   @Input('text') text: string;
   @Input('icon') icon: string = 'help_outline';
-  @Input('color') color: string = 'var(--bfh-orange)';
+  @Input('color') color: string = 'var(--tc-purple)';
 
   constructor() {}
 
