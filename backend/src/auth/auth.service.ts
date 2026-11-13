@@ -2,14 +2,19 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { Md5 } from 'ts-md5';
+import {
+  hashPassword,
+  hashToken,
+  isLegacyMd5Hash,
+  safeEqual,
+  verifyPassword,
+} from './password.util';
 import { User } from '@prisma/client';
-import { RegisterData } from 'src/interfaces';
+import { RegisterData } from '../interfaces';
 import { SendgridService } from '../sendgrid/sendgrid.service';
 import { getOidcConfig } from './oidc.config';
 import { OidcService } from './oidc.service';
@@ -54,14 +59,23 @@ export class AuthService {
    * @param pass
    * @returns the user if succeeded or null if not
    */
-  async validateUser(email: string, pass: string): Promise<User> {
+  async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.userService.getUser(email);
-    const passEncrypted = this.hashData(pass);
-    if (user && this.matchingPW(user.password, passEncrypted)) {
-      const { password, ...result } = user;
-      return result;
+    if (!user || !(await verifyPassword(pass, user.password))) {
+      return null;
     }
-    return null;
+
+    // upgrade old MD5 hashes to bcrypt now that we know the plain password
+    if (isLegacyMd5Hash(user.password)) {
+      await this.userService.updateUser({
+        where: { email: user.email },
+        data: { password: await hashPassword(pass) },
+      });
+      this.logger.log(`Password hash of ${user.email} upgraded to bcrypt`);
+    }
+
+    const { password, refreshToken, registerToken, ...result } = user;
+    return result;
   }
 
   async login(user: User) {
@@ -86,42 +100,32 @@ export class AuthService {
       `User ${registerData.firstName} ${registerData.lastName} (${registerData.email}) is trying to register as admin`,
     );
 
-    // if there was no user, make a new one and set it to the user var
+    // if there was no user, make a new one (without password for now)
     if (!user) {
       this.logger.log(`User ${registerData.email} didn't exist`);
       user = await this.userService.registerUser(
         registerData.email,
-        registerData.password,
         registerData.firstName,
         registerData.lastName,
         registerData.company,
       );
-    } else {
-      // checking if the user already has the admin-role,
-      // which means he is already registered
-      if (user.roles.includes('ADMIN')) {
-        this.logger.log(`user ${registerData.email} was already an admin`);
-        throw new BadRequestException(undefined, 'User already exists');
-      }
-      // for existing users, updating the user to the data entered when registering
-      user = await this.userService.updateUser({
-        where: {
-          email: registerData.email,
-        },
-        data: {
-          password: this.hashData(registerData.password),
-          firstName: registerData.firstName,
-          lastName: registerData.lastName,
-          company: registerData.company,
-        },
-      });
+    } else if (user.roles.includes('ADMIN')) {
+      // the user already has the admin-role, which means he is already registered
+      this.logger.log(`user ${registerData.email} was already an admin`);
+      throw new BadRequestException(undefined, 'User already exists');
     }
 
-    // now the user exists or has already existed
-    // creating the user's registerToken
+    // IMPORTANT: password and names are NOT written to the user yet.
+    // They are stored inside the signed registerToken and only applied
+    // after the owner of the e-mail address has confirmed it.
+    // Otherwise anybody could change the data of an existing account.
     const registerToken = await this.jwtService.signAsync(
       {
         email: registerData.email,
+        pwHash: await hashPassword(registerData.password),
+        firstName: registerData.firstName,
+        lastName: registerData.lastName,
+        company: registerData.company ?? null,
       },
       {
         secret: process.env['JWT_REGISTRATION_SECRET'],
@@ -129,13 +133,18 @@ export class AuthService {
       },
     );
 
-    // setting the token
     await this.userService.setRegisterTokenOnUser(user.userId, registerToken);
 
-    user.registerToken = registerToken;
-
-    // and sending an email with a link with that token
-    await this.sendgridService.adminConfirmationRequest(user, lang);
+    // the mail uses the names entered in the form
+    await this.sendgridService.adminConfirmationRequest(
+      {
+        ...user,
+        firstName: registerData.firstName,
+        lastName: registerData.lastName,
+        registerToken,
+      },
+      lang,
+    );
 
     return;
   }
@@ -144,54 +153,40 @@ export class AuthService {
     this.logger.log(`User is trying to confirm e-mail`);
 
     // verifying the jwt
+    let payload: {
+      email: string;
+      pwHash: string;
+      firstName: string;
+      lastName: string;
+      company: string | null;
+    };
     try {
-      this.jwtService.verify(registerToken, {
+      payload = this.jwtService.verify(registerToken, {
         secret: process.env['JWT_REGISTRATION_SECRET'],
       });
     } catch (error) {
-      this.logger.error(`token verification error: ${error.message}`);
-      throw new InternalServerErrorException(undefined, error.message);
+      this.logger.warn(`token verification error: ${error.message}`);
+      // same answer for every failure: do not reveal details to the client
+      throw new BadRequestException('INVALID_REGISTER_TOKEN');
     }
 
-    // trying to find a user by the registerToken
-    let user = await this.userService.getUserByRegisterToken(registerToken);
+    // the token must be the latest one stored on the user
+    const user = await this.userService.getUserByRegisterToken(registerToken);
 
-    // if no user was found by registerToken, the registration failed
-    if (!user) {
-      // trying to find out the reason it failed by decoding token
-      const decodedRegisterToken = this.jwtService.decode(registerToken);
-
-      this.logger.log(
-        `User ${decodedRegisterToken['email']} was not found by registerToken`,
-      );
-
-      // and getting the user by email
-      user = await this.userService.getUser(decodedRegisterToken['email']);
-
-      // if still no user was found then he did not exist
-      if (!user) {
-        this.logger.log(`User ${decodedRegisterToken['email']} did not exists`);
-        throw new InternalServerErrorException(
-          undefined,
-          'User did not exist.',
-        );
-      }
-
-      // if the user was found, that means that he was not set up for registration
-      this.logger.log(
-        `User ${decodedRegisterToken['email']} was not set up for registration`,
-      );
-      throw new InternalServerErrorException(
-        undefined,
-        'User was not in the registration process.',
-      );
+    if (!user || user.email !== payload.email || !payload.pwHash) {
+      this.logger.warn(`registerToken for ${payload.email} not valid anymore`);
+      throw new BadRequestException('INVALID_REGISTER_TOKEN');
     }
 
-    // getting here means all worked out
-    // which will then unset the user's registerToken
-    // and add the admin role to the user, finally letting the user log in
+    // getting here means all worked out: now the entered data is applied,
+    // the registerToken is removed and the user gets the admin role
     this.logger.log(`User ${user.email} e-mail confirmation succeeded`);
-    return this.userService.completeRegistration(user.userId);
+    return this.userService.completeRegistration(user.userId, {
+      password: payload.pwHash,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      company: payload.company,
+    });
   }
 
   async getTokens(user: User) {
@@ -221,7 +216,7 @@ export class AuthService {
   }
 
   async updateRefreshToken(email: string, refreshToken: string) {
-    const hashedRefreshToken = this.hashData(refreshToken);
+    const hashedRefreshToken = hashToken(refreshToken);
     await this.userService.updateUser({
       where: { email: email },
       data: { refreshToken: hashedRefreshToken },
@@ -234,9 +229,9 @@ export class AuthService {
       throw new ForbiddenException('Access Denied');
     }
 
-    const refreshTokenMatches = this.matchingPW(
+    const refreshTokenMatches = safeEqual(
       user.refreshToken,
-      this.hashData(refreshToken),
+      hashToken(refreshToken),
     );
 
     if (!refreshTokenMatches) {
@@ -245,13 +240,5 @@ export class AuthService {
     const tokens = await this.getTokens(user);
     await this.updateRefreshToken(email, tokens.refreshToken);
     return tokens;
-  }
-
-  hashData(data: string): string {
-    return Md5.hashStr(data);
-  }
-
-  matchingPW(value1: string, value2: string): boolean {
-    return value1 == value2;
   }
 }

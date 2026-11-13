@@ -84,7 +84,7 @@ export const createUserSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   email: Joi.string().email().required(),
-  password: Joi.string().required(),
+  password: Joi.string().min(8).max(200).required(),
   company: Joi.string(),
 });
 
@@ -94,11 +94,21 @@ export const updateUserSchema = Joi.object({
   lastName: Joi.string().required(),
   email: Joi.string().email().required(),
   company: Joi.string(),
-  password: Joi.string(),
+  password: Joi.string().min(8).max(200),
 });
 
 export const changePWSchema = Joi.object({
-  password: Joi.string().required(),
+  password: Joi.string().min(8).max(200).required(),
+});
+
+export const registerSchema = Joi.object({
+  email: Joi.string().email().required(),
+  emailRepeat: Joi.string().valid(Joi.ref('email')).required(),
+  password: Joi.string().min(8).max(200).required(),
+  passwordRepeat: Joi.string().valid(Joi.ref('password')).required(),
+  firstName: Joi.string().max(100).required(),
+  lastName: Joi.string().max(100).required(),
+  company: Joi.string().allow('', null).max(200),
 });
 
 export const createGradingsAndCommentSchema = (max: number) =>

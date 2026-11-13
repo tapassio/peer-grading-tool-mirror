@@ -78,7 +78,7 @@ export class CreateAdminUserComponent implements OnInit {
             ),
           ],
         ],
-        adminPW: ['', Validators.required],
+        adminPW: ['', [Validators.required, Validators.minLength(8)]],
         adminPWRepeat: ['', Validators.required],
       },
       { validators: this.checkPasswords }

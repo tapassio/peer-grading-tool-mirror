@@ -1,8 +1,10 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   ForbiddenException,
   Get,
+  NotFoundException,
   Param,
   Post,
 } from '@nestjs/common';
@@ -33,17 +35,48 @@ export class GroupController {
     return this.groupService.getGradingReviewDataByUrl(String(url));
   }
 
-  @Post()
-  async createGradingsAndComment(@Body() data): Promise<any> {
-    const campaign = await this.prisma.campaign.findFirst({
-      where: {
-        groups: {
-          some: {
-            groupId: data.groupId,
+  /**
+   * The personal link in the URL identifies the peer and the group.
+   * groupId and fromPeer are taken from the database, never from the body.
+   */
+  @Post(':url')
+  async createGradingsAndComment(
+    @Param('url') url,
+    @Body() data,
+  ): Promise<any> {
+    const connection = await this.prisma.groupPeerConnection.findUnique({
+      where: { link: String(url) },
+      include: {
+        peer: true,
+        group: {
+          include: {
+            peers: { include: { peer: true } },
+            campaign: {
+              include: {
+                criteria: true,
+                users: { select: { userId: true } },
+              },
+            },
           },
         },
       },
     });
+
+    if (!connection) {
+      throw new NotFoundException();
+    }
+
+    const campaign = connection.group.campaign;
+
+    // validate the shape of the data first
+    const dataValidation = new JoiValidationPipe(
+      createGradingsAndCommentSchema(campaign.maxPoints),
+    );
+    dataValidation.transform(data, null);
+
+    if (data.gradings.length === 0) {
+      throw new BadRequestException('no gradings');
+    }
 
     const campaignToCheck = await this.campaignService.getCampaignById(
       campaign.campaignId,
@@ -56,13 +89,34 @@ export class GroupController {
       throw new ForbiddenException('campaign is already closed');
     }
 
-    const dataValidation = new JoiValidationPipe(
-      createGradingsAndCommentSchema(campaign.maxPoints),
-    );
+    // allowed targets: only peers of this group and criteria of this campaign
+    const groupPeerIds = connection.group.peers.map((p) => p.peerId);
+    const criteriaIds = campaign.criteria.map((c) => c.criteriaId);
+    // comments may go to the campaign's lecturers or to peers of this group
+    const allowedUserIds = [
+      ...campaign.users.map((u) => u.userId),
+      ...connection.group.peers.map((p) => p.peer.userId),
+    ];
 
-    dataValidation.transform(data, null);
+    for (const grading of data.gradings) {
+      if (
+        !groupPeerIds.includes(grading.toPeer?.peerId) ||
+        !criteriaIds.includes(grading.criteria?.criteriaId)
+      ) {
+        throw new BadRequestException('invalid grading target');
+      }
+      // the sender is always the owner of the link
+      grading.fromPeer = connection.peer;
+    }
 
-    let response = await this.groupService.upsertGradingsAndComment(data);
-    return response;
+    for (const userIdKey in data.comments || {}) {
+      if (!allowedUserIds.includes(parseInt(userIdKey))) {
+        throw new BadRequestException('invalid comment target');
+      }
+    }
+
+    data.groupId = connection.groupId;
+
+    return this.groupService.upsertGradingsAndComment(data);
   }
 }

@@ -38,7 +38,7 @@ export class RegisterComponent {
         company: [,],
         email: [, [Validators.required, Validators.email]],
         emailRepeat: [, [Validators.required, Validators.email]],
-        password: [, Validators.required],
+        password: [, [Validators.required, Validators.minLength(8)]],
         passwordRepeat: [, Validators.required],
       },
       { validators: [this.checkEmails, this.checkPasswords] }

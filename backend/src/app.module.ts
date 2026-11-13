@@ -22,10 +22,15 @@ import { ExcelService } from './excel/excel.service';
 import { ExcelController } from './excel/excel.controller';
 import { HeaderResolver, I18nModule } from 'nestjs-i18n';
 import { SanitizeService } from './sanitize/sanitize.service';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
+    // Rate limit: max. 100 requests per minute and IP for every route.
+    // Login and registration have stricter limits (see auth.controller.ts).
+    ThrottlerModule.forRoot({ ttl: 60, limit: 100 }),
     ConfigModule.forRoot({
       load: [config],
       isGlobal: true,
@@ -75,7 +80,8 @@ import { SanitizeService } from './sanitize/sanitize.service';
         },
         loaderOptions: {
           path: join(__dirname, '/i18n/'),
-          watch: true,
+          // reloading translation files is only useful during development
+          watch: !configService.get('production'),
         },
       }),
       resolvers: [new HeaderResolver(['lang'])],
@@ -92,6 +98,7 @@ import { SanitizeService } from './sanitize/sanitize.service';
     ExcelController,
   ],
   providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
     AppService,
     PrismaService,
     CampaignService,

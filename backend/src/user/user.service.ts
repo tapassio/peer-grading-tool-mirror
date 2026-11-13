@@ -6,9 +6,8 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { User, Prisma } from '@prisma/client';
-import { Md5 } from 'ts-md5';
+import { hashPassword } from '../auth/password.util';
 import { SendgridService } from '../sendgrid/sendgrid.service';
-import { throwError } from 'rxjs';
 import type { DocPouchIdentity } from '../auth/oidc.service';
 /**
  * this service handles requests regarding users
@@ -179,18 +178,17 @@ export class UserService {
    */
   async registerUser(
     email: string,
-    password: string,
     firstName: string,
     lastName: string,
     company: string | undefined,
   ) {
+    // no password yet: it is only set after the e-mail was confirmed
     const user = await this.prisma.user.create({
       data: {
         email,
         firstName,
         lastName,
         company,
-        password: Md5.hashStr(password),
       },
       select: {
         email: true,
@@ -231,12 +229,24 @@ export class UserService {
    * @param userId
    * @returns the users email and names
    */
-  async completeRegistration(userId: number) {
+  async completeRegistration(
+    userId: number,
+    confirmedData: {
+      password: string; // already hashed
+      firstName: string;
+      lastName: string;
+      company: string | null;
+    },
+  ) {
     return this.prisma.user.update({
       where: {
         userId,
       },
       data: {
+        password: confirmedData.password,
+        firstName: confirmedData.firstName,
+        lastName: confirmedData.lastName,
+        company: confirmedData.company,
         registerToken: null,
         roles: {
           connect: {
@@ -380,9 +390,16 @@ export class UserService {
    * @param data
    * @returns
    */
-  async createAdmin(data: Prisma.UserCreateInput): Promise<any> {
+  async createAdmin(input: Prisma.UserCreateInput): Promise<any> {
+    // only take over the allowed fields (protection against mass assignment)
+    const data: Prisma.UserCreateInput = {
+      email: input.email,
+      firstName: input.firstName,
+      lastName: input.lastName,
+      company: input.company,
+    };
     // OIDC users have no local password; only hash it when one was provided.
-    if (data.password) data.password = Md5.hashStr(data.password);
+    if (input.password) data.password = await hashPassword(input.password);
 
     let admin: any = await this.prisma.user.findFirst({
       where: {
@@ -445,12 +462,19 @@ export class UserService {
    * @returns
    */
   async updateAdmin(data: User): Promise<any> {
-    if (data.password) data.password = Md5.hashStr(data.password);
+    // only these fields may be changed (protection against mass assignment)
+    const changes: Prisma.UserUpdateInput = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      company: data.company,
+    };
+    if (data.password) changes.password = await hashPassword(data.password);
     let admin;
     try {
       admin = await this.prisma.user.update({
         where: { userId: data.userId },
-        data: { ...data },
+        data: changes,
         select: {
           userId: true,
           password: false,
@@ -461,7 +485,9 @@ export class UserService {
         },
       });
     } catch (error) {
-      throwError(() => new Error('error'));
+      // before, this error was silently ignored
+      this.logger.error(`updating admin ${data.userId} failed: ${error.message}`);
+      throw new InternalServerErrorException('UPDATE_FAILED');
     }
     this.logger.log('admin user ' + data.email + ' updated');
     return admin;
@@ -469,10 +495,10 @@ export class UserService {
 
   async updateAdminPW(data: any): Promise<any> {
     this.logger.log('user ' + data.email + ' changed password');
-    data.password = Md5.hashStr(data.password);
     const admin = await this.prisma.user.update({
       where: { email: data.email },
-      data: { ...data },
+      // only the password may be changed here
+      data: { password: await hashPassword(data.password) },
       select: {
         userId: true,
         password: false,

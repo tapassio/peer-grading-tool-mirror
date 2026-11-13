@@ -75,12 +75,15 @@ export class PGTService {
     );
   }
 
-  addGradingsAndComment(data: {
-    gradings: Grading[];
-    comments: any;
-    groupId: number;
-  }) {
-    return this.http.post(environment.api + '/group/', data, {
+  addGradingsAndComment(
+    url: string,
+    data: {
+      gradings: Grading[];
+      comments: any;
+      groupId: number;
+    },
+  ) {
+    return this.http.post(environment.api + '/group/' + url, data, {
       headers: {
         skipAuth: 'true',
       },

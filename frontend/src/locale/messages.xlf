@@ -419,6 +419,9 @@
       <trans-unit id="8881629026941611750" datatype="html">
         <source>Der Wert muss mindestens <x id="INTERPOLATION" equiv-text="{{ control.errors[&quot;min&quot;].min }}"/> sein.</source>
       </trans-unit>
+      <trans-unit id="5639772534982645997" datatype="html">
+        <source>Mindestens <x id="INTERPOLATION" equiv-text="{{ control.errors[&quot;minlength&quot;].requiredLength }}"/> Zeichen.</source>
+      </trans-unit>
       <trans-unit id="2536281828397564786" datatype="html">
         <source>Ungültige E-Mail-Adresse.</source>
       </trans-unit>

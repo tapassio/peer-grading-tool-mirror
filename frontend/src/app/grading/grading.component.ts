@@ -268,7 +268,7 @@ export class GradingComponent implements OnInit {
         .pipe(
           switchMap((accepted) => {
             if (accepted) {
-              return this.pgtService.addGradingsAndComment(data);
+              return this.pgtService.addGradingsAndComment(this.url(), data);
             }
             return of(null);
           })

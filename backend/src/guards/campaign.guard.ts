@@ -11,25 +11,25 @@ export class CampaignGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const { user, params, method, body } = context.switchToHttp().getRequest();
 
-    const userCampaigns = await this.prisma.campaign.findMany({
-      where: {
-        users: {
-          some: {
-            email: user.email,
-          },
-        },
-      },
-    });
+    // the campaign id comes from the URL (GET/DELETE) or the body (POST)
+    const rawId =
+      method === 'GET' || method === 'DELETE' ? params?.id : body?.campaignId;
+    const campaignId = Number(rawId);
 
-    if (method === 'GET' || method === 'DELETE') {
-      return userCampaigns.find((c) => c.campaignId == params.id) != null;
-    } else if (method === 'POST') {
-      return (
-        body.campaignId === 0 ||
-        userCampaigns.find((c) => c.campaignId == body.campaignId) != null
-      );
+    if (!user?.email || !Number.isInteger(campaignId) || campaignId <= 0) {
+      return false;
     }
 
-    return true;
+    // only allowed if the campaign belongs to the logged in user
+    const campaign = await this.prisma.campaign.findFirst({
+      where: {
+        campaignId,
+        users: { some: { email: user.email } },
+      },
+      select: { campaignId: true },
+    });
+
+    // default: deny (every other method or unknown campaign)
+    return campaign !== null;
   }
 }

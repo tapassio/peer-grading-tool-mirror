@@ -2,6 +2,18 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { SendgridService } from '../sendgrid/sendgrid.service';
 import { PrismaService } from '../prisma.service';
 import { CalculationsService } from '../calculations/calculations.service';
+
+/**
+ * Only these user fields may be sent to peers (public, no login).
+ * Never include password, refreshToken or registerToken here.
+ */
+const publicUserSelect = {
+  userId: true,
+  firstName: true,
+  lastName: true,
+  email: true,
+};
+
 /**
  * the group service is used for actions done by peers in the frontend
  */
@@ -175,7 +187,7 @@ export class GroupService {
             campaign: {
               include: {
                 criteria: true,
-                users: true,
+                users: { select: publicUserSelect },
               },
             },
             peers: {
@@ -186,7 +198,7 @@ export class GroupService {
             comments: {
               include: {
                 fromPeer: true,
-                toUser: true,
+                toUser: { select: publicUserSelect },
               },
             },
             gradings: {
