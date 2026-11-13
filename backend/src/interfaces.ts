@@ -1,3 +1,8 @@
+/**
+ * Shared PGT domain interfaces (mirroring the Prisma schema) used across the
+ * service layer. Field names must match the Prisma `include` shapes; the
+ * German `CampaignStatus` labels are the ones sent in the e-mail templates.
+ */
 export interface Campaign {
   campaignId: number;
   name: string;
