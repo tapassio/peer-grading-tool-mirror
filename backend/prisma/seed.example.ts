@@ -1,5 +1,6 @@
 import { Campaign, PrismaClient } from '@prisma/client';
-import { Md5 } from 'ts-md5';
+import * as bcrypt from 'bcryptjs';
+import { randomBytes } from 'crypto';
 
 const prisma = new PrismaClient();
 
@@ -136,7 +137,7 @@ async function createUser(
   company?: string,
   password: string = 'p',
 ) {
-  const passwordEncrypted = Md5.hashStr(password);
+  const passwordEncrypted = bcrypt.hashSync(password, 12);
 
   return await prisma.user.create({
     data: {
@@ -232,7 +233,7 @@ async function createPeerUser(
   roleId: number,
   password: string = 'p',
 ) {
-  const passwordEncrypted = Md5.hashStr(password);
+  const passwordEncrypted = bcrypt.hashSync(password, 12);
 
   await prisma.user.upsert({
     where: {
@@ -278,10 +279,9 @@ async function createPeerUser(
   });
 }
 
-function generateLink(groupId, peerId) {
-  const string = groupId + '-' + peerId;
-  let linkString = Md5.hashStr(string) + groupId + peerId;
-  return linkString;
+function generateLink(_groupId, _peerId) {
+  // random, not guessable (same as AppService.generateLink)
+  return randomBytes(32).toString('base64url');
 }
 
 // generating gradings for groups

@@ -13,7 +13,6 @@ import {
   Prisma,
 } from '@prisma/client';
 import { AppService } from '../app.service';
-import { Md5 } from 'ts-md5';
 import { SendgridService } from '../sendgrid/sendgrid.service';
 import { CampaignStatus, Grading, MailsSent, User } from '../interfaces';
 import { CalculationsService } from '../calculations/calculations.service';
@@ -317,7 +316,7 @@ export class CampaignService {
                   firstName: peer.firstName,
                   lastName: peer.lastName,
                   email: peer.email,
-                  password: Md5.hashStr('p'),
+                  // peers never log in, so they get no password
                   roles: {
                     connect: {
                       roleId: 2,
@@ -336,7 +335,7 @@ export class CampaignService {
             peerId: updatedPeer.peerId,
           },
         },
-        link: this.appService.generateLink(groupId, updatedPeer.peerId),
+        link: this.appService.generateLink(),
       });
     }
 
@@ -742,7 +741,7 @@ export class CampaignService {
                   firstName: peer.firstName,
                   lastName: peer.lastName,
                   email: peer.email,
-                  password: Md5.hashStr('p'),
+                  // peers never log in, so they get no password
                 },
               },
             },
@@ -764,10 +763,11 @@ export class CampaignService {
         },
         data: {
           peerId: updatedPeer.peerId,
-          link: this.appService.generateLink(
-            oldGroup.groupId,
-            updatedPeer.peerId,
-          ),
+          // keep the existing link if it is still the same peer,
+          // otherwise the link already sent by e-mail would stop working
+          ...(updatedPeer.peerId !== peer.peerId && {
+            link: this.appService.generateLink(),
+          }),
         },
       });
       await tx.grading.updateMany({

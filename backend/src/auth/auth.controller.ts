@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -17,6 +18,10 @@ import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { getOidcConfig, isOidcMode } from './oidc.config';
+import { Throttle } from '@nestjs/throttler';
+import { JoiValidationPipe } from '../validators/joi-validation.pipe';
+import { registerSchema } from '../validators/joi-objects';
+import { RegisterData } from '../interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -66,6 +71,8 @@ export class AuthController {
     return this.authService.exchangeOidcToken(token);
   }
 
+  // max. 5 login attempts per minute and IP (brute force protection)
+  @Throttle(5, 60)
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req) {
@@ -77,8 +84,9 @@ export class AuthController {
   @Get('profile')
   async getProfile(@Request() req) {
     const user = await this.userService.getUser(req.user.email);
-    delete user['password'];
-    return user;
+    // never send secrets to the browser
+    const { password, refreshToken, registerToken, ...publicUser } = user;
+    return publicUser;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -87,15 +95,24 @@ export class AuthController {
     return this.authService.logout(req.user.email);
   }
 
+  // every registration sends an e-mail: limit it to avoid mail spam
+  @Throttle(3, 60)
   @Post('register')
-  async registerUser(@Body() registerData, @I18n() i18n: I18nContext) {
+  async registerUser(
+    @Body(new JoiValidationPipe(registerSchema)) registerData: RegisterData,
+    @I18n() i18n: I18nContext,
+  ) {
     this.assertLocalAuthEnabled();
     return this.authService.register(registerData, i18n.lang);
   }
 
+  @Throttle(10, 60)
   @Post('confirm-email')
   async confirmEmail(@Body() registerTokenData: any) {
     this.assertLocalAuthEnabled();
+    if (typeof registerTokenData?.registerToken !== 'string') {
+      throw new BadRequestException('INVALID_REGISTER_TOKEN');
+    }
     return this.authService.confirmEmail(registerTokenData.registerToken);
   }
 

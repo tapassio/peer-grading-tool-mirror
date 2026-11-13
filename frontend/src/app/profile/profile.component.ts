@@ -47,7 +47,7 @@ export class ProfileComponent implements OnInit {
     });
     this.changePasswordForm = this.formBuilder.group(
       {
-        newPassword: [, Validators.required],
+        newPassword: [, [Validators.required, Validators.minLength(8)]],
         passwordRepeat: [, Validators.required],
       },
       { validators: this.checkPasswords }

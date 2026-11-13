@@ -558,6 +558,10 @@
         <source>Der Wert muss mindestens <x id="INTERPOLATION" equiv-text="{{ control.errors[&quot;min&quot;].min }}"/> sein.</source>
         <target state="translated">the value must be at least <x id="INTERPOLATION" equiv-text="{{ control.errors[&quot;min&quot;].min }}"/>.</target>
       </trans-unit>
+      <trans-unit id="5639772534982645997" datatype="html">
+        <source>Mindestens <x id="INTERPOLATION" equiv-text="{{ control.errors[&quot;minlength&quot;].requiredLength }}"/> Zeichen.</source>
+        <target state="translated">at least <x id="INTERPOLATION" equiv-text="{{ control.errors[&quot;minlength&quot;].requiredLength }}"/> characters.</target>
+      </trans-unit>
       <trans-unit id="2536281828397564786" datatype="html">
         <source>Ungültige E-Mail-Adresse.</source>
         <target state="translated">invalid e-mail address.</target>

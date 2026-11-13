@@ -4,18 +4,57 @@ import { join } from 'path';
 import { existsSync } from 'fs';
 import { AppModule } from './app.module';
 import { toolchainManifest } from './toolchain/manifest';
+import helmet from 'helmet';
+import { checkSecrets } from './security/check-secrets';
 
 async function bootstrap() {
+  checkSecrets(process.env.PRODUCTION === 'true');
+
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+  const production = configService.get<boolean>('production');
+
+  // Behind a reverse proxy the client IP is in X-Forwarded-For.
+  // Needed so that the rate limit counts per user and not per proxy.
+  // Set TRUST_PROXY=1 (number of proxies) when deployed behind one.
+  if (process.env.TRUST_PROXY) {
+    app
+      .getHttpAdapter()
+      .getInstance()
+      .set('trust proxy', Number(process.env.TRUST_PROXY) || 1);
+  }
+
+  // Security headers (clickjacking, MIME sniffing, HSTS, ...).
+  // The CSP allows inline styles because Angular Material needs them.
+  // (angular.json: inlineCritical is off, because its onload trick for
+  // stylesheets would be blocked by the CSP.)
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          'style-src': [
+            "'self'",
+            "'unsafe-inline'",
+            'https://fonts.googleapis.com',
+          ],
+          'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
+          'img-src': ["'self'", 'data:'],
+          'connect-src': ["'self'", ...docPouchOrigin()],
+          'frame-ancestors': ["'self'", ...frameAncestors()],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+    }),
+  );
 
   const corsOrigins = configService.get<string[]>('corsOrigins') || [];
   if (corsOrigins.length > 0) {
     app.enableCors({ origin: corsOrigins, credentials: true });
-  } else {
-    // Development default: allow every origin.
+  } else if (!production) {
+    // Development only: allow every origin.
     app.enableCors();
   }
+  // Production without CORS_ORIGINS: no CORS, only same-origin requests.
 
   // e.g. APP_BASE_PATH=/tc/PeerGrading -> global prefix tc/PeerGrading/api
   const basePath = configService.get<string>('basePath') || '';
@@ -71,4 +110,26 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ? +process.env.PORT : 3000);
 }
+/** the frontend talks to DocPouch directly during the OIDC login */
+function docPouchOrigin(): string[] {
+  try {
+    return process.env.DOCPOUCH_URL
+      ? [new URL(process.env.DOCPOUCH_URL).origin]
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Pages that may embed the app in an iframe (e.g. the Toolchain host).
+ * Comma separated list in FRAME_ANCESTORS, default: none.
+ */
+function frameAncestors(): string[] {
+  return (process.env.FRAME_ANCESTORS || '')
+    .split(',')
+    .map((o) => o.trim())
+    .filter((o) => o.length > 0);
+}
+
 bootstrap();
