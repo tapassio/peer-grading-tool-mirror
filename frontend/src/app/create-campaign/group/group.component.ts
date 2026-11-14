@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Group, Campaign, CampaignStatus } from 'src/app/interfaces';
 import { CreateCampaignService } from '../create-campaign.service';
@@ -10,16 +10,14 @@ import { CreateCampaignService } from '../create-campaign.service';
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class GroupComponent implements OnInit {
-  @Input('group') group: Group;
-  @Input('campaign') campaign: Campaign;
-  @Input('campaignStatus') campaignStatus: CampaignStatus;
+export class GroupComponent {
+  @Input() group: Group;
+  @Input() campaign: Campaign;
+  @Input() campaignStatus: CampaignStatus;
 
   peerForm: FormGroup;
 
   constructor(private createCampaignService: CreateCampaignService) {}
-
-  ngOnInit(): void {}
 
   removeGroup() {
     this.createCampaignService.removeGroup(this.group);

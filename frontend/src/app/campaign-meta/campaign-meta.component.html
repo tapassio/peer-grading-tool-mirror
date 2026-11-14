@@ -52,7 +52,7 @@
       <b><ng-container i18n>Anzahl Teilnehmende</ng-container>:&nbsp;</b>
       <span>{{ countPeers() }}</span>
     </p>
-    @if (getCampaignStatus() != 'erstellt') {
+    @if (getCampaignStatus() !== 'erstellt') {
     <p>
       <b><ng-container i18n>Abschlussgrad</ng-container>:&nbsp;</b
       ><span
@@ -67,7 +67,7 @@
     @for (crit of campaign.criteria; track crit; let index = $index) {
     <p>
       <b
-        >@if (index == 0) {
+        >@if (index === 0) {
         <div>
           <ng-container i18n>Kriterien</ng-container> (<ng-container i18n
             >Gewichtung</ng-container

@@ -16,12 +16,12 @@
       <b><span i18n>Bewertungsskala</span>:&nbsp;</b>
       <span>1 - {{ campaign.maxPoints }}</span>
     </p>
-    @if (getCampaignStatus() == 'läuft') {
+    @if (getCampaignStatus() === 'läuft') {
     <p>
       <b><span i18n>Kampagnenbeginn</span>:&nbsp;</b>
       <span>{{ campaign.openingDate | date }}</span>
     </p>
-    } @if (getCampaignStatus() == 'abgeschlossen') {
+    } @if (getCampaignStatus() === 'abgeschlossen') {
     <p>
       <b><span i18n>Kampagnenzeitraum</span>:&nbsp;</b>
       <span
@@ -36,7 +36,7 @@
     @for (crit of campaign.criteria; track crit; let index = $index) {
     <p>
       <b
-        >@if (index == 0) {
+        >@if (index === 0) {
         <div>
           <span i18n>Kriterien</span> (<span i18n>Gewichtung</span>):&nbsp;
         </div>

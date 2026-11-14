@@ -62,7 +62,7 @@ export class UserService {
           }
           return;
         },
-        error: (error) => {
+        error: () => {
           this.snackBarService.openSnackBar(
             $localize`Username oder Passwort falsch`
           );
@@ -81,14 +81,14 @@ export class UserService {
   }
 
   cleanupUserData(user: User): User {
-    let { roles, campaigns, ...rest } = user;
-    let cleanRoles: any[] = [];
-    for (let role of user.roles) {
+    const { roles, campaigns, ...rest } = user;
+    const cleanRoles: any[] = [];
+    for (const role of user.roles) {
       cleanRoles.push(UserRole[role]);
     }
-    let cleanCampaigns: Campaign[] = [];
+    const cleanCampaigns: Campaign[] = [];
     if (user.campaigns) {
-      for (let campaign of user.campaigns) {
+      for (const campaign of user.campaigns) {
         cleanCampaigns.push(this.campaignService.cleanupCampaignData(campaign));
       }
     }
@@ -119,8 +119,8 @@ export class UserService {
    * @returns
    */
   userRolesToString(user: User) {
-    let result: string[] = [];
-    for (let role of user.roles) {
+    const result: string[] = [];
+    for (const role of user.roles) {
       if (role == 0) {
         result.push($localize`Admin`);
       } else if (role == 2) {

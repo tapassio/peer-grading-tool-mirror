@@ -1,4 +1,4 @@
-@if (campaignStatus == 'erstellt') {
+@if (campaignStatus === 'erstellt') {
 <form [formGroup]="criteriaForm">
   <label>
     <div><ng-container i18n>Kriterienname</ng-container>:</div>
@@ -28,7 +28,7 @@
       mat-raised-button
       color="primary"
       (click)="addCriteria(criteriaForm)"
-      [disabled]="criteriaForm.invalid || campaignStatus != 'erstellt'"
+      [disabled]="criteriaForm.invalid || campaignStatus !== 'erstellt'"
       type="submit"
     >
       <ng-container i18n>Hinzufügen</ng-container> <mat-icon>add</mat-icon>
@@ -51,7 +51,7 @@
       <button
         mat-raised-button
         color="primary"
-        [disabled]="campaignStatus != 'erstellt'"
+        [disabled]="campaignStatus !== 'erstellt'"
         (click)="removeCriteria(criteria)"
       >
         <ng-container i18n>Löschen</ng-container> <mat-icon>delete</mat-icon>

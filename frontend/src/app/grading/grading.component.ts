@@ -28,7 +28,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { WarnDialogComponent } from '../warn-dialog/warn-dialog.component';
 import { SnackBarService } from '../services/snack-bar.service';
-import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 
 interface GradingData {
@@ -130,13 +129,13 @@ export class GradingComponent implements OnInit {
     });
 
     // initializing form groups
-    let gradingFormGroup = this.formBuilder.group({});
+    const gradingFormGroup = this.formBuilder.group({});
     gradingFormGroup.setValidators(Validators.required);
 
-    let commentsFormGroup = this.formBuilder.group({});
+    const commentsFormGroup = this.formBuilder.group({});
 
     // iterating over each peer of the group which corresponds with each row in the table
-    for (let peer of this.group().peers) {
+    for (const peer of this.group().peers) {
       // getting gradings to fill the form in case it has been entered before
       const peerToPeerGradings = this.campaignService.getPeerToPeerGradings(
         this.group(),
@@ -144,13 +143,13 @@ export class GradingComponent implements OnInit {
         peer
       );
 
-      let peerFormgroup = new FormGroup({});
+      const peerFormgroup = new FormGroup({});
 
       // iterating over criteria which corresponds to each column in the table
-      for (let crit of this.campaign().criteria) {
+      for (const crit of this.campaign().criteria) {
         // points is stored to set the value of the critControl
         // it is set to the value of the already exisisting grading or to undefined if the grading didn't exist
-        let points = peerToPeerGradings.find(
+        const points = peerToPeerGradings.find(
           (grading) => grading.criteria.criteriaId === crit.criteriaId
         )
           ? peerToPeerGradings.find(
@@ -158,7 +157,7 @@ export class GradingComponent implements OnInit {
             )?.points
           : undefined;
 
-        let critControl = new FormControl(points, [
+        const critControl = new FormControl(points, [
           // whole or half points, e.g. 4 or 4.5 (Swiss half grades)
           Validators.pattern('^\\d+(\\.[05])?$'),
           Validators.min(1),
@@ -178,7 +177,7 @@ export class GradingComponent implements OnInit {
         (comment: PeerComment) => comment.toUser.userId == user.userId
       )?.text;
 
-      let commentFormControl = this.formBuilder.control(textOfComment);
+      const commentFormControl = this.formBuilder.control(textOfComment);
 
       commentsFormGroup.addControl(`${user.userId}`, commentFormControl);
     }
@@ -194,7 +193,7 @@ export class GradingComponent implements OnInit {
         (comment: PeerComment) => comment.toUser.userId == (peer as any).userId
       )?.text;
 
-      let commentFormControl = this.formBuilder.control(textOfComment);
+      const commentFormControl = this.formBuilder.control(textOfComment);
 
       commentsFormGroup.addControl(
         `${(peer as any).userId}`,
@@ -221,7 +220,7 @@ export class GradingComponent implements OnInit {
   generateGradings(toPeer: Peer): Grading[] {
     const gradings = new Array<Grading>();
 
-    for (let crit of this.campaign().criteria) {
+    for (const crit of this.campaign().criteria) {
       gradings.push(
         this.campaignService.gradingConstructor(
           crit,
@@ -242,7 +241,7 @@ export class GradingComponent implements OnInit {
   submit(gradingForm: FormGroup) {
     if (gradingForm.valid) {
       // getting comments that were not empty
-      let comments: any = {};
+      const comments: any = {};
 
       for (const userIdKey in gradingForm.value.comments) {
         if (
@@ -254,13 +253,13 @@ export class GradingComponent implements OnInit {
       }
 
       // generating the gradings for each peer
-      let gradings: Grading[] = [];
-      for (let toPeer of this.group().peers) {
+      const gradings: Grading[] = [];
+      for (const toPeer of this.group().peers) {
         gradings.push(...this.generateGradings(toPeer));
       }
 
       // setting up the data to transfer to the backend
-      let data = {
+      const data = {
         gradings,
         comments,
         groupId: this.group().groupId,
@@ -286,7 +285,7 @@ export class GradingComponent implements OnInit {
               );
             }
           },
-          error: (err: HttpErrorResponse) => {
+          error: () => {
             this.snackBarService.openSnackBar(
               $localize`Gradings konnten nicht gespeichert werden.`
             );

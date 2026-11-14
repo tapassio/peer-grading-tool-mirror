@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 /**
  * the tooltip component is a component displays a box with a "?" sign
  * text is displayed when hovering over it
@@ -10,12 +10,9 @@ import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class ToolTipComponent implements OnInit {
-  @Input('text') text: string;
-  @Input('icon') icon: string = 'help_outline';
-  @Input('color') color: string = 'var(--tc-purple)';
+export class ToolTipComponent {
+  @Input() text: string;
+  @Input() icon = 'help_outline';
+  @Input() color = 'var(--tc-purple)';
 
-  constructor() {}
-
-  ngOnInit(): void {}
 }

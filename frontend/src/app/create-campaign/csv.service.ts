@@ -26,7 +26,7 @@ export class CsvService {
     this.csvErrors.set([]);
 
     let groups: Group[] = [];
-    let lines = csv.split(/\r?\n/);
+    const lines = csv.split(/\r?\n/);
 
     const firstLine: string[] = this.splitLine(lines[0]).map(
       (colName: string) => colName.toLowerCase().trim()
@@ -60,7 +60,7 @@ export class CsvService {
       return [];
     }
 
-    for (let [index, line] of lines.entries()) {
+    for (const [index, line] of lines.entries()) {
       // skipping the first line and empty lines
       if (index == 0 || line == '') {
         continue;
@@ -98,7 +98,7 @@ export class CsvService {
         );
       }
 
-      const groupNumber: number = Number(groupNumberString);
+      const groupNumber = Number(groupNumberString);
 
       let foundGroup = groups.find((gr) => gr.number == groupNumber);
 
@@ -136,9 +136,9 @@ export class CsvService {
 
   private splitLine(line: string): string[] {
     // checking for semicolons, commas or tabs as separators
-    let semicolonSplittedLine = line.split(';');
-    let commaSplittedLine = line.split(',');
-    let tabSplittedLine = line.split('\t');
+    const semicolonSplittedLine = line.split(';');
+    const commaSplittedLine = line.split(',');
+    const tabSplittedLine = line.split('\t');
 
     if (
       semicolonSplittedLine.length > commaSplittedLine.length &&
@@ -168,7 +168,7 @@ export class CsvService {
       ) != null;
     const groupNumberValid = groupNumber.match('^\\d+$') != null;
 
-    let invalidMessages: string[] = [];
+    const invalidMessages: string[] = [];
 
     if (!lastNameValid) invalidMessages.push($localize`kein Nachname`);
     if (!firstNameValid) invalidMessages.push($localize`kein Vorname`);

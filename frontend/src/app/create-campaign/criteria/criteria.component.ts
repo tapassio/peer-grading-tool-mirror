@@ -16,8 +16,8 @@ import { CreateCampaignService } from '../create-campaign.service';
 })
 export class CriteriaComponent implements OnInit {
   criteriaForm: FormGroup;
-  @Input('campaign') campaign: Campaign;
-  @Input('campaignStatus') campaignStatus: CampaignStatus;
+  @Input() campaign: Campaign;
+  @Input() campaignStatus: CampaignStatus;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -28,8 +28,8 @@ export class CriteriaComponent implements OnInit {
   ngOnInit(): void {
     // creating the form for the criteria
     this.criteriaForm = this.formBuilder.group({
-      criteriaName: [, Validators.required],
-      criteriaWeight: [, [Validators.required, Validators.min(0)]],
+      criteriaName: [null, Validators.required],
+      criteriaWeight: [null, [Validators.required, Validators.min(0)]],
     });
 
     if (this.campaignStatus != 'erstellt') this.criteriaForm.disable();

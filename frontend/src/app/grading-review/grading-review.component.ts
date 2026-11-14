@@ -93,8 +93,8 @@ export class PeerGradingReviewComponent implements OnInit {
   exportPDF() {
     this.pgtService.getReviewPDF(this.url()).subscribe({
       next: (blob) => {
-        let url = window.URL.createObjectURL(blob);
-        let a = document.createElement('a');
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
         document.body.appendChild(a);
         a.setAttribute('style', 'display: none');
         a.href = url;

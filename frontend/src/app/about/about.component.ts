@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 /**
  * this component is a page explaining the PGT
@@ -10,10 +10,8 @@ import { Router } from '@angular/router';
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class AboutComponent implements OnInit {
+export class AboutComponent {
   constructor(private router: Router) {}
-
-  ngOnInit(): void {}
 
   backToLogin() {
     this.router.navigate(['/login']);

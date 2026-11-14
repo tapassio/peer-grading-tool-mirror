@@ -4,7 +4,9 @@
   gap: 1em;
 }
 
-.adminForm label {
+/* .form-row: a row without a form field (e.g. the button row) */
+.adminForm label,
+.adminForm .form-row {
   white-space: nowrap;
   display: flex;
   justify-content: space-between;
@@ -39,7 +41,8 @@ input {
 }
 
 @media screen and (max-width: 480px) {
-  .adminForm label {
+  .adminForm label,
+  .adminForm .form-row {
     display: block;
   }
 

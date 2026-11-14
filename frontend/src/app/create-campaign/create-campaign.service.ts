@@ -33,7 +33,8 @@ export class CreateCampaignService {
   defaultCriteria: { de: Criteria[]; en: Criteria[] } = DEFAULT_CRITERIA;
 
   campaign: WritableSignal<Campaign> = signal(this.createNewCampaign(), {
-    equal: (a, b) => {
+    // always "changed", so every set() updates the views
+    equal: () => {
       return false;
     },
   });
@@ -115,15 +116,14 @@ export class CreateCampaignService {
   }
 
   updateCampaignValues(values: any) {
-    let campaign = this.campaign();
-    for (let key in values) {
+    const campaign = this.campaign();
+    for (const key in values) {
       (campaign as any)[key] = values[key];
     }
     this.campaign.set(campaign);
   }
 
-  updateUnsavedChanges(value: boolean, text: string) {
-    // console.log('updating unsaved changes', value, ':', text);
+  updateUnsavedChanges(value: boolean, _reason: string) {
     this.unsavedChanges.set(value);
   }
 
@@ -163,7 +163,7 @@ export class CreateCampaignService {
 
   addGroup() {
     this.updateUnsavedChanges(true, 'group added');
-    let group = this.campaignService.groupConstructor(0, [], [], false, [], 0);
+    const group = this.campaignService.groupConstructor(0, [], [], false, [], 0);
     this.campaignService.addGroup(this.campaign(), group);
     this.campaign.set(this.campaign());
   }
@@ -189,10 +189,10 @@ export class CreateCampaignService {
 
   importCSV(campaign: Campaign, event: Event) {
     const target = event.currentTarget as HTMLInputElement;
-    let files: FileList | null = target.files;
+    const files: FileList | null = target.files;
     if (target && files) {
-      let file: File = files[0];
-      let reader: FileReader = new FileReader();
+      const file: File = files[0];
+      const reader: FileReader = new FileReader();
       reader.readAsText(file);
       let csv: string;
       reader.onload = () => {
@@ -284,7 +284,7 @@ export class CreateCampaignService {
    * this method checks if the data of the campaign makes sense
    */
   private computeCampaignErrors(campaign: Campaign) {
-    let campaignErrors: string[] = [];
+    const campaignErrors: string[] = [];
 
     if (!Number.isInteger(campaign.maxPoints)) {
       campaignErrors.push(
@@ -300,14 +300,14 @@ export class CreateCampaignService {
       campaignErrors.push($localize`Keine Gruppen erfasst.`);
     }
 
-    for (let group of campaign.groups) {
+    for (const group of campaign.groups) {
       if (group.peers.length == 0) {
         campaignErrors.push(
           $localize`Keine Teilnehmenden in Gruppe ${group.number}.`
         );
       }
 
-      let emailSet = new Set<string>();
+      const emailSet = new Set<string>();
 
       for (const email of group.peers.map((p) => p.email)) {
         if (emailSet.has(email)) {

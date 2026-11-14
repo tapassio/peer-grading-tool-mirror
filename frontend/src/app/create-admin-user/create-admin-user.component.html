@@ -66,8 +66,8 @@
         }
       </div>
     </label>
-    <label
-      >@if (admin() != null) {
+    <div class="form-row">
+      @if (admin() != null) {
       <button
         mat-raised-button
         color="primary"
@@ -89,8 +89,8 @@
         <ng-container i18n>Admin erstellen</ng-container>
         <mat-icon>save</mat-icon>
       </button>
-      }</label
-    >
+      }
+    </div>
   </form>
 </main>
 }

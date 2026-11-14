@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -8,13 +8,8 @@ import { FormControl } from '@angular/forms';
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class FormErrorComponent implements OnInit {
+export class FormErrorComponent {
 
   @Input() control:FormControl | any;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

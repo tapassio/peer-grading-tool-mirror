@@ -38,7 +38,7 @@ export class AdminDashboardComponent implements OnInit {
       });
   }
 
-  onReloadEvent(event: any) {
+  onReloadEvent(_event: any) {
     this.adminDashboardService.reloadCampaigns();
   }
 

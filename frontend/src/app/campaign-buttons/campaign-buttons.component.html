@@ -1,6 +1,6 @@
 <div class="button-super-container">
   <div class="button-container">
-    @if (viewState == 'dashboard') {
+    @if (viewState === 'dashboard') {
     <button mat-raised-button class="tc-secondary" (click)="toSummary()">
       <ng-container i18n>Anschauen</ng-container>
       <mat-icon>remove_red_eye</mat-icon>
@@ -9,7 +9,7 @@
     <button mat-raised-button class="tc-secondary" (click)="edit()">
       <ng-container i18n>Bearbeiten</ng-container> <mat-icon>edit</mat-icon>
     </button>
-    @if (viewState == 'summary') {
+    @if (viewState === 'summary') {
     <button mat-raised-button color="warn" (click)="deleteCampaign()">
       <ng-container i18n>Löschen</ng-container> <mat-icon>delete</mat-icon>
     </button>
@@ -38,9 +38,9 @@
       mat-raised-button
       color="accent"
       (click)="startCampaign()"
-      [disabled]="getCampaignStatus() != 'erstellt'"
+      [disabled]="getCampaignStatus() !== 'erstellt'"
       matTooltip="Kampagne wurde bereits begonnen."
-      [matTooltipDisabled]="getCampaignStatus() == 'erstellt'"
+      [matTooltipDisabled]="getCampaignStatus() === 'erstellt'"
     >
       <ng-container i18n>Einladungs-Mails versenden</ng-container>
       <mat-icon>play_arrow</mat-icon>
@@ -49,7 +49,7 @@
     <button
       mat-raised-button
       color="accent"
-      [disabled]="getCampaignStatus() != 'läuft' || gradingsComplete()"
+      [disabled]="getCampaignStatus() !== 'läuft' || gradingsComplete()"
       (click)="sendReminderMails()"
       [matTooltip]="getReminderTooltip()"
     >
@@ -61,9 +61,9 @@
       mat-raised-button
       color="accent"
       (click)="endCampaign()"
-      [disabled]="getCampaignStatus() != 'läuft'"
+      [disabled]="getCampaignStatus() !== 'läuft'"
       [matTooltip]="getEndingTooltip()"
-      [matTooltipDisabled]="getCampaignStatus() == 'abgeschlossen'"
+      [matTooltipDisabled]="getCampaignStatus() === 'abgeschlossen'"
     >
       <ng-container i18n>Kampagne beenden</ng-container>
       <mat-icon>stop</mat-icon>
@@ -73,9 +73,9 @@
       mat-raised-button
       color="accent"
       (click)="sendCampaignResults()"
-      [disabled]="getCampaignStatus() == 'erstellt'"
+      [disabled]="getCampaignStatus() === 'erstellt'"
       matTooltip="Kampagne wurde noch nicht begonnen."
-      [matTooltipDisabled]="getCampaignStatus() != 'erstellt'"
+      [matTooltipDisabled]="getCampaignStatus() !== 'erstellt'"
     >
       <ng-container i18n>Ergebnisse an Teilnehmer senden</ng-container>
       <mat-icon>mail</mat-icon>

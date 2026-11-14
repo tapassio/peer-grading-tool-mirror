@@ -5,7 +5,6 @@ import { CampaignService } from '../services/campaign.service';
 
 describe('CsvService', () => {
   let service: CsvService;
-  let campaignService: CampaignService;
   let campaignServiceMock: Partial<CampaignService>;
 
   beforeEach(() => {
@@ -40,7 +39,6 @@ describe('CsvService', () => {
       ],
     });
     service = TestBed.inject(CsvService);
-    campaignService = TestBed.inject(CampaignService);
 
     // Resetting signals before each test
     service.csvErrors.set([]);

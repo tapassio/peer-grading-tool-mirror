@@ -59,7 +59,7 @@
     <button
       mat-raised-button
       color="primary"
-      [disabled]="campaignStatus == 'abgeschlossen'"
+      [disabled]="campaignStatus === 'abgeschlossen'"
       (click)="removePeer()"
     >
       <span i18n>Löschen</span>

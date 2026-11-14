@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Campaign, Group, Peer } from 'src/app/interfaces';
 import { CampaignService } from 'src/app/services/campaign.service';
 /**
@@ -15,14 +15,12 @@ import { CampaignService } from 'src/app/services/campaign.service';
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class CampaignGroupSummaryComponent implements OnInit {
+export class CampaignGroupSummaryComponent {
   @Input() group?: Group;
   @Input() campaign?: Campaign;
-  completed: boolean = false;
+  completed = false;
 
   constructor(public campaignService: CampaignService) {}
-
-  ngOnInit(): void {}
 
   /**
    * this method returns the peers that haven't graded yeet

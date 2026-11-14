@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
-import { Campaign, Grading, MailsSent, PeerComment } from '../interfaces';
+import { Campaign, Grading, MailsSent } from '../interfaces';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
