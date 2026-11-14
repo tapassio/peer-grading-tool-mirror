@@ -206,23 +206,44 @@ const probePort = (port) =>
       resolve(false);
     });
   });
+// `taskkill` must be resolved by absolute path: under Git Bash the inherited
+// PATH is unix-style (with literal %NVM_HOME%/%NVM_SYMLINK% entries), so
+// spawnSync('taskkill', …) fails with ENOENT and --stop silently leaves the
+// processes alive.
+const taskkillPath = isWindows
+  ? join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'taskkill.exe')
+  : null;
+
 function killTree(pid) {
-  if (!pid) return;
-  try {
-    if (isWindows) {
-      spawnSync('taskkill', ['/pid', String(pid), '/T', '/F'], {
-        stdio: 'ignore',
-        windowsHide: true,
-      });
-    } else {
-      try {
-        process.kill(-pid, 'SIGTERM');
-      } catch {
-        process.kill(pid, 'SIGTERM');
-      }
+  if (!pid) return true;
+  if (!procAlive(pid)) return true; // already gone
+  if (isWindows) {
+    const res = spawnSync(taskkillPath, ['/pid', String(pid), '/T', '/F'], {
+      stdio: 'ignore',
+      windowsHide: true,
+    });
+    if (!res.error && res.status === 0) return true;
+    const reason = res.error ? res.error.code : `exit ${res.status}`;
+    warn(`taskkill failed for pid ${pid} (${reason}), falling back to process.kill`);
+    try {
+      process.kill(pid, 'SIGKILL');
+      return true;
+    } catch (e) {
+      warn(`could not kill pid ${pid}: ${e.message}`);
+      return false;
     }
-  } catch (e) {
-    warn(`could not kill pid ${pid}: ${e.message}`);
+  }
+  try {
+    process.kill(-pid, 'SIGTERM');
+    return true;
+  } catch {
+    try {
+      process.kill(pid, 'SIGTERM');
+      return true;
+    } catch (e) {
+      warn(`could not kill pid ${pid}: ${e.message}`);
+      return false;
+    }
   }
 }
 
@@ -497,9 +518,12 @@ async function stopAll() {
   for (const name of ['frontend', 'backend']) {
     const pid = readPid(name);
     if (pid) {
-      killTree(pid);
-      clearPid(name);
-      ok(`stopped ${name} (pid ${pid})`);
+      if (killTree(pid)) {
+        clearPid(name);
+        ok(`stopped ${name} (pid ${pid})`);
+      } else {
+        warn(`could not stop ${name} (pid ${pid}) — kill it manually`);
+      }
     }
   }
 }
