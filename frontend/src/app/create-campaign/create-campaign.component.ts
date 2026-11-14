@@ -5,6 +5,7 @@ import {
   Signal,
   effect,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {
   Campaign,
@@ -26,9 +27,11 @@ import {
 } from '../services/campaign.service';
 
 @Component({
-  selector: 'pgt-create-campaign',
-  templateUrl: './create-campaign.component.html',
-  styleUrls: ['../app.component.css', './create-campaign.component.css'],
+    selector: 'pgt-create-campaign',
+    templateUrl: './create-campaign.component.html',
+    styleUrls: ['../app.component.css', './create-campaign.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CreateCampaignComponent implements OnInit, DeactivatableComponent {
   campaignId: Signal<number | undefined> = signal(

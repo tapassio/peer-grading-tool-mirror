@@ -5,6 +5,7 @@ import {
   WritableSignal,
   computed,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Campaign, Group, Peer, PeerComment } from '../interfaces';
@@ -33,9 +34,11 @@ interface GradingReviewData {
  * this component displays the peer grading review for a peer user
  */
 @Component({
-  selector: 'pgt-grading-review',
-  templateUrl: './grading-review.component.html',
-  styleUrls: ['../app.component.css', './grading-review.component.css'],
+    selector: 'pgt-grading-review',
+    templateUrl: './grading-review.component.html',
+    styleUrls: ['../app.component.css', './grading-review.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PeerGradingReviewComponent implements OnInit {
   url: Signal<string> = signal(this.activatedRoute.snapshot.params['url']);

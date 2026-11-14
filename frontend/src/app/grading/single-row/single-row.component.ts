@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Campaign, Peer } from 'src/app/interfaces';
 import { GradingComponent } from '../grading.component';
 
@@ -6,9 +6,11 @@ import { GradingComponent } from '../grading.component';
  * this component displays each row of the form in the grading component
  */
 @Component({
-  selector: 'pgt-single-row',
-  templateUrl: './single-row.component.html',
-  styleUrls: ['./single-row.component.css', '../../app.component.css'],
+    selector: 'pgt-single-row',
+    templateUrl: './single-row.component.html',
+    styleUrls: ['./single-row.component.css', '../../app.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class SingleRowComponent implements OnInit {
   @Input() toPeer: Peer;

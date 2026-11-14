@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { CreateCampaignService } from './create-campaign.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
@@ -10,8 +10,9 @@ describe('CreateCampaignService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule, MatSnackBarModule, MatDialogModule],
-    });
+    imports: [MatSnackBarModule, MatDialogModule],
+    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
+});
     service = TestBed.inject(CreateCampaignService);
   });
 

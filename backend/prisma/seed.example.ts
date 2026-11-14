@@ -1,8 +1,9 @@
-import { Campaign, PrismaClient } from '@prisma/client';
+import { Campaign } from '@prisma/client';
+import { createPrismaClient } from '../src/prisma-client';
 import * as bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 const critNames = [
   {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -17,9 +17,11 @@ import { HttpErrorResponse } from '@angular/common/http';
  * here the password can be changed
  */
 @Component({
-  selector: 'pgt-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['../app.component.css', './profile.component.css'],
+    selector: 'pgt-profile',
+    templateUrl: './profile.component.html',
+    styleUrls: ['../app.component.css', './profile.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ProfileComponent implements OnInit {
   user: User | null | undefined;

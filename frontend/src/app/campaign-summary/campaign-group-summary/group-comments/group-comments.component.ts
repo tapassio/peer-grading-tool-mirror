@@ -1,10 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Peer, PeerComment } from 'src/app/interfaces';
 
 @Component({
-  selector: 'pgt-group-comments',
-  templateUrl: './group-comments.component.html',
-  styleUrl: './group-comments.component.css',
+    selector: 'pgt-group-comments',
+    templateUrl: './group-comments.component.html',
+    styleUrl: './group-comments.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupCommentsComponent {
   @Input('comments') comments: PeerComment[];

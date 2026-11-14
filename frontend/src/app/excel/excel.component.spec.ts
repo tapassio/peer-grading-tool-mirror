@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExcelComponent } from './excel.component';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -12,14 +12,12 @@ describe('ExcelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        HttpClientModule,
-        MatSnackBarModule,
+    declarations: [ExcelComponent],
+    imports: [MatSnackBarModule,
         RouterModule.forRoot([]),
-        ReactiveFormsModule,
-      ],
-      declarations: [ExcelComponent],
-    }).compileComponents();
+        ReactiveFormsModule],
+    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
+}).compileComponents();
 
     fixture = TestBed.createComponent(ExcelComponent);
     component = fixture.componentInstance;

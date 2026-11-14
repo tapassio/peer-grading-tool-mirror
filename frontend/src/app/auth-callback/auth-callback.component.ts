@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
 /**
@@ -7,9 +7,11 @@ import { AuthService } from '../services/auth.service';
  * forwards the user back to the originally requested page.
  */
 @Component({
-  selector: 'pgt-auth-callback',
-  templateUrl: './auth-callback.component.html',
-  styleUrls: ['./auth-callback.component.css'],
+    selector: 'pgt-auth-callback',
+    templateUrl: './auth-callback.component.html',
+    styleUrls: ['./auth-callback.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AuthCallbackComponent implements OnInit {
   constructor(private authService: AuthService) {}

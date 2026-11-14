@@ -5,6 +5,7 @@ import {
   WritableSignal,
   computed,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {
   FormBuilder,
@@ -41,9 +42,11 @@ interface GradingData {
  * this component lets peers enter their gradings and a comment
  */
 @Component({
-  selector: 'pgt-grading',
-  templateUrl: './grading.component.html',
-  styleUrls: ['./grading.component.css', '../app.component.css'],
+    selector: 'pgt-grading',
+    templateUrl: './grading.component.html',
+    styleUrls: ['./grading.component.css', '../app.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GradingComponent implements OnInit {
   url: Signal<string> = signal(this.activatedRoute.snapshot.params['url']);

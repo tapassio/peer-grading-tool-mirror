@@ -27,9 +27,9 @@ notice in `LICENSE`.
    - DATABASE_URL, JWT-SECRET, JWT_REFRESH_SECRET and HOST can be left for local use.
    - SEND_GRID_KEY and SEND_GRID_SENDER_EMAIL must be obtained from sendgrid. see `https://sendgrid.com/`
 
-2. Use `npm i` in the `frontend/` and `backend/` folder.
+2. Install Node.js 24 (LTS). Use `npm i` in the `frontend/` and `backend/` folder.
 
-   - Then check whether the Prisma version in `/backend/package.json` and `/backend/package-lock.json` is at least 4.7.1.
+   - Then run `npx prisma generate` in the `/backend` folder (Prisma 7 no longer does this during `npm i`).
 
 3. Set up the database for the first time.
    - Copy `backend/prisma/seed.example.ts` in this folder and rename to `seed.ts`.

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
@@ -18,9 +18,11 @@ import { PGTService } from '../services/pgt.service';
  * user after every navigation (e.g. after login or logout).
  */
 @Component({
-  selector: 'pgt-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css'],
+    selector: 'pgt-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class HeaderComponent implements OnInit {
   user: User | null = null;

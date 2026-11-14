@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HeaderComponent } from './header.component';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 describe('HeaderComponent', () => {
@@ -10,9 +10,10 @@ describe('HeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientModule, MatSnackBarModule],
-      declarations: [HeaderComponent],
-    }).compileComponents();
+    declarations: [HeaderComponent],
+    imports: [MatSnackBarModule],
+    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
+}).compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;

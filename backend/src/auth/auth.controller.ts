@@ -72,7 +72,7 @@ export class AuthController {
   // Every exchange costs one DocPouch request, and DocPouch allows only
   // 100 GET requests per 15 minutes for the whole PGT server (same IP).
   // Without this limit a few hundred bogus requests would block all logins.
-  @Throttle(5, 60)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('oidc/exchange')
   async exchangeOidcToken(
     @Req() req,
@@ -96,7 +96,7 @@ export class AuthController {
   }
 
   // max. 5 login attempts per minute and IP (brute force protection)
-  @Throttle(5, 60)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req, @Res({ passthrough: true }) res) {
@@ -122,7 +122,7 @@ export class AuthController {
   }
 
   // every registration sends an e-mail: limit it to avoid mail spam
-  @Throttle(3, 60)
+  @Throttle({ default: { limit: 3, ttl: 60_000 } })
   @Post('register')
   async registerUser(
     @Body(new JoiValidationPipe(registerSchema)) registerData: RegisterData,
@@ -132,7 +132,7 @@ export class AuthController {
     return this.authService.register(registerData, i18n.lang);
   }
 
-  @Throttle(10, 60)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @Post('confirm-email')
   async confirmEmail(@Body() registerTokenData: any) {
     this.assertLocalAuthEnabled();

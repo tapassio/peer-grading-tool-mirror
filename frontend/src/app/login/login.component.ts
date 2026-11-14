@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SnackBarService } from '../services/snack-bar.service';
@@ -11,9 +11,11 @@ import { AuthService } from '../services/auth.service';
  * In OIDC mode the local form is replaced by a DocPouch login button.
  */
 @Component({
-  selector: 'pgt-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+    selector: 'pgt-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;

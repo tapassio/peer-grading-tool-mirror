@@ -91,7 +91,8 @@ async function bootstrap() {
     const isGerman = (path: string) =>
       path === `${basePath}/de` || path.startsWith(`${basePath}/de/`);
 
-    server.get('*', (req, res, next) => {
+    // Express 5: a named wildcard ('{*path}') instead of '*'
+    server.get('/{*path}', (req, res, next) => {
       // Never swallow API calls or missing static assets.
       if (req.path.startsWith(apiPath) || req.path.includes('.')) {
         return next();

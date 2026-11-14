@@ -1,10 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Peer, User } from 'src/app/interfaces';
 
 @Component({
-  selector: 'pgt-single-comment',
-  templateUrl: './single-comment.component.html',
-  styleUrl: './single-comment.component.css',
+    selector: 'pgt-single-comment',
+    templateUrl: './single-comment.component.html',
+    styleUrl: './single-comment.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class SingleCommentComponent implements OnInit {
   @Input() toUser: User;

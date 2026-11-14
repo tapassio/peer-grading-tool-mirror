@@ -1,11 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Campaign, CampaignStatus, Grading } from '../interfaces';
 import { CampaignService } from '../services/campaign.service';
 
 @Component({
-  selector: 'pgt-campaign-meta',
-  templateUrl: './campaign-meta.component.html',
-  styleUrls: ['./campaign-meta.component.css'],
+    selector: 'pgt-campaign-meta',
+    templateUrl: './campaign-meta.component.html',
+    styleUrls: ['./campaign-meta.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CampaignMetaComponent implements OnInit {
   @Input('campaign') campaign: Campaign;

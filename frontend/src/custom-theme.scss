@@ -6,7 +6,8 @@
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 
 :root {
   /* Toolchain Family palette (same values as Toolchain Tool Manager, app.css) */
@@ -104,59 +105,59 @@ $tc-red-palette: (
   ),
 );
 
-$dsl-headline-1: mat.define-typography-level(
+$dsl-headline-1: mat.m2-define-typography-level(
   $font-weight: normal,
   $font-size: 2em,
 );
-$dsl-headline-2: mat.define-typography-level(
+$dsl-headline-2: mat.m2-define-typography-level(
   $font-weight: normal,
   $font-size: 2em,
 );
-$dsl-headline-3: mat.define-typography-level(
+$dsl-headline-3: mat.m2-define-typography-level(
   $font-weight: bold,
   $font-size: 1.5em,
 );
-$dsl-headline-4: mat.define-typography-level(
+$dsl-headline-4: mat.m2-define-typography-level(
   $font-weight: normal,
   $font-size: 1.5em,
 );
-$dsl-headline-5: mat.define-typography-level(
+$dsl-headline-5: mat.m2-define-typography-level(
   $font-weight: bold,
   $font-size: 1.2em,
 );
-$dsl-headline-6: mat.define-typography-level(
+$dsl-headline-6: mat.m2-define-typography-level(
   $font-weight: normal,
   $font-size: 1.2em,
 );
-$dsl-subtitle-1: mat.define-typography-level(
+$dsl-subtitle-1: mat.m2-define-typography-level(
   $font-weight: bold,
   $font-size: 1em,
 );
-$dsl-subtitle-2: mat.define-typography-level(
+$dsl-subtitle-2: mat.m2-define-typography-level(
   $font-weight: bold,
   $font-size: 1em,
 );
 
-$dsl-body-1: mat.define-typography-level(
+$dsl-body-1: mat.m2-define-typography-level(
   $font-weight: normal,
   $font-size: 1em,
 );
-$dsl-body-2: mat.define-typography-level(
+$dsl-body-2: mat.m2-define-typography-level(
   $font-weight: normal,
   $font-size: 1em,
 );
 
-$dsl-caption: mat.define-typography-level(
+$dsl-caption: mat.m2-define-typography-level(
   $font-weight: normal,
   $font-size: 0.8em,
 );
 
-$dsl-button: mat.define-typography-level(
+$dsl-button: mat.m2-define-typography-level(
   $font-weight: bold,
   $font-size: 1em,
 );
 
-$dsl-typography-config: mat.define-typography-config(
+$dsl-typography-config: mat.m2-define-typography-config(
   $headline-1: $dsl-headline-1,
   $headline-2: $dsl-headline-2,
   $headline-3: $dsl-headline-3,
@@ -175,15 +176,15 @@ $dsl-typography-config: mat.define-typography-config(
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$dsl-ci-cd-primary: mat.define-palette($tc-purple-palette, 700);
-$dsl-ci-cd-accent: mat.define-palette($tc-slate-palette, 700);
+$dsl-ci-cd-primary: mat.m2-define-palette($tc-purple-palette, 700);
+$dsl-ci-cd-accent: mat.m2-define-palette($tc-slate-palette, 700);
 
 // optional
-$dsl-ci-cd-warn: mat.define-palette($tc-red-palette, 700);
+$dsl-ci-cd-warn: mat.m2-define-palette($tc-red-palette, 700);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
-$dsl-ci-cd-theme: mat.define-light-theme(
+$dsl-ci-cd-theme: mat.m2-define-light-theme(
   (
     color: (
       primary: $dsl-ci-cd-primary,
