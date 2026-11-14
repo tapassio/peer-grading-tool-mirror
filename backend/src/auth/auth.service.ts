@@ -5,7 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import {
   hashPassword,
   hashToken,
@@ -197,14 +197,14 @@ export class AuthService {
         { email: email },
         {
           secret: process.env['JWT_SECRET'],
-          expiresIn: accessTokenTtl,
+          expiresIn: accessTokenTtl as JwtSignOptions['expiresIn'],
         },
       ),
       this.jwtService.signAsync(
         { email: email },
         {
           secret: process.env['JWT_REFRESH_SECRET'],
-          expiresIn: refreshTokenTtl,
+          expiresIn: refreshTokenTtl as JwtSignOptions['expiresIn'],
         },
       ),
     ]);

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Campaign, Criteria, Group, Peer, PeerComment } from 'src/interfaces';
+import { Campaign, Criteria, Group, Peer, PeerComment } from '../interfaces';
 import * as ExcelJS from 'exceljs';
 import { CalculationsService, gradeRoundingOf } from '../calculations/calculations.service';
 import { CampaignService } from '../campaign/campaign.service';

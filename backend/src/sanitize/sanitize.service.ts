@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import * as sanitizeHTML from 'sanitize-html';
+import sanitizeHTML from 'sanitize-html';
 
 @Injectable()
 export class SanitizeService {

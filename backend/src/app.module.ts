@@ -30,7 +30,8 @@ import { APP_GUARD } from '@nestjs/core';
     ScheduleModule.forRoot(),
     // Rate limit: max. 100 requests per minute and IP for every route.
     // Login and registration have stricter limits (see auth.controller.ts).
-    ThrottlerModule.forRoot({ ttl: 60, limit: 100 }),
+    // (@nestjs/throttler 6: ttl in milliseconds)
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
     ConfigModule.forRoot({
       load: [config],
       isGlobal: true,
@@ -43,18 +44,20 @@ import { APP_GUARD } from '@nestjs/core';
         }
 
         const base = config.get<string>('basePath') || '';
+        // Express 5 / path-to-regexp 8 syntax: never serve files for the API
+        const exclude = [`${base}/api/{*path}`];
         const english = join(__dirname, '..', 'frontend', 'en');
         const german = join(__dirname, '..', 'frontend', 'de');
 
         const options: ServeStaticModuleOptions[] = [
           {
             rootPath: english, // actual files of the english app
-            exclude: ['api'],
+            exclude,
             serveRoot: `${base}/en`,
           },
           {
             rootPath: german, // actual files of the german app
-            exclude: ['api'],
+            exclude,
             serveRoot: `${base}/de`, // on what url to find it
           },
         ];
@@ -62,8 +65,8 @@ import { APP_GUARD } from '@nestjs/core';
         // fallback for when the url has neither /de nor /en
         options.push(
           base
-            ? { rootPath: english, exclude: ['api'], serveRoot: base }
-            : { rootPath: english, exclude: ['api'] },
+            ? { rootPath: english, exclude, serveRoot: base }
+            : { rootPath: english, exclude },
         );
 
         // important: the fallback has to be the last entry
@@ -72,6 +75,7 @@ import { APP_GUARD } from '@nestjs/core';
       inject: [ConfigService],
     }),
     I18nModule.forRootAsync({
+      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         fallbackLanguage: 'en',
         fallbacks: {

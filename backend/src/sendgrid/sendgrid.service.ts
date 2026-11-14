@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Peer } from '@prisma/client';
-import * as SendGrid from '@sendgrid/mail';
+// default import: the package exports a class instance (methods on the
+// prototype), which 'import * as' would lose with esModuleInterop (TS 6)
+import SendGrid from '@sendgrid/mail';
 import { I18nService } from 'nestjs-i18n';
 import { env } from 'process';
 import { UpdateCampaignCheckData } from '../campaign/campaign.service';

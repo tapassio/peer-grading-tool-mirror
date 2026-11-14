@@ -1,5 +1,5 @@
-# Node 18 is end-of-life (no security updates since April 2025).
-FROM node:22 AS backendBuild
+# Node 24 = LTS (security updates until April 2028).
+FROM node:24 AS backendBuild
 LABEL stage=build
 
 COPY backend/ /backend
@@ -7,11 +7,11 @@ COPY backend/ /backend
 WORKDIR /backend
 
 # npm ci installs exactly the versions from package-lock.json
-RUN npm ci && npm run build
+# Prisma 7 no longer generates the client during npm install
+RUN npm ci && npx prisma generate && npm run build
 
-# Angular 17 officially supports Node 18 and 20 only, so the frontend is
-# built with Node 20. This image is only used for building, not at runtime.
-FROM node:20 AS frontendBuild
+# Angular 22 supports Node 22, 24 and 26. Only used for building.
+FROM node:24 AS frontendBuild
 LABEL stage=build
 
 COPY frontend/ /frontend
@@ -20,7 +20,7 @@ WORKDIR /frontend
 
 RUN npm ci && npm run build
 
-FROM node:22 AS prod
+FROM node:24 AS prod
 
 ENV NODE_ENV=production
 

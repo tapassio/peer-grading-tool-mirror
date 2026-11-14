@@ -21,7 +21,7 @@ This page explains what changed and what has to be done when deploying.
 | CampaignGuard | allowed unknown methods, `campaignId 0` | default deny, one DB query |
 | Admin update | `{ ...data }` passed to Prisma | explicit field lists; errors are no longer swallowed |
 | Passwords (new) | any length | at least 8 characters |
-| Docker | Node 18 (EOL), `npm install` | Node 22 runtime, `npm ci` |
+| Docker | Node 18 (EOL), `npm install` | Node 24 (LTS), `npm ci` |
 
 ## Deployment checklist
 
