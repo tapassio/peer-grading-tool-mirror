@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, input } from '@angular/core';
 import { Peer, User } from 'src/app/interfaces';
 import { ToolTipComponent } from '../../tool-tip/tool-tip.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -11,15 +11,15 @@ import { ReactiveFormsModule } from '@angular/forms';
     imports: [ToolTipComponent, ReactiveFormsModule]
 })
 export class SingleCommentComponent implements OnInit {
-  @Input() toUser: User;
-  @Input() peer: Peer;
-  @Input() commentFormGroup: any;
-  @Input() isAdmin = false;
+  readonly toUser = input.required<User>();
+  readonly peer = input.required<Peer>();
+  readonly commentFormGroup = input.required<any>();
+  readonly isAdmin = input(false);
 
   peerCommentTooltip: string;
 
   ngOnInit(): void {
     // prettier-ignore
-    this.peerCommentTooltip = $localize`Der eingegebene Kommentar ist sowohl für Dozierende, als auch für ${this.toUser.firstName} ${this.toUser.lastName} sichtbar.`;
+    this.peerCommentTooltip = $localize`Der eingegebene Kommentar ist sowohl für Dozierende, als auch für ${this.toUser().firstName} ${this.toUser().lastName} sichtbar.`;
   }
 }

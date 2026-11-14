@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { Campaign } from '../../interfaces';
 import { CampaignMetaComponent } from '../../campaign-meta/campaign-meta.component';
 import { CampaignButtonsComponent } from '../../campaign-buttons/campaign-buttons.component';
@@ -11,9 +11,9 @@ import { CampaignButtonsComponent } from '../../campaign-buttons/campaign-button
     imports: [CampaignMetaComponent, CampaignButtonsComponent]
 })
 export class CampaignComponent {
-  @Input() campaign: Campaign;
-  @Input() viewState: 'dashboard' | 'summary';
-  @Output() reloadEvent: EventEmitter<string> = new EventEmitter<string>();
+  readonly campaign = input.required<Campaign>();
+  readonly viewState = input.required<'dashboard' | 'summary'>();
+  readonly reloadEvent = output<string>();
 
   onReloadEvent(value: string) {
     this.reloadEvent.emit(value);

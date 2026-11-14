@@ -15,9 +15,9 @@ describe('PeerComponent', () => {
 
     fixture = TestBed.createComponent(PeerComponent);
     component = fixture.componentInstance;
-    component.group = testGroup();
-    component.peer = testPeer();
-    component.campaignStatus = 'erstellt' as any;
+    fixture.componentRef.setInput('group', testGroup());
+    fixture.componentRef.setInput('peer', testPeer());
+    fixture.componentRef.setInput('campaignStatus', 'erstellt' as any);
     fixture.detectChanges();
   });
 

@@ -14,6 +14,7 @@ describe('ToolTipComponent', () => {
 
     fixture = TestBed.createComponent(ToolTipComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('text', 'Hilfetext');
     fixture.detectChanges();
   });
 

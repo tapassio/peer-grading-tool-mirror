@@ -15,8 +15,8 @@ describe('CampaignComponent', () => {
 
     fixture = TestBed.createComponent(CampaignComponent);
     component = fixture.componentInstance;
-    component.campaign = testCampaign();
-    component.viewState = 'dashboard';
+    fixture.componentRef.setInput('campaign', testCampaign());
+    fixture.componentRef.setInput('viewState', 'dashboard');
     fixture.detectChanges();
   });
 

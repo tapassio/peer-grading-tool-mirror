@@ -1,8 +1,8 @@
-@if (isAdmin) {
+@if (isAdmin()) {
 <h4>
   <span i18n
-    >Kommentar an Dozent/Dozentin {{ toUser.firstName }}
-    {{ toUser.lastName }}</span
+    >Kommentar an Dozent/Dozentin {{ toUser().firstName }}
+    {{ toUser().lastName }}</span
   ><pgt-tool-tip
     icon="info_outline"
     text="Der eingegebene Kommentar ist nur für Dozierende sichtbar."
@@ -11,12 +11,12 @@
 </h4>
 } @else {
 <h4>
-  <span i18n>Kommentar an {{ toUser.firstName }} {{ toUser.lastName }}</span
+  <span i18n>Kommentar an {{ toUser().firstName }} {{ toUser().lastName }}</span
   ><pgt-tool-tip icon="info_outline" [text]="peerCommentTooltip"></pgt-tool-tip>
 </h4>
 }
 <textarea
-  [formControl]="commentFormGroup.controls[toUser.userId]"
+  [formControl]="commentFormGroup().controls[toUser().userId]"
   placeholder="Kommentar"
   i18n-placeholder
 ></textarea>

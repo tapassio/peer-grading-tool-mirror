@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input } from '@angular/core';
 import { Campaign, Peer } from 'src/app/interfaces';
 import { GradingComponent } from '../grading.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -17,10 +17,10 @@ import { DecimalPipe } from '@angular/common';
 export class SingleRowComponent {
   private gradingComponent = inject(GradingComponent);
 
-  @Input() toPeer: Peer;
-  @Input() peer: Peer;
-  @Input() campaign: Campaign;
-  @Input() gradingsFormGroup: any;
+  readonly toPeer = input.required<Peer>();
+  readonly peer = input.required<Peer>();
+  readonly campaign = input.required<Campaign>();
+  readonly gradingsFormGroup = input.required<any>();
 
   /**
    * this function is called in the html to calculate the average of a row
@@ -28,7 +28,7 @@ export class SingleRowComponent {
    * @returns
    */
   getPeersAverage(toPeer: Peer): number {
-    if (this.peer) {
+    if (this.peer()) {
       const gradings = this.gradingComponent.generateGradings(toPeer);
 
       let sum = 0;

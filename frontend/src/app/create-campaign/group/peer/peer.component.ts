@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject, input } from '@angular/core';
 import { CampaignStatus, Group, Peer } from '../../../interfaces';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CreateCampaignService } from '../../create-campaign.service';
@@ -19,19 +19,19 @@ export class PeerComponent implements OnInit {
   private createCampaignService = inject(CreateCampaignService);
   private formBuilder = inject(FormBuilder);
 
-  @Input() peer: Peer;
-  @Input() group: Group;
-  @Input() campaignStatus: CampaignStatus;
+  readonly peer = input.required<Peer>();
+  readonly group = input.required<Group>();
+  readonly campaignStatus = input.required<CampaignStatus>();
   peerEditForm: FormGroup;
 
   ngOnInit(): void {
     this.peerEditForm = this.formBuilder.group({
-      peerId: [this.peer.peerId, Validators.required],
-      firstName: [this.peer.firstName, Validators.required],
-      lastName: [this.peer.lastName, Validators.required],
-      matriculationNumber: [this.peer.matriculationNumber],
+      peerId: [this.peer().peerId, Validators.required],
+      firstName: [this.peer().firstName, Validators.required],
+      lastName: [this.peer().lastName, Validators.required],
+      matriculationNumber: [this.peer().matriculationNumber],
       email: [
-        this.peer.email,
+        this.peer().email,
         [
           Validators.required,
           Validators.pattern(
@@ -41,7 +41,7 @@ export class PeerComponent implements OnInit {
       ],
     });
 
-    if (this.campaignStatus == 'abgeschlossen') {
+    if (this.campaignStatus() == 'abgeschlossen') {
       this.peerEditForm.disable();
     }
 
@@ -52,12 +52,12 @@ export class PeerComponent implements OnInit {
     this.peerEditForm.valueChanges.subscribe((peer: Peer) => {
       this.createCampaignService.updateUnsavedChanges(true, 'peer edited');
       for (const key in peer) {
-        (this.peer as any)[key] = (peer as any)[key];
+        (this.peer() as any)[key] = (peer as any)[key];
       }
     });
   }
 
   removePeer() {
-    this.createCampaignService.removePeer(this.group, this.peer);
+    this.createCampaignService.removePeer(this.group(), this.peer());
   }
 }

@@ -15,8 +15,8 @@ describe('CriteriaComponent', () => {
 
     fixture = TestBed.createComponent(CriteriaComponent);
     component = fixture.componentInstance;
-    component.campaign = testCampaign();
-    component.campaignStatus = 'erstellt' as any;
+    fixture.componentRef.setInput('campaign', testCampaign());
+    fixture.componentRef.setInput('campaignStatus', 'erstellt' as any);
     fixture.detectChanges();
   });
 

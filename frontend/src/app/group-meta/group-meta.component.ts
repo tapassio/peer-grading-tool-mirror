@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input } from '@angular/core';
 import { Campaign, CampaignStatus, Group } from '../interfaces';
 import { CampaignService } from '../services/campaign.service';
 import { DatePipe } from '@angular/common';
@@ -13,11 +13,11 @@ import { DatePipe } from '@angular/common';
 export class GroupMetaComponent {
   private campaignService = inject(CampaignService);
 
-  @Input() campaign: Campaign;
-  @Input() group: Group;
-  @Input() showCriteria = true;
+  readonly campaign = input.required<Campaign>();
+  readonly group = input.required<Group>();
+  readonly showCriteria = input(true);
 
   getCampaignStatus(): CampaignStatus {
-    return this.campaignService.getCampaignStatus(this.campaign);
+    return this.campaignService.getCampaignStatus(this.campaign());
   }
 }

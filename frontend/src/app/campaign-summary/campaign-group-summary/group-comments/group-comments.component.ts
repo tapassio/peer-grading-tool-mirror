@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { Peer, PeerComment } from 'src/app/interfaces';
 
 @Component({
@@ -8,11 +8,11 @@ import { Peer, PeerComment } from 'src/app/interfaces';
     changeDetection: ChangeDetectionStrategy.Eager
 })
 export class GroupCommentsComponent {
-  @Input() comments: PeerComment[];
-  @Input() peers: Peer[];
+  readonly comments = input.required<PeerComment[]>();
+  readonly peers = input.required<Peer[]>();
 
   filterCommentsByPeer(peer: Peer): PeerComment[] {
-    return this.comments.filter(
+    return this.comments().filter(
       (comment: PeerComment) => comment.fromPeer.peerId == peer.peerId
     );
   }

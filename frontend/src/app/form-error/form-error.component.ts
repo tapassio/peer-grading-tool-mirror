@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -9,6 +9,6 @@ import { FormControl } from '@angular/forms';
 })
 export class FormErrorComponent {
 
-  @Input() control:FormControl | any;
+  readonly control = input<FormControl | any>();
 
 }

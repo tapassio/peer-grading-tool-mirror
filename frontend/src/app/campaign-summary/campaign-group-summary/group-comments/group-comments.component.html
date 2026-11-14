@@ -1,4 +1,4 @@
-@for (peer of peers; track peer) {
+@for (peer of peers(); track peer) {
 <h4 i18n>Kommentare von {{ peer.firstName }} {{ peer.lastName }}:</h4>
 <dl>
   @for (comment of filterCommentsByPeer(peer); track comment) {
