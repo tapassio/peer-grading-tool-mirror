@@ -5,8 +5,7 @@ import { FormControl } from '@angular/forms';
     selector: 'pgt-form-error',
     templateUrl: './form-error.component.html',
     styleUrls: ['./form-error.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    changeDetection: ChangeDetectionStrategy.Eager
 })
 export class FormErrorComponent {
 

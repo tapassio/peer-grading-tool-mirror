@@ -11,8 +11,7 @@ describe('CampaignSummaryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [CampaignSummaryComponent],
-    imports: [MatSnackBarModule, RouterModule.forRoot([])],
+    imports: [MatSnackBarModule, RouterModule.forRoot([]), CampaignSummaryComponent],
     providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
 }).compileComponents();
 

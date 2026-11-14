@@ -1,4 +1,4 @@
-import { Injectable, WritableSignal, signal } from '@angular/core';
+import { Injectable, WritableSignal, signal, inject } from '@angular/core';
 import { Campaign } from '../interfaces';
 import { PGTService } from '../services/pgt.service';
 import { CampaignService } from '../services/campaign.service';
@@ -10,14 +10,12 @@ import { HttpErrorResponse } from '@angular/common/http';
   providedIn: 'root',
 })
 export class AdminDashboardService {
-  campaigns: WritableSignal<Campaign[]> = signal([]);
+  private pgtService = inject(PGTService);
+  private campaignService = inject(CampaignService);
+  private snackBarService = inject(SnackBarService);
+  private router = inject(Router);
 
-  constructor(
-    private pgtService: PGTService,
-    private campaignService: CampaignService,
-    private snackBarService: SnackBarService,
-    private router: Router
-  ) {}
+  campaigns: WritableSignal<Campaign[]> = signal([]);
 
   reloadCampaigns() {
     this.pgtService.getCampaignsByUser().subscribe({

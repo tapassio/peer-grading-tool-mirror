@@ -8,8 +8,8 @@ describe('GroupCommentsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [GroupCommentsComponent]
-    })
+    imports: [GroupCommentsComponent]
+})
     .compileComponents();
     
     fixture = TestBed.createComponent(GroupCommentsComponent);

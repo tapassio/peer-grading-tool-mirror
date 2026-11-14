@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, computed, signal, ChangeDetectionStrategy, inject } from '@angular/core';
 import { PGTService } from '../services/pgt.service';
 import {
   DEFAULT_THRESHOLDS,
@@ -7,6 +7,7 @@ import {
   RawCampaign,
   StatisticsService,
 } from '../services/statistics.service';
+import { ReactiveFormsModule } from '@angular/forms';
 
 /**
  * "Statistik" page: overview, response rate, distribution of the points and
@@ -17,9 +18,12 @@ import {
     templateUrl: './statistics.component.html',
     styleUrls: ['./statistics.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [ReactiveFormsModule]
 })
 export class StatisticsComponent implements OnInit {
+  private pgtService = inject(PGTService);
+  private statisticsService = inject(StatisticsService);
+
   campaigns = signal<RawCampaign[]>([]);
   loading = signal(true);
   loadError = signal(false);
@@ -69,11 +73,6 @@ export class StatisticsComponent implements OnInit {
     sameForAll: $localize`vergebene Punktzahl`,
     raterSpread: $localize`Differenz zwischen grosszügigster und strengster Bewertung`,
   };
-
-  constructor(
-    private pgtService: PGTService,
-    private statisticsService: StatisticsService
-  ) {}
 
   ngOnInit(): void {
     this.pgtService.getCampaignsByUser().subscribe({

@@ -13,12 +13,11 @@ describe('CreateUserComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [CreateAdminUserComponent, FormErrorComponent],
     imports: [FormsModule,
         ReactiveFormsModule,
         MatSnackBarModule,
         RouterModule.forRoot([]),
-        MatIconModule],
+        MatIconModule, CreateAdminUserComponent, FormErrorComponent],
     providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
 }).compileComponents();
 

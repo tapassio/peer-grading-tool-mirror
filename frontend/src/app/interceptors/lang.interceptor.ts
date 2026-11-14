@@ -1,10 +1,11 @@
-import { Inject, Injectable, LOCALE_ID } from '@angular/core';
+import { Injectable, LOCALE_ID, inject } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable()
 export class LangInterceptor implements HttpInterceptor {
-  constructor(@Inject(LOCALE_ID) public currentLocale: string) {}
+  currentLocale = inject(LOCALE_ID);
+
 
   intercept(
     request: HttpRequest<unknown>,

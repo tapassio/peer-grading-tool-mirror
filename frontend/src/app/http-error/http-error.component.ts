@@ -1,17 +1,20 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
     selector: 'pgt-http-error',
     templateUrl: './http-error.component.html',
     styleUrls: ['./http-error.component.css', '../app.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [MatButton, MatIcon]
 })
 export class HttpErrorComponent implements OnInit {
-  status: string;
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
 
-  constructor(private activatedRoute: ActivatedRoute, private router: Router) {}
+  status: string;
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params: Params) => {

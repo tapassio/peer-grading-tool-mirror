@@ -1,6 +1,6 @@
 import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Campaign, User, UserRole } from '../interfaces';
@@ -8,6 +8,7 @@ import { TokenService } from '../services/token.service';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
 import { PGTService } from '../services/pgt.service';
+import { LanguageSwitchComponent } from '../language-switch/language-switch.component';
 
 /**
  * Header in the style of the Toolchain Family tools:
@@ -22,9 +23,15 @@ import { PGTService } from '../services/pgt.service';
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [RouterLink, RouterLinkActive, LanguageSwitchComponent]
 })
 export class HeaderComponent implements OnInit {
+  router = inject(Router);
+  userService = inject(UserService);
+  tokenService = inject(TokenService);
+  private authService = inject(AuthService);
+  private pgtService = inject(PGTService);
+
   user: User | null = null;
   campaignCount: number | null = null;
   participantCount = 0;
@@ -33,14 +40,6 @@ export class HeaderComponent implements OnInit {
   toolchainUrl = environment.toolchainUrl;
 
   private destroyRef = inject(DestroyRef);
-
-  constructor(
-    public router: Router,
-    public userService: UserService,
-    public tokenService: TokenService,
-    private authService: AuthService,
-    private pgtService: PGTService
-  ) {}
 
   ngOnInit(): void {
     this.refresh();

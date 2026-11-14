@@ -8,8 +8,8 @@ describe('ToolTipComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ToolTipComponent ]
-    })
+    imports: [ToolTipComponent]
+})
     .compileComponents();
 
     fixture = TestBed.createComponent(ToolTipComponent);

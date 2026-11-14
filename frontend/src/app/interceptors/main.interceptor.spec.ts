@@ -1,12 +1,20 @@
 import { HttpHeaders, HttpRequest } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { TokenService } from '../services/token.service';
 import { MainInterceptor } from './main.interceptor';
 
 describe('MainInterceptor', () => {
-  const tokens = new TokenService();
-  const interceptor = new MainInterceptor(tokens);
+  let tokens: TokenService;
+  let interceptor: MainInterceptor;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({ providers: [TokenService, MainInterceptor] });
+    tokens = TestBed.inject(TokenService);
+    interceptor = TestBed.inject(MainInterceptor);
+    tokens.setAccessToken('access');
+  });
 
   function send(url: string, headers = new HttpHeaders()) {
     let sent!: HttpRequest<any>;
@@ -21,7 +29,6 @@ describe('MainInterceptor', () => {
     return sent;
   }
 
-  beforeEach(() => tokens.setAccessToken('access'));
 
   it('sends the access token to the API', () => {
     const r = send(environment.api + '/campaign');

@@ -1,19 +1,11 @@
-import {
-  Component,
-  HostListener,
-  OnInit,
-  Signal,
-  effect,
-  signal,
-  ChangeDetectionStrategy
-} from '@angular/core';
+import { Component, HostListener, OnInit, Signal, effect, signal, ChangeDetectionStrategy, inject } from '@angular/core';
 import {
   Campaign,
   CampaignStatus,
   DeactivatableComponent,
   Language,
 } from '../interfaces';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CreateCampaignService } from './create-campaign.service';
@@ -25,15 +17,30 @@ import {
   DEFAULT_GRADE_ROUNDING,
   gradeRoundingOf,
 } from '../services/campaign.service';
+import { FormErrorComponent } from '../form-error/form-error.component';
+import { ToolTipComponent } from '../tool-tip/tool-tip.component';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { CriteriaComponent } from './criteria/criteria.component';
+import { MatButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { GroupComponent } from './group/group.component';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { DatePipe } from '@angular/common';
+import { CampaignStatusPipe } from '../pipes/campaign-status.pipe';
 
 @Component({
     selector: 'pgt-create-campaign',
     templateUrl: './create-campaign.component.html',
     styleUrls: ['../app.component.css', './create-campaign.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [ReactiveFormsModule, FormErrorComponent, ToolTipComponent, MatSlideToggle, CriteriaComponent, MatButton, MatTooltip, MatIcon, GroupComponent, MatProgressSpinner, DatePipe, CampaignStatusPipe]
 })
 export class CreateCampaignComponent implements OnInit, DeactivatableComponent {
+  private formBuilder = inject(FormBuilder);
+  private activatedRoute = inject(ActivatedRoute);
+  createCampaignService = inject(CreateCampaignService);
+
   campaignId: Signal<number | undefined> = signal(
     this.activatedRoute.snapshot.params['id']
   );
@@ -61,12 +68,6 @@ export class CreateCampaignComponent implements OnInit, DeactivatableComponent {
       this.createCampaignService.campaignStatus()
     );
   });
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private activatedRoute: ActivatedRoute,
-    public createCampaignService: CreateCampaignService
-  ) {}
 
   /**
    * Upon initialization the component checks if it has to load an already existing campaign by looking up the url

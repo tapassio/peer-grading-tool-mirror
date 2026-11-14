@@ -1,18 +1,5 @@
-import {
-  Component,
-  OnInit,
-  Signal,
-  WritableSignal,
-  computed,
-  signal,
-  ChangeDetectionStrategy
-} from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, OnInit, Signal, WritableSignal, computed, signal, ChangeDetectionStrategy, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { of, switchMap } from 'rxjs';
 
 import { PGTService } from '../services/pgt.service';
@@ -29,6 +16,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WarnDialogComponent } from '../warn-dialog/warn-dialog.component';
 import { SnackBarService } from '../services/snack-bar.service';
 import { MatDialog } from '@angular/material/dialog';
+import { GroupMetaComponent } from '../group-meta/group-meta.component';
+import { SingleRowComponent } from './single-row/single-row.component';
+import { SingleCommentComponent } from './single-comment/single-comment.component';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 interface GradingData {
   campaign: Campaign;
@@ -45,9 +37,17 @@ interface GradingData {
     templateUrl: './grading.component.html',
     styleUrls: ['./grading.component.css', '../app.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [GroupMetaComponent, ReactiveFormsModule, SingleRowComponent, SingleCommentComponent, MatButton, MatIcon]
 })
 export class GradingComponent implements OnInit {
+  pgtService = inject(PGTService);
+  campaignService = inject(CampaignService);
+  private activatedRoute = inject(ActivatedRoute);
+  private dialog = inject(MatDialog);
+  private formBuilder = inject(FormBuilder);
+  private snackBarService = inject(SnackBarService);
+  private router = inject(Router);
+
   url: Signal<string> = signal(this.activatedRoute.snapshot.params['url']);
 
   gradingData: WritableSignal<GradingData> = signal({
@@ -81,16 +81,6 @@ export class GradingComponent implements OnInit {
   tooEarly: Signal<boolean> = computed(
     () => this.campaign().openingDate == undefined
   );
-
-  constructor(
-    public pgtService: PGTService,
-    public campaignService: CampaignService,
-    private activatedRoute: ActivatedRoute,
-    private dialog: MatDialog,
-    private formBuilder: FormBuilder,
-    private snackBarService: SnackBarService,
-    private router: Router
-  ) {}
 
   /**
    * when the component is loaded, the data for this component is got using the url

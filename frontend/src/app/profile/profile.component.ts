@@ -1,17 +1,13 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ValidatorFn,
-  AbstractControl,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { FormBuilder, FormGroup, ValidatorFn, AbstractControl, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { User } from '../interfaces';
 import { UserService } from '../services/user.service';
 import { SnackBarService } from '../services/snack-bar.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { FormErrorComponent } from '../form-error/form-error.component';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 /**
  * the profile component displays user data of admin users
  * here the password can be changed
@@ -21,18 +17,16 @@ import { HttpErrorResponse } from '@angular/common/http';
     templateUrl: './profile.component.html',
     styleUrls: ['../app.component.css', './profile.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [ReactiveFormsModule, FormErrorComponent, MatButton, MatIcon]
 })
 export class ProfileComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private router = inject(Router);
+  private snackBarService = inject(SnackBarService);
+  userService = inject(UserService);
+
   user: User | null | undefined;
   changePasswordForm: FormGroup;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private snackBarService: SnackBarService,
-    public userService: UserService
-  ) {}
 
   /**
    * the password form is built when the component loads

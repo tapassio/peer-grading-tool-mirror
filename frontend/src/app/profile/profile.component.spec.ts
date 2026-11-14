@@ -11,10 +11,9 @@ describe('AdminPwComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [ProfileComponent],
     imports: [FormsModule,
         ReactiveFormsModule,
-        MatSnackBarModule],
+        MatSnackBarModule, ProfileComponent],
     providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
 }).compileComponents();
 

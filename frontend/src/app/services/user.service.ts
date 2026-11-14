@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { map, Observable, switchMap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User, Campaign, UserRole, RegisterData } from '../interfaces';
@@ -15,13 +15,12 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class UserService {
-  constructor(
-    private http: HttpClient,
-    private tokenService: TokenService,
-    private snackBarService: SnackBarService,
-    private router: Router,
-    private campaignService: CampaignService
-  ) {}
+  private http = inject(HttpClient);
+  private tokenService = inject(TokenService);
+  private snackBarService = inject(SnackBarService);
+  private router = inject(Router);
+  private campaignService = inject(CampaignService);
+
 
   /**
    * this functions sets a users password

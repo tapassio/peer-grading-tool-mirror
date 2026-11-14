@@ -1,6 +1,10 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Campaign, Group, Peer } from 'src/app/interfaces';
 import { CampaignService } from 'src/app/services/campaign.service';
+import { MatTooltip } from '@angular/material/tooltip';
+import { ToolTipComponent } from '../../tool-tip/tool-tip.component';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { GroupCommentsComponent } from './group-comments/group-comments.component';
 /**
  * this is a child component of campaign summary.
  * it handles displaying each group
@@ -13,14 +17,14 @@ import { CampaignService } from 'src/app/services/campaign.service';
         './campaign-group-summary.component.css',
     ],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [MatTooltip, ToolTipComponent, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, GroupCommentsComponent]
 })
 export class CampaignGroupSummaryComponent {
+  campaignService = inject(CampaignService);
+
   @Input() group?: Group;
   @Input() campaign?: Campaign;
   completed = false;
-
-  constructor(public campaignService: CampaignService) {}
 
   /**
    * this method returns the peers that haven't graded yeet

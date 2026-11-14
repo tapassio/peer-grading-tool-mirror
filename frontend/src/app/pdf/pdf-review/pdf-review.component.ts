@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Signal, signal, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PGTService } from '../../services/pgt.service';
 /**
@@ -9,17 +9,14 @@ import { PGTService } from '../../services/pgt.service';
     selector: 'pgt-pdf-review',
     templateUrl: './pdf-review.component.html',
     styleUrls: ['./pdf-review.component.css', '../../app.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    changeDetection: ChangeDetectionStrategy.Eager
 })
 export class PdfReviewComponent implements OnInit {
-  url: Signal<string> = signal(this.activatedRoute.snapshot.params['url']);
+  private pgtService = inject(PGTService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
 
-  constructor(
-    private pgtService: PGTService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router
-  ) {}
+  url: Signal<string> = signal(this.activatedRoute.snapshot.params['url']);
 
   ngOnInit(): void {
     this.pgtService.getReviewPDF(this.url()).subscribe({

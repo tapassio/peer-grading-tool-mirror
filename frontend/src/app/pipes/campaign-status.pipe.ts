@@ -1,10 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { CampaignStatus } from '../interfaces';
 
-@Pipe({
-  name: 'campaignStatus',
-  standalone: false,
-})
+@Pipe({ name: 'campaignStatus', })
 export class CampaignStatusPipe implements PipeTransform {
   transform(status: CampaignStatus): string {
     switch (status) {

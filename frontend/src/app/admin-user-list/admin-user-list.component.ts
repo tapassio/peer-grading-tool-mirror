@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { WarnDialogComponent } from '../warn-dialog/warn-dialog.component';
 import { SuperService } from '../services/super.service';
@@ -7,6 +7,12 @@ import { Campaign, CampaignStatus, User } from '../interfaces';
 import { CampaignService } from '../services/campaign.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription } from '@angular/material/expansion';
+import { CampaignMetaComponent } from '../campaign-meta/campaign-meta.component';
+import { UpperCasePipe, DatePipe } from '@angular/common';
+import { CampaignStatusPipe } from '../pipes/campaign-status.pipe';
 /**
  * this component is only accessible for super users
  * there you get a list of all admin users and can edit or delete them
@@ -16,18 +22,16 @@ import { MatDialog } from '@angular/material/dialog';
     templateUrl: './admin-user-list.component.html',
     styleUrls: ['./admin-user-list.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [MatButton, MatIcon, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription, CampaignMetaComponent, UpperCasePipe, DatePipe, CampaignStatusPipe]
 })
 export class AdminUserListComponent implements OnInit {
-  admins: User[];
+  private adminService = inject(SuperService);
+  private router = inject(Router);
+  private snackBarService = inject(SnackBarService);
+  dialog = inject(MatDialog);
+  private campaignService = inject(CampaignService);
 
-  constructor(
-    private adminService: SuperService,
-    private router: Router,
-    private snackBarService: SnackBarService,
-    public dialog: MatDialog,
-    private campaignService: CampaignService
-  ) {}
+  admins: User[];
 
   /**
    * gets all admins from the backend through adminService

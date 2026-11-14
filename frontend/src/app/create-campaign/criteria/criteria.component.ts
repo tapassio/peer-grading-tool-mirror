@@ -1,8 +1,11 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, Input, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Campaign, CampaignStatus, Criteria } from 'src/app/interfaces';
 import { CampaignService } from '../../services/campaign.service';
 import { CreateCampaignService } from '../create-campaign.service';
+import { FormErrorComponent } from '../../form-error/form-error.component';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 /**
  * This is a child component of the create campaign component
  * It handles displaying all data regarding criteria
@@ -12,18 +15,16 @@ import { CreateCampaignService } from '../create-campaign.service';
     templateUrl: './criteria.component.html',
     styleUrls: ['../../app.component.css', './criteria.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [ReactiveFormsModule, FormErrorComponent, MatButton, MatIcon]
 })
 export class CriteriaComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private createCampaignService = inject(CreateCampaignService);
+  private campaignService = inject(CampaignService);
+
   criteriaForm: FormGroup;
   @Input() campaign: Campaign;
   @Input() campaignStatus: CampaignStatus;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private createCampaignService: CreateCampaignService,
-    private campaignService: CampaignService
-  ) {}
 
   ngOnInit(): void {
     // creating the form for the criteria

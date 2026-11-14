@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import DocPouchClient, {
   I_DocumentCreation,
   I_DocumentEntry,
@@ -67,10 +67,9 @@ export interface PeerGradingResult {
   providedIn: 'root',
 })
 export class ToolchainService {
-  constructor(
-    private authService: AuthService,
-    private campaignService: CampaignService
-  ) {}
+  private authService = inject(AuthService);
+  private campaignService = inject(CampaignService);
+
 
   canPublish(): boolean {
     return this.authService.isOidcMode();

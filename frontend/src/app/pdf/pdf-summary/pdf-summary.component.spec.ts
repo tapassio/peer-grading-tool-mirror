@@ -11,8 +11,7 @@ describe('PdfSummaryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [PdfSummaryComponent],
-    imports: [MatSnackBarModule, RouterModule.forRoot([])],
+    imports: [MatSnackBarModule, RouterModule.forRoot([]), PdfSummaryComponent],
     providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
 }).compileComponents();
 

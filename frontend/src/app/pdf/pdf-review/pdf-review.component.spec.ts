@@ -11,8 +11,7 @@ describe('PdfReviewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [PdfReviewComponent],
-    imports: [MatSnackBarModule, RouterModule.forRoot([])],
+    imports: [MatSnackBarModule, RouterModule.forRoot([]), PdfReviewComponent],
     providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
 }).compileComponents();
 

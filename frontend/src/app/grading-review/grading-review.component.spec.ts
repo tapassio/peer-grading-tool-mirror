@@ -11,8 +11,7 @@ describe('PeerGradingReviewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [PeerGradingReviewComponent],
-    imports: [MatSnackBarModule, RouterModule.forRoot([])],
+    imports: [MatSnackBarModule, RouterModule.forRoot([]), PeerGradingReviewComponent],
     providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
 }).compileComponents();
 

@@ -9,14 +9,13 @@ describe('SingleRowComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [...testImports],
-      declarations: [SingleRowComponent],
-      providers: [
+    imports: [...testImports, SingleRowComponent],
+    providers: [
         // the row asks the grading page for the entered points
         { provide: GradingComponent, useValue: { generateGradings: () => [] } },
-      ],
-      schemas: testSchemas,
-    }).compileComponents();
+    ],
+    schemas: testSchemas,
+}).compileComponents();
 
     fixture = TestBed.createComponent(SingleRowComponent);
     component = fixture.componentInstance;
