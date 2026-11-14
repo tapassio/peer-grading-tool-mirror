@@ -19,6 +19,9 @@ interface GradingReviewData {
   peer: Peer;
   selfAverage: number;
   thirdPartyAverage: number;
+  /** final grade, rounded like set in the campaign */
+  grade: number;
+  gradeRounding: number;
   thirdPartyAverages: any;
   selfGradings: any;
   groupAverage: number;
@@ -44,6 +47,8 @@ export class PeerGradingReviewComponent implements OnInit {
     selfAverage: 0,
     selfGradings: {},
     thirdPartyAverage: 0,
+    grade: 0,
+    gradeRounding: 0.5,
     thirdPartyAverages: {},
     groupAverage: 0,
     difference: 0,

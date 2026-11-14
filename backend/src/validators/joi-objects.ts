@@ -1,4 +1,5 @@
 import * as Joi from 'joi';
+import { GRADE_ROUNDING_STEPS } from '../calculations/calculations.service';
 
 const userWithoutPeerSchema = Joi.object({
   userId: Joi.number().integer().required(),
@@ -76,6 +77,8 @@ export const createCampaignSchema = (maxPoints: number) =>
     closingDate: Joi.date(),
     language: Joi.string().required(),
     allowCommentsForPeers: Joi.boolean(),
+    // rounding step of the final grade (see GRADE_ROUNDING_STEPS)
+    gradeRounding: Joi.number().valid(...GRADE_ROUNDING_STEPS),
     groups: Joi.array().items(createGroupSchema(maxPoints)).required(),
     criteria: Joi.array().items(criteriaSchema).required(),
     users: Joi.array().items(userSchema),

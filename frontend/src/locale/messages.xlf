@@ -218,9 +218,6 @@
       <trans-unit id="2708383281929305763" datatype="html">
         <source>Kampagnen-Übersicht</source>
       </trans-unit>
-      <trans-unit id="7247594953500831530" datatype="html">
-        <source>Peer Grading Tool - E-Mail bestätigen</source>
-      </trans-unit>
       <trans-unit id="7775421822720457833" datatype="html">
         <source> Ihre E-Mail-Adresse &quot;<x id="INTERPOLATION" equiv-text="{{ responseMessage().email }}"/>&quot; wurde bestätigt. </source>
       </trans-unit>
@@ -446,9 +443,6 @@
       <trans-unit id="8336295545982123408" datatype="html">
         <source>Selbsteinschätzung</source>
       </trans-unit>
-      <trans-unit id="757295924336581179" datatype="html">
-        <source>Mittelwert aller Fremdeinschätzungen an Sie</source>
-      </trans-unit>
       <trans-unit id="3029723177600454722" datatype="html">
         <source>Mittelwert aller Fremdeinschätzungen der gesamten Gruppe</source>
       </trans-unit>
@@ -497,9 +491,6 @@
       <trans-unit id="8840612557533179474" datatype="html">
         <source>Gradings konnten nicht gespeichert werden.</source>
       </trans-unit>
-      <trans-unit id="7640918008321105776" datatype="html">
-        <source>Gradings können nicht gesendet werden. Werte müssen zwischen 1 und <x id="PH" equiv-text="this.campaign().maxPoints"/> liegen.</source>
-      </trans-unit>
       <trans-unit id="7699675702721078532" datatype="html">
         <source>Die Gradings und der Kommentar können nach dem Senden nicht mehr bearbeitet werden.</source>
       </trans-unit>
@@ -524,12 +515,6 @@
       <trans-unit id="496551592979694168" datatype="html">
         <source>Verlassen</source>
       </trans-unit>
-      <trans-unit id="2361265238320887165" datatype="html">
-        <source>Abmelden</source>
-      </trans-unit>
-      <trans-unit id="420087024221106702" datatype="html">
-        <source>Sie sind</source>
-      </trans-unit>
       <trans-unit id="5363940464046088994" datatype="html">
         <source>Profil</source>
       </trans-unit>
@@ -541,12 +526,6 @@
       </trans-unit>
       <trans-unit id="8930526198656004715" datatype="html">
         <source>Zurück</source>
-      </trans-unit>
-      <trans-unit id="7855604283854332023" datatype="html">
-        <source>Peer Grading Tool Login</source>
-      </trans-unit>
-      <trans-unit id="1726363342938046830" datatype="html">
-        <source>About</source>
       </trans-unit>
       <trans-unit id="2454050363478003966" datatype="html">
         <source>Login</source>
@@ -586,9 +565,6 @@
       </trans-unit>
       <trans-unit id="234707134716067658" datatype="html">
         <source>Passwort konnte nicht geändert werden.</source>
-      </trans-unit>
-      <trans-unit id="6332827336259492293" datatype="html">
-        <source>Peer Grading Tool - Registrieren</source>
       </trans-unit>
       <trans-unit id="3367592830654824806" datatype="html">
         <source>E-Mail wiederholen</source>
@@ -851,26 +827,14 @@
       <trans-unit id="9182952202800815493" datatype="html">
         <source>Verteilung der Fremdbewertungen</source>
       </trans-unit>
-      <trans-unit id="9187938685129405658" datatype="html">
-        <source> Abweichung = Fremdbewertung einer Person minus Gruppenschnitt (wie in der Auswertung für die Studierenden). Positiv: besser bewertet als der Schnitt der Gruppe. </source>
-      </trans-unit>
       <trans-unit id="266993209743998509" datatype="html">
         <source>Notenskala 1–6</source>
-      </trans-unit>
-      <trans-unit id="3585493459499709516" datatype="html">
-        <source>Standard: Schweizer Notenskala 1–6 (6 = sehr gut, 4 = genügend)</source>
-      </trans-unit>
-      <trans-unit id="7619461379753375169" datatype="html">
-        <source> Abweichung = Fremdbewertung einer Person minus Gruppenschnitt, auf halbe Noten gerundet (wie in der Auswertung für die Studierenden). Positiv: besser bewertet als der Schnitt der Gruppe. </source>
       </trans-unit>
       <trans-unit id="3591904190146133039" datatype="html">
         <source>Gradings können nicht gesendet werden. Werte müssen zwischen 1 und <x id="PH" equiv-text="this.campaign().maxPoints"/> liegen (ganze oder halbe Punkte, z. B. 4.5).</source>
       </trans-unit>
       <trans-unit id="977578758307041695" datatype="html">
         <source>Standard: Schweizer Notenskala 1–6 (6 = sehr gut, 4 = genügend). Halbe Noten wie 4.5 sind möglich.</source>
-      </trans-unit>
-      <trans-unit id="4435055682334394988" datatype="html">
-        <source> Jede Person zählt einmal: Fremdbewertung minus Gruppenschnitt, auf halbe Noten gerundet. Rot: unter dem Schnitt der Gruppe, grün: darüber. </source>
       </trans-unit>
       <trans-unit id="5156464165139691669" datatype="html">
         <source>Verteilung der Abweichungen vom Gruppenschnitt</source>
@@ -883,6 +847,45 @@
       </trans-unit>
       <trans-unit id="6592091172743993683" datatype="html">
         <source>Diese E-Mail-Adresse gehört bereits zu einem anderen Konto. Bitte die Administration kontaktieren.</source>
+      </trans-unit>
+      <trans-unit id="190224308275562338" datatype="html">
+        <source>Zehntelnoten (z. B. 4.3)</source>
+      </trans-unit>
+      <trans-unit id="3555725377377753556" datatype="html">
+        <source> Jede Person zählt einmal: Fremdbewertung minus Gruppenschnitt, in halben Schritten (bei feinerer Rundung in Viertelschritten). Rot: unter dem Schnitt der Gruppe, grün: darüber. </source>
+      </trans-unit>
+      <trans-unit id="3816989482976584708" datatype="html">
+        <source>Nicht runden (2 Nachkommastellen)</source>
+      </trans-unit>
+      <trans-unit id="4388879716045736175" datatype="html">
+        <source>Note</source>
+      </trans-unit>
+      <trans-unit id="4793152834135745171" datatype="html">
+        <source>Gewichteter Mittelwert aller Fremdeinschätzungen an Sie, gerundet wie für die Kampagne festgelegt (Standard: halbe Noten)</source>
+      </trans-unit>
+      <trans-unit id="5309683017480544653" datatype="html">
+        <source>Rundung der Note</source>
+      </trans-unit>
+      <trans-unit id="6093761293589820264" datatype="html">
+        <source>Halbe Noten (z. B. 4.5) – Standard</source>
+      </trans-unit>
+      <trans-unit id="610702522258828491" datatype="html">
+        <source>Die Note (Mittelwert der Fremdeinschätzungen) und die Abweichung werden am Schluss so gerundet. Gerechnet wird mit den ungerundeten Werten.</source>
+      </trans-unit>
+      <trans-unit id="6443177674439627481" datatype="html">
+        <source>Viertelnoten (z. B. 4.25)</source>
+      </trans-unit>
+      <trans-unit id="6537536626786918093" datatype="html">
+        <source>Ganze Noten (z. B. 4)</source>
+      </trans-unit>
+      <trans-unit id="7543202084882719510" datatype="html">
+        <source>Note (Fremdeinschätzung)</source>
+      </trans-unit>
+      <trans-unit id="8094888557115283603" datatype="html">
+        <source> Abweichung = Fremdbewertung einer Person minus Gruppenschnitt, gerundet wie in der Kampagne eingestellt (Standard: halbe Noten), gleich wie in der Auswertung für die Studierenden. Positiv: besser bewertet als der Schnitt der Gruppe. </source>
+      </trans-unit>
+      <trans-unit id="8150000916709737284" datatype="html">
+        <source>Fremddurchschnitt, gerundet wie für die Kampagne festgelegt. Diese Note sehen die Studierenden.</source>
       </trans-unit>
     </body>
   </file>

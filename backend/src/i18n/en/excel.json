@@ -33,7 +33,7 @@
   "email": "e-mail",
   "matriculationNumber": "matriculation number",
   "groupNumber": "group number",
-  "peerAssessmentAverageOfPeers": "peer grading average",
+  "peerAssessmentAverageOfPeers": "grade (rounded peer grading average)",
   "deviation": "deviation",
 
   "overviewOfGroup": "overview of group {groupNumber}",
@@ -43,7 +43,7 @@
   "firstName": "first name",
   "gradingsSent": "gradings sent?",
   "selfAverage": "self assessment average",
-  "peerAssessmentAverage": "peer grading average",
+  "peerAssessmentAverage": "grade (rounded peer grading average)",
 
   "comments": "comments",
   "commentFrom": "comment from",

@@ -100,9 +100,10 @@
       </div>
     </div>
     <p class="hint" i18n>
-      Abweichung = Fremdbewertung einer Person minus Gruppenschnitt, auf halbe
-      Noten gerundet (wie in der Auswertung für die Studierenden). Positiv:
-      besser bewertet als der Schnitt der Gruppe.
+      Abweichung = Fremdbewertung einer Person minus Gruppenschnitt, gerundet
+      wie in der Kampagne eingestellt (Standard: halbe Noten), gleich wie in der
+      Auswertung für die Studierenden. Positiv: besser bewertet als der Schnitt
+      der Gruppe.
     </p>
   </section>
 
@@ -241,8 +242,9 @@
           }
         </svg>
         <p class="hint" i18n>
-          Jede Person zählt einmal: Fremdbewertung minus Gruppenschnitt, auf halbe
-          Noten gerundet. Rot: unter dem Schnitt der Gruppe, grün: darüber.
+          Jede Person zählt einmal: Fremdbewertung minus Gruppenschnitt, in
+          halben Schritten (bei feinerer Rundung in Viertelschritten). Rot:
+          unter dem Schnitt der Gruppe, grün: darüber.
         </p>
         @if (d.scales.length > 1) {
         <p class="hint warn" i18n>

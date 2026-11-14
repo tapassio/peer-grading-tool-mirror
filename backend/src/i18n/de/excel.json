@@ -33,7 +33,7 @@
   "email": "E-Mail",
   "matriculationNumber": "Matrikelnr.",
   "groupNumber": "Gruppennr.",
-  "peerAssessmentAverageOfPeers": "Fremddurchschnitt d. Peers",
+  "peerAssessmentAverageOfPeers": "Note (Fremddurchschnitt gerundet)",
   "deviation": "Abweichung vom Gruppendurchschnitt",
 
   "overviewOfGroup": "Übersicht Gruppe {groupNumber}",
@@ -43,7 +43,7 @@
   "firstName": "Vorname",
   "gradingsSent": "Gradings gesendet?",
   "selfAverage": "Eigendurchschnitt",
-  "peerAssessmentAverage": "Fremddurchschnitt",
+  "peerAssessmentAverage": "Note (Fremddurchschnitt gerundet)",
 
   "comments": "Kommentare",
   "commentFrom": "Kommentar von",

@@ -132,9 +132,9 @@ export class StatisticsComponent implements OnInit {
     return d.total ? Math.round((100 * count) / d.total) : 0;
   }
 
-  /** deviations are rounded to half points: +1.5, -0.5, 0 */
+  /** deviations with sign, max. 2 decimals: +1.5, -0.25, 0 */
   signed(value: number): string {
-    return (value > 0 ? '+' : '') + value.toFixed(1).replace('.0', '');
+    return (value > 0 ? '+' : '') + String(Number(value.toFixed(2)));
   }
 
   stepLabel(value: number): string {

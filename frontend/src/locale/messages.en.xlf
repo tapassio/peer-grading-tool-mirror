@@ -294,10 +294,6 @@
         <source>Kampagnen-Übersicht</source>
         <target state="translated">overview of campaign</target>
       </trans-unit>
-      <trans-unit id="7247594953500831530" datatype="html">
-        <source>Peer Grading Tool - E-Mail bestätigen</source>
-        <target>Peer Grading Tool - confirm email</target>
-      </trans-unit>
       <trans-unit id="7775421822720457833" datatype="html">
         <source> Ihre E-Mail-Adresse &quot;<x id="INTERPOLATION" equiv-text="{{ responseMessage().email }}"/>&quot; wurde bestätigt. </source>
         <target> your e-mail adress &quot;<x id="INTERPOLATION" equiv-text="{{ responseMessage().email }}"/>&quot; has been confirmed. </target>
@@ -594,10 +590,6 @@
         <source>Selbsteinschätzung</source>
         <target state="translated">self assessment</target>
       </trans-unit>
-      <trans-unit id="757295924336581179" datatype="html">
-        <source>Mittelwert aller Fremdeinschätzungen an Sie</source>
-        <target state="translated">average value of all peer assessments to you</target>
-      </trans-unit>
       <trans-unit id="3029723177600454722" datatype="html">
         <source>Mittelwert aller Fremdeinschätzungen der gesamten Gruppe</source>
         <target state="translated">average value of all peer assessments of all group members</target>
@@ -662,10 +654,6 @@
         <source>Gradings konnten nicht gespeichert werden.</source>
         <target state="translated">gradings could not be saved.</target>
       </trans-unit>
-      <trans-unit id="7640918008321105776" datatype="html">
-        <source>Gradings können nicht gesendet werden. Werte müssen zwischen 1 und <x id="PH" equiv-text="this.campaign().maxPoints"/> liegen.</source>
-        <target state="translated">gradings cannot be sent. Values must be between 1 and {this.campaign.maxPoints}.</target>
-      </trans-unit>
       <trans-unit id="7699675702721078532" datatype="html">
         <source>Die Gradings und der Kommentar können nach dem Senden nicht mehr bearbeitet werden.</source>
         <target state="translated">the gradings and the comment cannot be edited after sending.</target>
@@ -698,14 +686,6 @@
         <source>Verlassen</source>
         <target state="translated">leave</target>
       </trans-unit>
-      <trans-unit id="2361265238320887165" datatype="html">
-        <source>Abmelden</source>
-        <target state="translated">logout</target>
-      </trans-unit>
-      <trans-unit id="420087024221106702" datatype="html">
-        <source>Sie sind</source>
-        <target state="translated">you are</target>
-      </trans-unit>
       <trans-unit id="5363940464046088994" datatype="html">
         <source>Profil</source>
         <target state="translated">profile</target>
@@ -721,14 +701,6 @@
       <trans-unit id="8930526198656004715" datatype="html">
         <source>Zurück</source>
         <target state="translated">Back</target>
-      </trans-unit>
-      <trans-unit id="7855604283854332023" datatype="html">
-        <source>Peer Grading Tool Login</source>
-        <target state="translated">Peer Grading Tool login</target>
-      </trans-unit>
-      <trans-unit id="1726363342938046830" datatype="html">
-        <source>About</source>
-        <target state="translated">about</target>
       </trans-unit>
       <trans-unit id="2454050363478003966" datatype="html">
         <source>Login</source>
@@ -781,10 +753,6 @@
       <trans-unit id="234707134716067658" datatype="html">
         <source>Passwort konnte nicht geändert werden.</source>
         <target state="translated">password could not be changed.</target>
-      </trans-unit>
-      <trans-unit id="6332827336259492293" datatype="html">
-        <source>Peer Grading Tool - Registrieren</source>
-        <target state="translated">Peer Grading Tool - register</target>
       </trans-unit>
       <trans-unit id="3367592830654824806" datatype="html">
         <source>E-Mail wiederholen</source>
@@ -1134,21 +1102,9 @@
         <source>Verteilung der Fremdbewertungen</source>
         <target state="translated">distribution of peer assessments</target>
       </trans-unit>
-      <trans-unit id="9187938685129405658" datatype="html">
-        <source> Abweichung = Fremdbewertung einer Person minus Gruppenschnitt (wie in der Auswertung für die Studierenden). Positiv: besser bewertet als der Schnitt der Gruppe. </source>
-        <target state="translated">Deviation = peer assessment of a person minus group average (as in the evaluation for the students). Positive: graded better than the group average.</target>
-      </trans-unit>
       <trans-unit id="266993209743998509" datatype="html">
         <source>Notenskala 1–6</source>
         <target state="translated">grade scale 1–6</target>
-      </trans-unit>
-      <trans-unit id="3585493459499709516" datatype="html">
-        <source>Standard: Schweizer Notenskala 1–6 (6 = sehr gut, 4 = genügend)</source>
-        <target state="translated">Default: Swiss grade scale 1–6 (6 = very good, 4 = sufficient)</target>
-      </trans-unit>
-      <trans-unit id="7619461379753375169" datatype="html">
-        <source> Abweichung = Fremdbewertung einer Person minus Gruppenschnitt, auf halbe Noten gerundet (wie in der Auswertung für die Studierenden). Positiv: besser bewertet als der Schnitt der Gruppe. </source>
-        <target state="translated">Deviation = peer assessment of a person minus group average, rounded to half grades (as in the evaluation for the students). Positive: graded better than the group average.</target>
       </trans-unit>
       <trans-unit id="3591904190146133039" datatype="html">
         <source>Gradings können nicht gesendet werden. Werte müssen zwischen 1 und <x id="PH" equiv-text="this.campaign().maxPoints"/> liegen (ganze oder halbe Punkte, z. B. 4.5).</source>
@@ -1157,10 +1113,6 @@
       <trans-unit id="977578758307041695" datatype="html">
         <source>Standard: Schweizer Notenskala 1–6 (6 = sehr gut, 4 = genügend). Halbe Noten wie 4.5 sind möglich.</source>
         <target state="translated">Default: Swiss grade scale 1–6 (6 = very good, 4 = sufficient). Half grades such as 4.5 are possible.</target>
-      </trans-unit>
-      <trans-unit id="4435055682334394988" datatype="html">
-        <source> Jede Person zählt einmal: Fremdbewertung minus Gruppenschnitt, auf halbe Noten gerundet. Rot: unter dem Schnitt der Gruppe, grün: darüber. </source>
-        <target state="translated">Each person counts once: peer assessment minus group average, rounded to half grades. Red: below the group average, green: above.</target>
       </trans-unit>
       <trans-unit id="5156464165139691669" datatype="html">
         <source>Verteilung der Abweichungen vom Gruppenschnitt</source>
@@ -1177,6 +1129,58 @@
       <trans-unit id="6592091172743993683" datatype="html">
         <source>Diese E-Mail-Adresse gehört bereits zu einem anderen Konto. Bitte die Administration kontaktieren.</source>
         <target state="translated">This e-mail address already belongs to another account. Please contact the administration.</target>
+      </trans-unit>
+      <trans-unit id="4388879716045736175" datatype="html">
+        <source>Note</source>
+        <target state="translated">Grade</target>
+      </trans-unit>
+      <trans-unit id="8150000916709737284" datatype="html">
+        <source>Fremddurchschnitt, gerundet wie für die Kampagne festgelegt. Diese Note sehen die Studierenden.</source>
+        <target state="translated">Peer average, rounded as set for the campaign. This is the grade the students see.</target>
+      </trans-unit>
+      <trans-unit id="5309683017480544653" datatype="html">
+        <source>Rundung der Note</source>
+        <target state="translated">Grade rounding</target>
+      </trans-unit>
+      <trans-unit id="610702522258828491" datatype="html">
+        <source>Die Note (Mittelwert der Fremdeinschätzungen) und die Abweichung werden am Schluss so gerundet. Gerechnet wird mit den ungerundeten Werten.</source>
+        <target state="translated">The grade (average of the peer assessments) and the deviation are rounded like this at the end. All calculations use the unrounded values.</target>
+      </trans-unit>
+      <trans-unit id="6093761293589820264" datatype="html">
+        <source>Halbe Noten (z. B. 4.5) – Standard</source>
+        <target state="translated">Half grades (e.g. 4.5) – default</target>
+      </trans-unit>
+      <trans-unit id="6443177674439627481" datatype="html">
+        <source>Viertelnoten (z. B. 4.25)</source>
+        <target state="translated">Quarter grades (e.g. 4.25)</target>
+      </trans-unit>
+      <trans-unit id="190224308275562338" datatype="html">
+        <source>Zehntelnoten (z. B. 4.3)</source>
+        <target state="translated">Tenths (e.g. 4.3)</target>
+      </trans-unit>
+      <trans-unit id="6537536626786918093" datatype="html">
+        <source>Ganze Noten (z. B. 4)</source>
+        <target state="translated">Whole grades (e.g. 4)</target>
+      </trans-unit>
+      <trans-unit id="3816989482976584708" datatype="html">
+        <source>Nicht runden (2 Nachkommastellen)</source>
+        <target state="translated">No rounding (2 decimals)</target>
+      </trans-unit>
+      <trans-unit id="7543202084882719510" datatype="html">
+        <source>Note (Fremdeinschätzung)</source>
+        <target state="translated">Grade (peer assessment)</target>
+      </trans-unit>
+      <trans-unit id="4793152834135745171" datatype="html">
+        <source>Gewichteter Mittelwert aller Fremdeinschätzungen an Sie, gerundet wie für die Kampagne festgelegt (Standard: halbe Noten)</source>
+        <target state="translated">Weighted average of all peer assessments of you, rounded as set for the campaign (default: half grades)</target>
+      </trans-unit>
+      <trans-unit id="8094888557115283603" datatype="html">
+        <source> Abweichung = Fremdbewertung einer Person minus Gruppenschnitt, gerundet wie in der Kampagne eingestellt (Standard: halbe Noten), gleich wie in der Auswertung für die Studierenden. Positiv: besser bewertet als der Schnitt der Gruppe. </source>
+        <target state="translated"> Deviation = a person's peer rating minus the group average, rounded as set in the campaign (default: half grades), the same as in the students' results. Positive: rated better than the group average. </target>
+      </trans-unit>
+      <trans-unit id="3555725377377753556" datatype="html">
+        <source> Jede Person zählt einmal: Fremdbewertung minus Gruppenschnitt, in halben Schritten (bei feinerer Rundung in Viertelschritten). Rot: unter dem Schnitt der Gruppe, grün: darüber. </source>
+        <target state="translated"> Each person counts once: peer rating minus group average, in half steps (quarter steps with finer rounding). Red: below the group average, green: above. </target>
       </trans-unit>
     </body>
   </file>

@@ -28,8 +28,8 @@
         </td>
         }
         <th>
-          <div class="smallMobile" i18n>Durchschnitt</div>
-          {{ gradingReviewData().thirdPartyAverage }}
+          <div class="smallMobile" i18n>Note</div>
+          {{ gradingReviewData().grade }}
         </th>
       </tr>
       <tr class="selfGrading">
@@ -52,12 +52,12 @@
     <div class="bigNumbers">
       <div>
         <div>
-          {{ gradingReviewData().thirdPartyAverage }}
+          {{ gradingReviewData().grade }}
         </div>
         <h3>
-          <span i18n>Fremdeinschätzung</span>
+          <span i18n>Note (Fremdeinschätzung)</span>
           <pgt-tool-tip
-            text="Mittelwert aller Fremdeinschätzungen an Sie"
+            text="Gewichteter Mittelwert aller Fremdeinschätzungen an Sie, gerundet wie für die Kampagne festgelegt (Standard: halbe Noten)"
             i18n-text
           ></pgt-tool-tip>
         </h3>

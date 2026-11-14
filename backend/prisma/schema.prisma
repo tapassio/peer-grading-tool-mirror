@@ -70,6 +70,9 @@ model Campaign {
   groups                Group[]
   criteria              Criteria[]
   allowCommentsForPeers Boolean    @default(true)
+  // rounding step of the final grade: 0.5 = half grades (default),
+  // 0.25, 0.1, 1 = whole grades, 0 = no rounding
+  gradeRounding         Float      @default(0.5)
 }
 
 model Grading {

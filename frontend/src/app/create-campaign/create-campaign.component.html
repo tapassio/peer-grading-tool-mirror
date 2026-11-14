@@ -45,6 +45,22 @@
         </label>
         <label>
           <div>
+            <ng-container i18n>Rundung der Note</ng-container>:
+            <pgt-tool-tip
+              text="Die Note (Mittelwert der Fremdeinschätzungen) und die Abweichung werden am Schluss so gerundet. Gerechnet wird mit den ungerundeten Werten."
+              i18n-text
+            ></pgt-tool-tip>
+          </div>
+          <div class="formInputcontainer">
+            <select formControlName="gradeRounding">
+              @for (option of gradeRoundingOptions; track option.step) {
+              <option [ngValue]="option.step">{{ option.text }}</option>
+              }
+            </select>
+          </div>
+        </label>
+        <label>
+          <div>
             <ng-container i18n>Sprache</ng-container>:
             <pgt-tool-tip
               text="Die Kampagnensprache bestimmt, in welcher Sprache die Mails der Kampagne versendet werden."

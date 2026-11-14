@@ -35,7 +35,7 @@
   "groupOverview": "Übersicht über Gruppe {groupNumber}",
   "gradingTo": "Grading an",
   "gradingFrom": "Grading von",
-  "peerAssessmentAverage": "Fremddurchschnitt",
+  "peerAssessmentAverage": "Note (Fremddurchschnitt gerundet)",
   "pendingPeers": "Peers mit ausstehenden Gradings",
   "comments": "Kommentare"
 }

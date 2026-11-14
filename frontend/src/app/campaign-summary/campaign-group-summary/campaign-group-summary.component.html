@@ -51,6 +51,21 @@
         </td>
         }
       </tr>
+      <tr class="grade-row">
+        <td>
+          <b i18n>Note</b>:
+          <pgt-tool-tip
+            text="Fremddurchschnitt, gerundet wie für die Kampagne festgelegt. Diese Note sehen die Studierenden."
+            i18n-text
+          ></pgt-tool-tip>
+        </td>
+        @for (peer of group.peers; track peer) {
+        <td>
+          <div class="mobile">{{ peer.lastName }} {{ peer.firstName }}</div>
+          <b>{{ campaignService.getPeersGrade(campaign, group, peer) }}</b>
+        </td>
+        }
+      </tr>
     </table>
   </div>
 
@@ -83,6 +98,10 @@
         <div><ng-container i18n>Fremddurchschnitt</ng-container>:</div>
         <div>
           {{ campaignService.getPeersThirdPartyAverage(group, peer) }}
+        </div>
+        <div><ng-container i18n>Note</ng-container>:</div>
+        <div>
+          <b>{{ campaignService.getPeersGrade(campaign, group, peer) }}</b>
         </div>
       </td>
     </tr>
