@@ -170,7 +170,16 @@ export class GroupService {
         },
       },
     });
-    await this.sendGridService.peerGradingConfirmation(gradingData, peer);
+    // The gradings are saved at this point. The confirmation mail is only a
+    // receipt: if it cannot be sent (e.g. SendGrid not reachable), the
+    // submission must not look failed to the student.
+    try {
+      await this.sendGridService.peerGradingConfirmation(gradingData, peer);
+    } catch (error) {
+      this.logger.warn(
+        `gradings saved, but the confirmation mail could not be sent: ${error?.message ?? error}`,
+      );
+    }
 
     return true;
   }

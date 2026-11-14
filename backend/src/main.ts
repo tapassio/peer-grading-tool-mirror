@@ -6,10 +6,12 @@ import { AppModule } from './app.module';
 import { toolchainManifest } from './toolchain/manifest';
 import helmet from 'helmet';
 import { checkSecrets } from './security/check-secrets';
+import { warnIfRateLimitDisabled } from './security/rate-limit';
 import { docPouchOrigin, frameAncestors } from './security/csp';
 
 async function bootstrap() {
   checkSecrets(process.env.PRODUCTION === 'true');
+  warnIfRateLimitDisabled();
 
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);

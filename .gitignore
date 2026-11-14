@@ -10,4 +10,10 @@
 *.db-journal
 .env.compose
 
-backend/prisma/seed.ts
+backend/prisma/seed.ts# end-to-end tests
+e2e/node_modules/
+e2e/.data/
+e2e/test-results/
+e2e/playwright-report/
+# link to frontend/dist, created by e2e/scripts/start-server.mjs
+backend/frontend
