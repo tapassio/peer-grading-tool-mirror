@@ -16,8 +16,8 @@ describe('CampaignMetaComponent', () => {
 
     fixture = TestBed.createComponent(CampaignMetaComponent);
     component = fixture.componentInstance;
-    component.campaign = testCampaign();
-    component.viewState = 'dashboard';
+    fixture.componentRef.setInput('campaign', testCampaign());
+    fixture.componentRef.setInput('viewState', 'dashboard');
     fixture.detectChanges();
   });
 

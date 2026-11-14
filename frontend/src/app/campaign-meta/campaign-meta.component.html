@@ -1,9 +1,9 @@
 <div class="campaign-data">
   <div>
-    @if (showName) {
+    @if (showName()) {
     <p>
       <b><ng-container i18n>Kampagnenname</ng-container>:&nbsp;</b>
-      <span>{{ campaign.name }}</span>
+      <span>{{ campaign().name }}</span>
     </p>
     }
     <p>
@@ -12,26 +12,26 @@
     </p>
     <p>
       <b><ng-container i18n>Erstellt am</ng-container>:&nbsp;</b>
-      <span>{{ campaign.creationDate | date }}</span>
+      <span>{{ campaign().creationDate | date }}</span>
     </p>
-    @if (campaign.openingDate) {
+    @if (campaign().openingDate) {
     <p>
       <b><ng-container i18n>Beginn</ng-container>:&nbsp;</b>
-      <span>{{ campaign.openingDate | date }}</span>
+      <span>{{ campaign().openingDate | date }}</span>
     </p>
-    } @if (campaign.closingDate) {
+    } @if (campaign().closingDate) {
     <p>
       <b><ng-container i18n>Ende</ng-container>:&nbsp;</b>
-      <span>{{ campaign.closingDate | date }}</span>
+      <span>{{ campaign().closingDate | date }}</span>
     </p>
     }
     <p>
       <b><ng-container i18n>Sprache</ng-container>:&nbsp;</b>
-      <span>{{ campaign.language | uppercase }}</span>
+      <span>{{ campaign().language | uppercase }}</span>
     </p>
     <p>
       <b>
-        @if (campaign.allowCommentsForPeers) {
+        @if (campaign().allowCommentsForPeers) {
         <span i18n>P2P Kommentare erlaubt</span>
         } @else {
         <span i18n>P2P Kommentare nicht erlaubt</span>
@@ -42,11 +42,11 @@
   <div>
     <p>
       <b><ng-container i18n>Bewertungsskala</ng-container>:&nbsp;</b>
-      <span>1 - {{ campaign.maxPoints }}</span>
+      <span>1 - {{ campaign().maxPoints }}</span>
     </p>
     <p>
       <b><ng-container i18n>Anzahl Gruppen</ng-container>:&nbsp;</b>
-      <span>{{ campaign.groups.length }}</span>
+      <span>{{ campaign().groups.length }}</span>
     </p>
     <p>
       <b><ng-container i18n>Anzahl Teilnehmende</ng-container>:&nbsp;</b>
@@ -64,7 +64,7 @@
     }
   </div>
   <div class="criteria-data">
-    @for (crit of campaign.criteria; track crit; let index = $index) {
+    @for (crit of campaign().criteria; track crit; let index = $index) {
     <p>
       <b
         >@if (index === 0) {

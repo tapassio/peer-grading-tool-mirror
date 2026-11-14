@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input, output } from '@angular/core';
 import { Campaign, CampaignStatus, MailsSent } from '../interfaces';
 import { Router } from '@angular/router';
 import { PGTService } from '../services/pgt.service';
@@ -25,12 +25,12 @@ export class CampaignButtonsComponent {
   private snackBarService = inject(SnackBarService);
   private campaignService = inject(CampaignService);
 
-  @Input() campaign: Campaign;
-  @Input() viewState: 'dashboard' | 'summary';
-  @Output() reloadEvent: EventEmitter<string> = new EventEmitter<string>();
+  readonly campaign = input.required<Campaign>();
+  readonly viewState = input.required<'dashboard' | 'summary'>();
+  readonly reloadEvent = output<string>();
 
   edit() {
-    this.router.navigate(['/create-campaign/' + this.campaign.campaignId]);
+    this.router.navigate(['/create-campaign/' + this.campaign().campaignId]);
   }
 
   /**
@@ -39,17 +39,17 @@ export class CampaignButtonsComponent {
   startCampaign() {
     const dialogRef = this.dialog.open(WarnDialogComponent, {
       data: {
-        text: $localize`Möchten Sie die Kampagne "${this.campaign.name}" wirklich beginnen und allen Teilnehmern die Einladungs-Mails zusenden?`,
+        text: $localize`Möchten Sie die Kampagne "${this.campaign().name}" wirklich beginnen und allen Teilnehmern die Einladungs-Mails zusenden?`,
         affirmButton: $localize`Senden`,
       },
     });
 
     dialogRef.afterClosed().subscribe((accepted: boolean) => {
       if (accepted)
-        this.pgtService.startCampaign(this.campaign.campaignId).subscribe({
+        this.pgtService.startCampaign(this.campaign().campaignId).subscribe({
           next: (mailsSent: MailsSent) => {
             this.snackBarService.openSnackBar(
-              $localize`Kampagne "${this.campaign.name}" erfolgreich begonnen.` +
+              $localize`Kampagne "${this.campaign().name}" erfolgreich begonnen.` +
                 ' ' +
                 $localize`Anzahl gesendete Mails: Teilnehmer: ${mailsSent.peerMailsSent}; Admins: ${mailsSent.adminMailsSent}.`
             );
@@ -72,17 +72,17 @@ export class CampaignButtonsComponent {
   endCampaign() {
     const dialogRef = this.dialog.open(WarnDialogComponent, {
       data: {
-        text: $localize`Möchten Sie die Kampagne "${this.campaign.name}" wirklich beenden? Ausstehende Gradings können nicht mehr eingetragen werden.`,
+        text: $localize`Möchten Sie die Kampagne "${this.campaign().name}" wirklich beenden? Ausstehende Gradings können nicht mehr eingetragen werden.`,
         affirmButton: $localize`Senden`,
       },
     });
 
     dialogRef.afterClosed().subscribe((accepted: boolean) => {
       if (accepted)
-        this.pgtService.endCampaign(this.campaign.campaignId).subscribe({
+        this.pgtService.endCampaign(this.campaign().campaignId).subscribe({
           next: () => {
             this.snackBarService.openSnackBar(
-              $localize`Kampagne "${this.campaign.name}" erfolgreich beendet.`
+              $localize`Kampagne "${this.campaign().name}" erfolgreich beendet.`
             );
             this.reloadEvent.emit('end');
           },
@@ -100,7 +100,7 @@ export class CampaignButtonsComponent {
   sendCampaignResults() {
     const dialogRef = this.dialog.open(WarnDialogComponent, {
       data: {
-        text: $localize`Möchten Sie die Ergebnismails der Kampagne "${this.campaign.name}" wirklich senden?`,
+        text: $localize`Möchten Sie die Ergebnismails der Kampagne "${this.campaign().name}" wirklich senden?`,
         affirmButton: $localize`Senden`,
       },
     });
@@ -108,11 +108,11 @@ export class CampaignButtonsComponent {
     dialogRef.afterClosed().subscribe((accepted: boolean) => {
       if (accepted)
         this.pgtService
-          .sendCampaignResults(this.campaign.campaignId)
+          .sendCampaignResults(this.campaign().campaignId)
           .subscribe({
             next: (mailsSent: MailsSent) => {
               this.snackBarService.openSnackBar(
-                $localize`Ergebnismails der Kampagne "${this.campaign.name}" erfolgreich gesendet.` +
+                $localize`Ergebnismails der Kampagne "${this.campaign().name}" erfolgreich gesendet.` +
                   ' ' +
                   $localize`Anzahl gesendete Mails: Teilnehmer: ${mailsSent.peerMailsSent}; Admins: ${mailsSent.adminMailsSent}.`
               );
@@ -135,17 +135,17 @@ export class CampaignButtonsComponent {
   sendReminderMails() {
     const dialogRef = this.dialog.open(WarnDialogComponent, {
       data: {
-        text: $localize`Möchten Sie den Peers mit ausstehenden Gradings der Kampagne "${this.campaign.name}" eine Erinnerungsmail zusenden?`,
+        text: $localize`Möchten Sie den Peers mit ausstehenden Gradings der Kampagne "${this.campaign().name}" eine Erinnerungsmail zusenden?`,
         affirmButton: $localize`Senden`,
       },
     });
 
     dialogRef.afterClosed().subscribe((accepted: boolean) => {
       if (accepted)
-        this.pgtService.sendReminderMails(this.campaign.campaignId).subscribe({
+        this.pgtService.sendReminderMails(this.campaign().campaignId).subscribe({
           next: (mailsSent: MailsSent) => {
             this.snackBarService.openSnackBar(
-              $localize`Erinnerungsmails der Kampagne "${this.campaign.name}" erfolgreich gesendet.` +
+              $localize`Erinnerungsmails der Kampagne "${this.campaign().name}" erfolgreich gesendet.` +
                 ' ' +
                 $localize`Anzahl gesendete Mails: Teilnehmer: ${mailsSent.peerMailsSent}; Admins: ${mailsSent.adminMailsSent}.`
             );
@@ -193,7 +193,7 @@ export class CampaignButtonsComponent {
   }
 
   toSummary() {
-    this.router.navigate(['/campaign-summary/' + this.campaign.campaignId]);
+    this.router.navigate(['/campaign-summary/' + this.campaign().campaignId]);
   }
 
   /**
@@ -203,22 +203,22 @@ export class CampaignButtonsComponent {
   deleteCampaign() {
     const dialogRef = this.dialog.open(WarnDialogComponent, {
       data: {
-        text: $localize`Möchten Sie die Kampagne "${this.campaign.name}" wirklich löschen?`,
+        text: $localize`Möchten Sie die Kampagne "${this.campaign().name}" wirklich löschen?`,
       },
     });
 
     dialogRef.afterClosed().subscribe((shouldDelete: boolean) => {
       if (shouldDelete)
-        this.pgtService.deleteCampaign(this.campaign).subscribe({
+        this.pgtService.deleteCampaign(this.campaign()).subscribe({
           next: () => {
             this.snackBarService.openSnackBar(
-              $localize`Kampagne "${this.campaign.name}" wurde gelöscht`
+              $localize`Kampagne "${this.campaign().name}" wurde gelöscht`
             );
             this.reloadEvent.emit('delete');
           },
           error: (error: HttpErrorResponse) => {
             this.snackBarService.openSnackBar(
-              $localize`Kampagne "${this.campaign.name}" konnte nicht gelöscht werden.` +
+              $localize`Kampagne "${this.campaign().name}" konnte nicht gelöscht werden.` +
                 ` ` +
                 $localize`Fehlermeldung: ${error.message}`
             );
@@ -231,7 +231,7 @@ export class CampaignButtonsComponent {
    * this method lets the backend generate a pdf so the user can download it
    */
   exportCampaignAsPdf() {
-    this.pgtService.getCampaignSummaryPDF(this.campaign.campaignId).subscribe({
+    this.pgtService.getCampaignSummaryPDF(this.campaign().campaignId).subscribe({
       next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -239,7 +239,7 @@ export class CampaignButtonsComponent {
         a.setAttribute('style', 'display: none');
         a.href = url;
         a.download = `${
-          this.campaign.name
+          this.campaign().name
         }_${new Date().toLocaleDateString()}.pdf`;
         a.click();
         window.URL.revokeObjectURL(url);
@@ -260,7 +260,7 @@ export class CampaignButtonsComponent {
    */
   exportCampaignAsExcel() {
     this.pgtService
-      .getCampaignSummaryExcel(this.campaign.campaignId)
+      .getCampaignSummaryExcel(this.campaign().campaignId)
       .subscribe({
         next: (res: any) => {
           const blob = new Blob([res]);
@@ -270,7 +270,7 @@ export class CampaignButtonsComponent {
           a.setAttribute('style', 'display: none');
           a.href = url;
           a.download = `${
-            this.campaign.name
+            this.campaign().name
           }_${new Date().toLocaleDateString()}.xlsx`;
 
           a.click();
@@ -284,10 +284,10 @@ export class CampaignButtonsComponent {
   }
 
   getCampaignStatus(): CampaignStatus {
-    return this.campaignService.getCampaignStatus(this.campaign);
+    return this.campaignService.getCampaignStatus(this.campaign());
   }
 
   gradingsComplete(): boolean {
-    return this.campaignService.gradingsComplete(this.campaign);
+    return this.campaignService.gradingsComplete(this.campaign());
   }
 }

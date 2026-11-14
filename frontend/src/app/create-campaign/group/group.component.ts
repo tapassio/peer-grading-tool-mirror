@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Group, Campaign, CampaignStatus } from 'src/app/interfaces';
 import { CreateCampaignService } from '../create-campaign.service';
@@ -17,17 +17,17 @@ import { PeerComponent } from './peer/peer.component';
 export class GroupComponent {
   private createCampaignService = inject(CreateCampaignService);
 
-  @Input() group: Group;
-  @Input() campaign: Campaign;
-  @Input() campaignStatus: CampaignStatus;
+  readonly group = input.required<Group>();
+  readonly campaign = input.required<Campaign>();
+  readonly campaignStatus = input.required<CampaignStatus>();
 
   peerForm: FormGroup;
 
   removeGroup() {
-    this.createCampaignService.removeGroup(this.group);
+    this.createCampaignService.removeGroup(this.group());
   }
 
   addPeer() {
-    this.createCampaignService.addPeer(this.group);
+    this.createCampaignService.addPeer(this.group());
   }
 }

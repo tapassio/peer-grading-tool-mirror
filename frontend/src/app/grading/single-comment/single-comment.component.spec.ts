@@ -17,9 +17,9 @@ describe('SingleCommentComponent', () => {
     fixture = TestBed.createComponent(SingleCommentComponent);
     component = fixture.componentInstance;
     const user = testUser();
-    component.toUser = user;
-    component.peer = testPeer();
-    component.commentFormGroup = new FormGroup({ [user.userId]: new FormControl('') });
+    fixture.componentRef.setInput('toUser', user);
+    fixture.componentRef.setInput('peer', testPeer());
+    fixture.componentRef.setInput('commentFormGroup', new FormGroup({ [user.userId]: new FormControl('') }));
     fixture.detectChanges();
   });
 

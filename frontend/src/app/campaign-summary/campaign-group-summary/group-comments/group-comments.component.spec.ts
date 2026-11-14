@@ -14,6 +14,8 @@ describe('GroupCommentsComponent', () => {
     
     fixture = TestBed.createComponent(GroupCommentsComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('comments', []);
+    fixture.componentRef.setInput('peers', []);
     fixture.detectChanges();
   });
 

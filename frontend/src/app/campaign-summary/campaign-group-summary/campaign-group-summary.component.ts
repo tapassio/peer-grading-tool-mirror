@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input } from '@angular/core';
 import { Campaign, Group, Peer } from 'src/app/interfaces';
 import { CampaignService } from 'src/app/services/campaign.service';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -22,8 +22,8 @@ import { GroupCommentsComponent } from './group-comments/group-comments.componen
 export class CampaignGroupSummaryComponent {
   campaignService = inject(CampaignService);
 
-  @Input() group?: Group;
-  @Input() campaign?: Campaign;
+  readonly group = input.required<Group>();
+  readonly campaign = input.required<Campaign>();
   completed = false;
 
   /**
@@ -33,15 +33,17 @@ export class CampaignGroupSummaryComponent {
   getPeersWithIncompleteGradings(): Peer[] {
     const incompletePeers = [];
 
-    if (this.group && this.campaign) {
-      for (const peer of this.group.peers) {
+    const group = this.group();
+    const campaign = this.campaign();
+    if (group && campaign) {
+      for (const peer of group.peers) {
         const gradingsByPeer = this.campaignService.getGradingsByPeer(
-          this.group,
+          group,
           peer
         );
         if (
           gradingsByPeer.length <
-          this.campaign.criteria.length * this.group.peers.length
+          campaign.criteria.length * group.peers.length
         )
           incompletePeers.push(peer);
       }

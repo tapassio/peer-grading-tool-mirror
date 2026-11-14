@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject, input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Campaign, CampaignStatus, Criteria } from 'src/app/interfaces';
 import { CampaignService } from '../../services/campaign.service';
@@ -23,8 +23,8 @@ export class CriteriaComponent implements OnInit {
   private campaignService = inject(CampaignService);
 
   criteriaForm: FormGroup;
-  @Input() campaign: Campaign;
-  @Input() campaignStatus: CampaignStatus;
+  readonly campaign = input.required<Campaign>();
+  readonly campaignStatus = input.required<CampaignStatus>();
 
   ngOnInit(): void {
     // creating the form for the criteria
@@ -33,7 +33,7 @@ export class CriteriaComponent implements OnInit {
       criteriaWeight: [null, [Validators.required, Validators.min(0)]],
     });
 
-    if (this.campaignStatus != 'erstellt') this.criteriaForm.disable();
+    if (this.campaignStatus() !== 'erstellt') this.criteriaForm.disable();
   }
 
   /**
@@ -46,7 +46,7 @@ export class CriteriaComponent implements OnInit {
         criteriaForm.value.criteriaName,
         criteriaForm.value.criteriaWeight
       );
-      this.createCampaignService.addCriteria(this.campaign, criteria);
+      this.createCampaignService.addCriteria(this.campaign(), criteria);
       criteriaForm.reset();
     } else {
       criteriaForm.markAllAsTouched();
@@ -54,6 +54,6 @@ export class CriteriaComponent implements OnInit {
   }
 
   removeCriteria(criteria: Criteria) {
-    this.createCampaignService.removeCriteria(this.campaign, criteria);
+    this.createCampaignService.removeCriteria(this.campaign(), criteria);
   }
 }

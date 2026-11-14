@@ -21,10 +21,10 @@ describe('SingleRowComponent', () => {
     component = fixture.componentInstance;
     const campaign = testCampaign();
     const peers = campaign.groups[0].peers;
-    component.campaign = campaign;
-    component.peer = peers[0];
-    component.toPeer = peers[1];
-    component.gradingsFormGroup = testGradingsForm(campaign, peers);
+    fixture.componentRef.setInput('campaign', campaign);
+    fixture.componentRef.setInput('peer', peers[0]);
+    fixture.componentRef.setInput('toPeer', peers[1]);
+    fixture.componentRef.setInput('gradingsFormGroup', testGradingsForm(campaign, peers));
     fixture.detectChanges();
   });
 

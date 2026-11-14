@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 /**
@@ -13,8 +13,8 @@ import { MatTooltip } from '@angular/material/tooltip';
     imports: [MatIcon, MatTooltip]
 })
 export class ToolTipComponent {
-  @Input() text: string;
-  @Input() icon = 'help_outline';
-  @Input() color = 'var(--tc-purple)';
+  readonly text = input.required<string>();
+  readonly icon = input('help_outline');
+  readonly color = input('var(--tc-purple)');
 
 }

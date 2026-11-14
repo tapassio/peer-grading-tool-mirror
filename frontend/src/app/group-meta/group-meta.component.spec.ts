@@ -15,8 +15,8 @@ describe('GroupMetaComponent', () => {
 
     fixture = TestBed.createComponent(GroupMetaComponent);
     component = fixture.componentInstance;
-    component.campaign = testCampaign();
-    component.group = testGroup();
+    fixture.componentRef.setInput('campaign', testCampaign());
+    fixture.componentRef.setInput('group', testGroup());
     fixture.detectChanges();
   });
 

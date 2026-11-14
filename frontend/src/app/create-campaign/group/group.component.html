@@ -4,11 +4,11 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <div class="groupTitle">
-            <h3><ng-container i18n>Gruppe</ng-container> {{ group.number }}</h3>
+            <h3><ng-container i18n>Gruppe</ng-container> {{ group().number }}</h3>
             <button
               mat-raised-button
               color="primary"
-              [disabled]="campaignStatus === 'abgeschlossen'"
+              [disabled]="campaignStatus() === 'abgeschlossen'"
               (click)="removeGroup()"
             >
               <ng-container i18n>Gruppe löschen</ng-container>
@@ -22,7 +22,7 @@
           mat-raised-button
           color="primary"
           (click)="addPeer()"
-          [disabled]="campaignStatus === 'abgeschlossen'"
+          [disabled]="campaignStatus() === 'abgeschlossen'"
         >
           <ng-container i18n>Person hinzufügen</ng-container>
           <mat-icon>person_add</mat-icon>
@@ -36,12 +36,12 @@
           <th i18n>E-Mail</th>
           <th></th>
         </tr>
-        @for (peer of group.peers; track peer) {
+        @for (peer of group().peers; track peer) {
         <tr
           pgt-peer
           [peer]="peer"
-          [group]="group"
-          [campaignStatus]="campaignStatus"
+          [group]="group()"
+          [campaignStatus]="campaignStatus()"
         ></tr>
         }
       </table>

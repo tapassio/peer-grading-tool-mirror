@@ -15,9 +15,9 @@ describe('GroupComponent', () => {
 
     fixture = TestBed.createComponent(GroupComponent);
     component = fixture.componentInstance;
-    component.campaign = testCampaign();
-    component.group = testGroup();
-    component.campaignStatus = 'erstellt' as any;
+    fixture.componentRef.setInput('campaign', testCampaign());
+    fixture.componentRef.setInput('group', testGroup());
+    fixture.componentRef.setInput('campaignStatus', 'erstellt' as any);
     fixture.detectChanges();
   });
 

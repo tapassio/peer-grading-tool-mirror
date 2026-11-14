@@ -1,12 +1,12 @@
-<h2>{{ campaign.name }}</h2>
+<h2>{{ campaign().name }}</h2>
 <div class="campaign-meta">
   <pgt-campaign-meta
-    [campaign]="campaign"
-    [viewState]="viewState"
+    [campaign]="campaign()"
+    [viewState]="viewState()"
   ></pgt-campaign-meta>
 </div>
 <pgt-campaign-buttons
-  [campaign]="campaign"
-  [viewState]="viewState"
+  [campaign]="campaign()"
+  [viewState]="viewState()"
   (reloadEvent)="onReloadEvent($event)"
 ></pgt-campaign-buttons>

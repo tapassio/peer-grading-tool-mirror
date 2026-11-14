@@ -1,28 +1,28 @@
-@if (control && control.invalid && control.errors && (control.dirty ||
-control.touched)) {
+@if (control() && control().invalid && control().errors && (control().dirty ||
+control().touched)) {
 <div class="formErrorContainer">
-  @if (control.hasError('required')) {
+  @if (control().hasError('required')) {
 
   <small i18n>Feld darf nicht leer sein.</small>&nbsp; }
-  @if(control.errors['min']) {
+  @if(control().errors['min']) {
 
   <small i18n
-    >Der Wert muss mindestens {{ control.errors["min"].min }} sein.</small
-  >&nbsp; } @if (control.errors['email']) {
+    >Der Wert muss mindestens {{ control().errors["min"].min }} sein.</small
+  >&nbsp; } @if (control().errors['email']) {
 
   <small i18n>Ungültige E-Mail-Adresse.</small>&nbsp; } @if
-  (control.errors['minlength']) {
+  (control().errors['minlength']) {
 
   <small i18n
-    >Mindestens {{ control.errors["minlength"].requiredLength }} Zeichen.</small
+    >Mindestens {{ control().errors["minlength"].requiredLength }} Zeichen.</small
   >&nbsp; } @if
-  (control.errors['pattern']) {
+  (control().errors['pattern']) {
 
-  <small i18n>Ungültige Eingabe.</small>&nbsp; } @if (control.errors['notSame'])
+  <small i18n>Ungültige Eingabe.</small>&nbsp; } @if (control().errors['notSame'])
   {
 
   <small i18n>Passwörter stimmen nicht überein.</small>&nbsp; } @if
-  (control.errors['emailsNotSame']) {
+  (control().errors['emailsNotSame']) {
 
   <small i18n>E-Mails stimmen nicht überein.</small>&nbsp; }
 </div>
