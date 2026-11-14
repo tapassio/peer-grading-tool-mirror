@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Campaign, Peer } from 'src/app/interfaces';
 import { GradingComponent } from '../grading.component';
 
@@ -12,15 +12,13 @@ import { GradingComponent } from '../grading.component';
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class SingleRowComponent implements OnInit {
+export class SingleRowComponent {
   @Input() toPeer: Peer;
   @Input() peer: Peer;
   @Input() campaign: Campaign;
   @Input() gradingsFormGroup: any;
 
   constructor(private gradingComponent: GradingComponent) {}
-
-  ngOnInit(): void {}
 
   /**
    * this function is called in the html to calculate the average of a row
@@ -33,7 +31,7 @@ export class SingleRowComponent implements OnInit {
 
       let sum = 0;
       let count = 0;
-      for (let grading of gradings) {
+      for (const grading of gradings) {
         sum += grading.points * grading.criteria.weight;
         count += grading.criteria.weight;
       }

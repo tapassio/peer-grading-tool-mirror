@@ -52,7 +52,6 @@ export function gradeRoundingOf(campaign?: { gradeRounding?: number | null }): n
   providedIn: 'root',
 })
 export class CampaignService {
-  constructor() {}
 
   ///////////// campaign
 
@@ -60,15 +59,15 @@ export class CampaignService {
     name: string,
     maxPoints: number,
     language: Language,
-    allowCommentsForPeers: boolean = true,
+    allowCommentsForPeers = true,
     creationDate: Date = new Date(),
     openingDate?: Date,
     closingDate?: Date,
     groups: Group[] = [],
     criteria: Criteria[] = [],
-    id: number = 0
+    id = 0
   ): Campaign {
-    return <Campaign>{
+    return {
       campaignId: id,
       name: name,
       language: language,
@@ -81,7 +80,7 @@ export class CampaignService {
       closingDate: closingDate,
       groups: groups,
       criteria: criteria,
-    };
+    } as Campaign;
   }
 
   cleanupCampaignData(campaign: Campaign): Campaign {
@@ -150,14 +149,14 @@ export class CampaignService {
   }
 
   addGroup(campaign: Campaign, ...groups: Group[]): void {
-    for (let group of groups) {
+    for (const group of groups) {
       campaign.groups.push(group);
     }
     this.autoNumberGroups(campaign.groups);
   }
 
   removeGroup(campaign: Campaign, ...groups: Group[]) {
-    for (let groupToDelete of groups) {
+    for (const groupToDelete of groups) {
       const index = campaign.groups.indexOf(groupToDelete);
       if (index != -1) {
         campaign.groups.splice(index, 1);
@@ -174,13 +173,13 @@ export class CampaignService {
   }
 
   addCriteria(campaign: Campaign, ...criteria: Criteria[]): void {
-    for (let crit of criteria) {
+    for (const crit of criteria) {
       campaign.criteria.push(crit);
     }
   }
 
   removeCriteria(campaign: Campaign, ...criteria: Criteria[]): void {
-    for (let crit of criteria) {
+    for (const crit of criteria) {
       const index = campaign.criteria.indexOf(crit, 0);
       if (index > -1) {
         campaign.criteria.splice(index, 1);
@@ -189,7 +188,7 @@ export class CampaignService {
   }
 
   getCriteriaByName(campaign: Campaign, name: string): Criteria {
-    for (let criteria of campaign.criteria) {
+    for (const criteria of campaign.criteria) {
       if (criteria.name === name) {
         return criteria;
       }
@@ -204,31 +203,31 @@ export class CampaignService {
   ///////////// group
 
   groupConstructor(
-    number: number = 0,
+    number = 0,
     peers: Peer[] = [],
     gradings: Grading[] = [],
-    completed: boolean = false,
+    completed = false,
     comments: PeerComment[] = [],
-    id: number = 0
+    id = 0
   ): Group {
-    return <Group>{
+    return {
       groupId: id,
       number: number,
       peers: peers,
       gradings: gradings,
       completed: completed,
       comments: comments,
-    };
+    } as Group;
   }
 
   addPeer(group: Group, ...peers: Peer[]): void {
-    for (let peer of peers) {
+    for (const peer of peers) {
       group.peers.push(peer);
     }
   }
 
   removePeerFromGroup(group: Group, ...peers: Peer[]): void {
-    for (let peer of peers) {
+    for (const peer of peers) {
       const index = group.peers.indexOf(peer, 0);
       if (index > -1) {
         group.peers.splice(index, 1);
@@ -241,7 +240,7 @@ export class CampaignService {
   }
 
   updateExistingGrading(group: Group, newGrading: Grading): void {
-    for (let grading of group.gradings) {
+    for (const grading of group.gradings) {
       if (
         newGrading.criteria == grading.criteria &&
         newGrading.fromPeer == grading.fromPeer &&
@@ -255,7 +254,7 @@ export class CampaignService {
   }
 
   getCommentByPeer(group: Group, peer: Peer): PeerComment | null {
-    for (let comment of group.comments) {
+    for (const comment of group.comments) {
       if (this.peerEquals(comment.fromPeer, peer)) {
         return comment;
       }
@@ -291,7 +290,7 @@ export class CampaignService {
 
   getGradingsByPeer(group: Group, fromPeer: Peer): Grading[] {
     const gradings = [];
-    for (let toPeer of group.peers) {
+    for (const toPeer of group.peers) {
       gradings.push(...this.getPeerToPeerGradings(group, fromPeer, toPeer));
     }
     return gradings;
@@ -304,7 +303,7 @@ export class CampaignService {
     } else {
       let sum = 0;
       let count = 0;
-      for (let grading of gradings) {
+      for (const grading of gradings) {
         sum += grading.points * grading.criteria.weight;
         count += grading.criteria.weight;
       }
@@ -329,7 +328,7 @@ export class CampaignService {
         grading.toPeer.peerId == peer.peerId &&
         grading.fromPeer.peerId != peer.peerId
     );
-    for (let grading of filteredGradings) {
+    for (const grading of filteredGradings) {
       sum += grading.points;
       count++;
     }
@@ -347,7 +346,7 @@ export class CampaignService {
         grading.toPeer.peerId == peer.peerId &&
         grading.fromPeer.peerId != peer.peerId
     );
-    for (let grading of filteredGradings) {
+    for (const grading of filteredGradings) {
       sum += grading.points * grading.criteria.weight;
       count += grading.criteria.weight;
     }
@@ -389,7 +388,7 @@ export class CampaignService {
     const filteredGradings = group.gradings.filter(
       (grading) => grading.toPeer.peerId != grading.fromPeer.peerId
     );
-    for (let grading of filteredGradings) {
+    for (const grading of filteredGradings) {
       sum += grading.points * grading.criteria.weight;
       count += grading.criteria.weight;
     }
@@ -404,15 +403,15 @@ export class CampaignService {
     lastName: string,
     eMail: string,
     matriculationNumber?: string,
-    id: number = 0
+    id = 0
   ): Peer {
-    return <Peer>{
+    return {
       peerId: id,
       firstName: firstName,
       lastName: lastName,
       matriculationNumber: matriculationNumber,
       email: eMail,
-    };
+    } as Peer;
   }
 
   peerEquals(peer1: Peer, peer2: Peer): boolean {
@@ -421,12 +420,12 @@ export class CampaignService {
 
   ///////////// criteria
 
-  criteriaConstructor(name: string, weight: number, id: number = 0): Criteria {
-    return <Criteria>{
+  criteriaConstructor(name: string, weight: number, id = 0): Criteria {
+    return {
       criteriaId: id,
       name: name,
       weight: weight,
-    };
+    } as Criteria;
   }
 
   ///////////// grading
@@ -437,16 +436,16 @@ export class CampaignService {
     to: Peer,
     points: number,
     timestamp: Date = new Date(),
-    gradingId: number = 0
+    gradingId = 0
   ): Grading {
-    return <Grading>{
+    return {
       gradingId: gradingId,
       criteria: criteria,
       fromPeer: from,
       toPeer: to,
       points: points,
       timestamp: timestamp,
-    };
+    } as Grading;
   }
 
   ///////////// peerComment
@@ -456,10 +455,10 @@ export class CampaignService {
     toUser: User,
     text: string
   ): PeerComment {
-    return <PeerComment>{
+    return {
       fromPeer,
       toUser,
       text,
-    };
+    } as PeerComment;
   }
 }

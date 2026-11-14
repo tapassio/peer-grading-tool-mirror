@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Campaign, CampaignStatus, Grading } from '../interfaces';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Campaign, CampaignStatus } from '../interfaces';
 import { CampaignService } from '../services/campaign.service';
 
 @Component({
@@ -9,14 +9,12 @@ import { CampaignService } from '../services/campaign.service';
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class CampaignMetaComponent implements OnInit {
-  @Input('campaign') campaign: Campaign;
-  @Input('showName') showName: boolean = false;
-  @Input('viewState') viewState: 'dashboard' | 'summary';
+export class CampaignMetaComponent {
+  @Input() campaign: Campaign;
+  @Input() showName = false;
+  @Input() viewState: 'dashboard' | 'summary';
 
   constructor(private campaignService: CampaignService) {}
-
-  ngOnInit(): void {}
 
   getCampaignStatus(): CampaignStatus {
     return this.campaignService.getCampaignStatus(this.campaign);

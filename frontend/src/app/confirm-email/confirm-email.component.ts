@@ -1,4 +1,4 @@
-import { Component, Signal, WritableSignal, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Signal, WritableSignal, signal, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SnackBarService } from '../services/snack-bar.service';
@@ -10,7 +10,7 @@ import { SnackBarService } from '../services/snack-bar.service';
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class ConfirmEmailComponent {
+export class ConfirmEmailComponent implements OnInit {
   registerToken: Signal<string> = signal(
     this.activatedRoute.snapshot.params['token']
   );

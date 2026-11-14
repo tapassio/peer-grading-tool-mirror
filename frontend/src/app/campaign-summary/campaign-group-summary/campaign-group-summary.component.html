@@ -21,7 +21,7 @@
           </div>
         </td>
         @for (toPeer of group.peers; track toPeer) {
-        <td [class.selfGrading]="fromPeer == toPeer">
+        <td [class.selfGrading]="fromPeer === toPeer">
           <div class="mobile">
             <ng-container i18n
               >Grading an {{ toPeer.lastName }}
@@ -138,7 +138,7 @@
     @for (peer of getPeersWithIncompleteGradings(); track peer; let i = $index)
     {
     <span>
-      @if (i == 0) {
+      @if (i === 0) {
       <b><ng-container i18n>Peers mit ausstehenden Gradings</ng-container>:</b>
 
       }

@@ -31,8 +31,8 @@ export class PdfSummaryComponent implements OnInit {
     this.pgtService.getCampaignSummaryPDF(this.campaignId()).subscribe({
       next: (blob) => {
         if (blob) {
-          let url = window.URL.createObjectURL(blob);
-          let a = document.createElement('a');
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
           document.body.appendChild(a);
           a.setAttribute('style', 'display: none');
           a.href = url;

@@ -9,8 +9,8 @@ import { Peer, PeerComment } from 'src/app/interfaces';
     standalone: false
 })
 export class GroupCommentsComponent {
-  @Input('comments') comments: PeerComment[];
-  @Input('peers') peers: Peer[];
+  @Input() comments: PeerComment[];
+  @Input() peers: Peer[];
 
   filterCommentsByPeer(peer: Peer): PeerComment[] {
     return this.comments.filter(

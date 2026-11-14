@@ -55,8 +55,8 @@
           <pgt-form-error [control]="changePasswordForm"></pgt-form-error>
         </div>
       </label>
-      <label
-        ><button
+      <div class="form-row">
+        <button
           mat-raised-button
           color="primary"
           [disabled]="!changePasswordForm.valid"
@@ -65,8 +65,8 @@
         >
           <ng-container i18n>Änderungen speichern</ng-container>
           <mat-icon>save</mat-icon>
-        </button></label
-      >
+        </button>
+      </div>
     </form>
   </section>
 </main>

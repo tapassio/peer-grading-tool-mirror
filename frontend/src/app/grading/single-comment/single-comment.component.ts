@@ -12,7 +12,7 @@ export class SingleCommentComponent implements OnInit {
   @Input() toUser: User;
   @Input() peer: Peer;
   @Input() commentFormGroup: any;
-  @Input() isAdmin: boolean = false;
+  @Input() isAdmin = false;
 
   peerCommentTooltip: string;
 

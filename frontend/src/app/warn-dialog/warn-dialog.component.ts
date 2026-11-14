@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 /**
  * this component displays a dialog box that warns the user before certain actions
@@ -10,7 +10,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class WarnDialogComponent implements OnInit {
+export class WarnDialogComponent {
   title: string = this.data.title || $localize`Warnung!`;
   affirmButton: string = this.data.affirmButton || $localize`Löschen`;
   cancelButton: string = this.data.cancelButton || $localize`Abbrechen`;
@@ -27,5 +27,4 @@ export class WarnDialogComponent implements OnInit {
     }
   ) {}
 
-  ngOnInit(): void {}
 }

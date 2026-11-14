@@ -7,8 +7,6 @@ import { CampaignService } from '../services/campaign.service';
 import { ToolchainService } from '../services/toolchain.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
-const pdfFonts = require('../../assets/fonts');
-//pdfMake.vfs = pdfFonts.pdfMake.vfs;
 /**
  * this component displays all data of a single campaign. only accessible for admin users
  * it has a child component to display each individual group in the campaign

@@ -1,4 +1,4 @@
-import { Component, WritableSignal, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, WritableSignal, signal, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -18,7 +18,7 @@ import { SnackBarService } from '../services/snack-bar.service';
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   sent: WritableSignal<boolean> = signal(false);
 
@@ -35,13 +35,13 @@ export class RegisterComponent {
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group(
       {
-        firstName: [, Validators.required],
-        lastName: [, Validators.required],
-        company: [,],
-        email: [, [Validators.required, Validators.email]],
-        emailRepeat: [, [Validators.required, Validators.email]],
-        password: [, [Validators.required, Validators.minLength(8)]],
-        passwordRepeat: [, Validators.required],
+        firstName: [null, Validators.required],
+        lastName: [null, Validators.required],
+        company: [null],
+        email: [null, [Validators.required, Validators.email]],
+        emailRepeat: [null, [Validators.required, Validators.email]],
+        password: [null, [Validators.required, Validators.minLength(8)]],
+        passwordRepeat: [null, Validators.required],
       },
       { validators: [this.checkEmails, this.checkPasswords] }
     );
@@ -55,8 +55,8 @@ export class RegisterComponent {
   checkPasswords: ValidatorFn = (
     group: AbstractControl
   ): ValidationErrors | null => {
-    let pass = group.get('password')?.value;
-    let passRepeat = group.get('passwordRepeat')?.value;
+    const pass = group.get('password')?.value;
+    const passRepeat = group.get('passwordRepeat')?.value;
     return pass === passRepeat ? null : { notSame: true };
   };
 
@@ -68,8 +68,8 @@ export class RegisterComponent {
   checkEmails: ValidatorFn = (
     group: AbstractControl
   ): ValidationErrors | null => {
-    let email = group.get('email')?.value;
-    let confirmEmail = group.get('emailRepeat')?.value;
+    const email = group.get('email')?.value;
+    const confirmEmail = group.get('emailRepeat')?.value;
     return email === confirmEmail ? null : { emailsNotSame: true };
   };
 

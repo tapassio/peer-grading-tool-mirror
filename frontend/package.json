@@ -8,7 +8,9 @@
     "watch": "npx ng build --watch --configuration development",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage"
+    "test:cov": "jest --coverage",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix"
   },
   "jest": {
     "preset": "jest-preset-angular",
@@ -54,18 +56,22 @@
     "@angular/cli": "~22.2.7",
     "@angular/compiler-cli": "^22.2.6",
     "@angular/localize": "^22.2.6",
+    "@eslint/js": "^10.0.1",
     "@types/file-saver": "^2.0.5",
     "@types/html-to-pdfmake": "^2.1.1",
     "@types/jest": "^30.0.0",
     "@types/pdfmake": "^0.2.2",
     "@types/string-similarity": "^4.0.0",
+    "angular-eslint": "22.6.0",
+    "eslint": "^10.12.0",
     "istanbul-lib-instrument": "^6.0.3",
     "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2",
     "jest-preset-angular": "^17.0.3",
+    "jsdom": "^26.1.0",
     "ng-extract-i18n-merge": "^3.5.0",
     "typescript": "^6.0.3",
-    "jsdom": "^26.1.0",
-    "jest-environment-jsdom": "^30.5.2"
+    "typescript-eslint": "8.71.0"
   },
   "engines": {
     "node": "^22.22.3 || ^24.15.0 || >=26.0.0"

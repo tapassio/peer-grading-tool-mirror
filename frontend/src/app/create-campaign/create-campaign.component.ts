@@ -76,13 +76,13 @@ export class CreateCampaignComponent implements OnInit, DeactivatableComponent {
     // creating the form for the general campaign data
     // values then get set when the actual campaign is loaded
     this.campaignForm = this.formBuilder.group({
-      name: [, Validators.required],
+      name: [null, Validators.required],
       maxPoints: [
-        ,
+        null,
         [Validators.required, Validators.min(3), Validators.pattern('\\d+')],
       ],
-      language: [, Validators.required],
-      allowCommentsForPeers: [, Validators.required],
+      language: [null, Validators.required],
+      allowCommentsForPeers: [null, Validators.required],
       gradeRounding: [DEFAULT_GRADE_ROUNDING, Validators.required],
     });
 

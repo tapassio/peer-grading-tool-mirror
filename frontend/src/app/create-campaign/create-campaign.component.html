@@ -7,14 +7,14 @@
   } @if (campaignForm) {
   <form [formGroup]="campaignForm" (keydown.enter)="$event.preventDefault()">
     <section class="allgemein">
-      @if (createCampaignService.campaignStatus() == 'abgeschlossen') {
+      @if (createCampaignService.campaignStatus() === 'abgeschlossen') {
       <div>
         <ng-container i18n
           >Die Kampagne kann nach ihrem Abschluss nicht mehr geändert
           werden.</ng-container
         >
       </div>
-      } @if (createCampaignService.campaignStatus() == 'läuft') {
+      } @if (createCampaignService.campaignStatus() === 'läuft') {
       <div i18n>Änderungen an laufenden Kampagnen sind teilweise gesperrt.</div>
       }
       <h2 i18n>Allgemein</h2>
@@ -94,35 +94,35 @@
           </div>
         </label>
         @if (createCampaignService.campaignExisted()) {
-        <label>
+        <div class="form-row">
           <div><ng-container i18n>Status</ng-container>:</div>
           <div class="formInputcontainer">
             <div>
               {{ createCampaignService.campaignStatus() | campaignStatus }}
             </div>
           </div>
-        </label>
+        </div>
         }
-        <label>
+        <div class="form-row">
           <div><ng-container i18n>Erstellt am</ng-container>:</div>
           <div class="formInputcontainer">
             {{ createCampaignService.campaign().creationDate | date }}
           </div>
-        </label>
+        </div>
         @if (createCampaignService.campaign().openingDate) {
-        <label>
+        <div class="form-row">
           <div><ng-container i18n>Kampagnenbeginn</ng-container>:</div>
           <div class="formInputcontainer">
             {{ createCampaignService.campaign().openingDate | date }}
           </div>
-        </label>
+        </div>
         } @if (createCampaignService.campaign().closingDate) {
-        <label>
+        <div class="form-row">
           <div><ng-container i18n>Kampagnenende</ng-container>:</div>
           <div class="formInputcontainer">
             {{ createCampaignService.campaign().closingDate | date }}
           </div>
-        </label>
+        </div>
         }
       </div>
     </section>
@@ -152,20 +152,20 @@
             mat-raised-button
             color="primary"
             [disabled]="
-              createCampaignService.campaignStatus() == 'abgeschlossen'
+              createCampaignService.campaignStatus() === 'abgeschlossen'
             "
           >
             <label
               class="input file-input"
               [class.disabled]="
-                createCampaignService.campaignStatus() == 'abgeschlossen'
+                createCampaignService.campaignStatus() === 'abgeschlossen'
               "
               ><input
                 type="file"
                 enctype="multipart/form-data"
                 (change)="importCSV($event)"
                 [disabled]="
-                  createCampaignService.campaignStatus() == 'abgeschlossen'
+                  createCampaignService.campaignStatus() === 'abgeschlossen'
                 "
                 accept=".csv"
               /><mat-icon>upload</mat-icon>&nbsp;<ng-container i18n
@@ -179,7 +179,7 @@
             color="primary"
             (click)="addGroup()"
             [disabled]="
-              createCampaignService.campaignStatus() == 'abgeschlossen'
+              createCampaignService.campaignStatus() === 'abgeschlossen'
             "
             type="submit"
           >
@@ -214,7 +214,7 @@
               mat-raised-button
               color="primary"
               [disabled]="
-                createCampaignService.campaignStatus() == 'abgeschlossen'
+                createCampaignService.campaignStatus() === 'abgeschlossen'
               "
               (click)="createCampaignService.removeGroup(group)"
             >
@@ -244,7 +244,7 @@
         type="submit"
         [disabled]="
           !campaignForm.valid ||
-          createCampaignService.campaignStatus() == 'abgeschlossen'
+          createCampaignService.campaignStatus() === 'abgeschlossen'
         "
         (click)="submit()"
       >

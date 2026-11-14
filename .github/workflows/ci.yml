@@ -1,7 +1,7 @@
 # Automatic checks for every pull request and for pushes to develop/main.
 #
 # backend:  install, Prisma client, migrations = schema, type check, lint, tests, build
-# frontend: install, tests, production build (de + en)
+# frontend: install, type check, lint, tests, production build (de + en)
 # docker:   the production image builds (Dockerfile)
 #
 # A red check means: do not merge before it is fixed.
@@ -79,6 +79,9 @@ jobs:
 
       - name: Type check
         run: npx tsc --noEmit -p tsconfig.app.json
+
+      - name: Lint (angular-eslint)
+        run: npm run lint
 
       - name: Tests
         run: npm test -- --ci

@@ -49,8 +49,8 @@ export class ProfileComponent implements OnInit {
     });
     this.changePasswordForm = this.formBuilder.group(
       {
-        newPassword: [, [Validators.required, Validators.minLength(8)]],
-        passwordRepeat: [, Validators.required],
+        newPassword: [null, [Validators.required, Validators.minLength(8)]],
+        passwordRepeat: [null, Validators.required],
       },
       { validators: this.checkPasswords }
     );
@@ -64,8 +64,8 @@ export class ProfileComponent implements OnInit {
   checkPasswords: ValidatorFn = (
     group: AbstractControl
   ): ValidationErrors | null => {
-    let pass = group.get('newPassword')?.value;
-    let confirmPass = group.get('passwordRepeat')?.value;
+    const pass = group.get('newPassword')?.value;
+    const confirmPass = group.get('passwordRepeat')?.value;
     return pass === confirmPass ? null : { notSame: true };
   };
 
@@ -87,8 +87,8 @@ export class ProfileComponent implements OnInit {
         userId: this.user?.userId,
       };
     }
-    let update = this.userService.changeUserPW(updateAdmin).subscribe({
-      next: (res) => {
+    const update = this.userService.changeUserPW(updateAdmin).subscribe({
+      next: () => {
         update.unsubscribe();
         this.router.navigate(['/admin-dashboard']);
         this.snackBarService.openSnackBar($localize`Änderungen gespeichert`);

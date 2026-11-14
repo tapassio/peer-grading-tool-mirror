@@ -17,7 +17,7 @@ export class SnackBarService {
   openSnackBar(
     message: string,
     action: string = $localize`Schliessen`,
-    duration: number = 15000
+    duration = 15000
   ) {
     this.snackBar.open(message, action, {
       duration: duration,
@@ -28,11 +28,11 @@ export class SnackBarService {
   openErrorBar(
     error: HttpErrorResponse,
     action: string = $localize`Schliessen`,
-    duration: number = 15000
+    duration = 15000
   ) {
-    let status = error.status;
-    let message = error.error.message;
-    let text = error.statusText;
+    const status = error.status;
+    const message = error.error.message;
+    const text = error.statusText;
     if (status && message) {
       this.openSnackBar(
         $localize`Fehler` + ` ${status}: ${message}`,

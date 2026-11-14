@@ -6,7 +6,7 @@ import { CampaignStatus } from '../interfaces';
   standalone: false,
 })
 export class CampaignStatusPipe implements PipeTransform {
-  transform(status: CampaignStatus, ...args: unknown[]): String {
+  transform(status: CampaignStatus): string {
     switch (status) {
       case 'erstellt':
         return $localize`erstellt`;

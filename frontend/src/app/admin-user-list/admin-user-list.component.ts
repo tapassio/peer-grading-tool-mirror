@@ -33,10 +33,10 @@ export class AdminUserListComponent implements OnInit {
    * gets all admins from the backend through adminService
    */
   ngOnInit(): void {
-    let adminList = this.adminService.getAdmins().subscribe({
+    const adminList = this.adminService.getAdmins().subscribe({
       next: (admins) => {
         // formatting campaigns
-        for (let admin of admins) {
+        for (const admin of admins) {
           if (admin.campaigns) {
             admin.campaigns = admin.campaigns.map((campaign: Campaign) =>
               this.campaignService.cleanupCampaignData(campaign)
@@ -70,10 +70,10 @@ export class AdminUserListComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((shouldDelete: boolean) => {
       if (shouldDelete) {
-        let deletion = this.adminService
+        const deletion = this.adminService
           .deleteAdmin({ email: admin.email })
           .subscribe({
-            next: (res) => {
+            next: () => {
               deletion.unsubscribe();
               this.ngOnInit();
               this.snackBarService.openSnackBar(

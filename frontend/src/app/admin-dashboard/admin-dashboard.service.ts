@@ -23,7 +23,7 @@ export class AdminDashboardService {
     this.pgtService.getCampaignsByUser().subscribe({
       next: (campaigns: Campaign[]) => {
         let cleanCampaigns = [];
-        for (let campaign of campaigns) {
+        for (const campaign of campaigns) {
           cleanCampaigns.push(
             this.campaignService.cleanupCampaignData(campaign)
           );

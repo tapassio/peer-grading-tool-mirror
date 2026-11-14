@@ -113,8 +113,8 @@ export class CreateAdminUserComponent implements OnInit {
   checkPasswords: ValidatorFn = (
     group: AbstractControl
   ): ValidationErrors | null => {
-    let pass = group.get('adminPW')?.value;
-    let confirmPass = group.get('adminPWRepeat')?.value;
+    const pass = group.get('adminPW')?.value;
+    const confirmPass = group.get('adminPWRepeat')?.value;
     return pass === confirmPass ? null : { notSame: true };
   };
 
@@ -152,7 +152,7 @@ export class CreateAdminUserComponent implements OnInit {
     };
 
     this.adminService.createAdmin(admin).subscribe({
-      next: (res: User) => {
+      next: () => {
         this.router.navigate(['user-list']);
         this.snackBarService.openSnackBar(
           $localize`Admin ${admin.firstName} ${admin.lastName} gespeichert.`
@@ -172,7 +172,7 @@ export class CreateAdminUserComponent implements OnInit {
    * @param adminForm
    */
   updateAdmin(adminForm: FormGroup) {
-    let updateAdmin: any = {
+    const updateAdmin: any = {
       email: adminForm.value.adminEmail,
       firstName: adminForm.value.adminFirstName,
       lastName: adminForm.value.adminLastName,
@@ -181,7 +181,7 @@ export class CreateAdminUserComponent implements OnInit {
     };
     if (adminForm.value.adminPW != null && adminForm.value.adminPW != '')
       updateAdmin['password'] = adminForm.value.adminPW;
-    let update = this.adminService.updateAdmin(updateAdmin).subscribe({
+    const update = this.adminService.updateAdmin(updateAdmin).subscribe({
       next: (res) => {
         if (res == null) {
           this.snackBarService.openSnackBar(

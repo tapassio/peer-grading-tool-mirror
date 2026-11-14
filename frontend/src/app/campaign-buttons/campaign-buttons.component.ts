@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { Campaign, CampaignStatus, MailsSent } from '../interfaces';
 import { Router } from '@angular/router';
 import { PGTService } from '../services/pgt.service';
@@ -15,9 +15,9 @@ import { MatDialog } from '@angular/material/dialog';
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class CampaignButtonsComponent implements OnInit {
-  @Input('campaign') campaign: Campaign;
-  @Input('viewState') viewState: 'dashboard' | 'summary';
+export class CampaignButtonsComponent {
+  @Input() campaign: Campaign;
+  @Input() viewState: 'dashboard' | 'summary';
   @Output() reloadEvent: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(
@@ -27,8 +27,6 @@ export class CampaignButtonsComponent implements OnInit {
     private snackBarService: SnackBarService,
     private campaignService: CampaignService
   ) {}
-
-  ngOnInit(): void {}
 
   edit() {
     this.router.navigate(['/create-campaign/' + this.campaign.campaignId]);
@@ -81,7 +79,7 @@ export class CampaignButtonsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((accepted: boolean) => {
       if (accepted)
         this.pgtService.endCampaign(this.campaign.campaignId).subscribe({
-          next: (res) => {
+          next: () => {
             this.snackBarService.openSnackBar(
               $localize`Kampagne "${this.campaign.name}" erfolgreich beendet.`
             );
@@ -211,7 +209,7 @@ export class CampaignButtonsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((shouldDelete: boolean) => {
       if (shouldDelete)
         this.pgtService.deleteCampaign(this.campaign).subscribe({
-          next: (res) => {
+          next: () => {
             this.snackBarService.openSnackBar(
               $localize`Kampagne "${this.campaign.name}" wurde gelöscht`
             );
@@ -234,8 +232,8 @@ export class CampaignButtonsComponent implements OnInit {
   exportCampaignAsPdf() {
     this.pgtService.getCampaignSummaryPDF(this.campaign.campaignId).subscribe({
       next: (blob: Blob) => {
-        let url = window.URL.createObjectURL(blob);
-        let a = document.createElement('a');
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
         document.body.appendChild(a);
         a.setAttribute('style', 'display: none');
         a.href = url;
@@ -265,8 +263,8 @@ export class CampaignButtonsComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           const blob = new Blob([res]);
-          let url = window.URL.createObjectURL(blob);
-          let a = document.createElement('a');
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
           document.body.appendChild(a);
           a.setAttribute('style', 'display: none');
           a.href = url;

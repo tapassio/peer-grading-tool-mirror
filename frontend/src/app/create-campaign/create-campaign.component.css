@@ -5,7 +5,9 @@ section form {
   gap: 1em;
 }
 
-section label {
+section label,
+
+section .form-row {
   flex: 100%;
   display: flex;
   align-items: center;
@@ -37,7 +39,9 @@ section label.file-input {
   background-color: rgba(0, 0, 0, 0.12) !important;
 } */
 
-section label > div {
+section label > div,
+
+section .form-row > div {
   width: 30%;
 }
 
@@ -137,11 +141,14 @@ span {
 }
 
 @media screen and (max-width: 810px) {
-  section label {
+  section label,
+  section .form-row {
     gap: 0.5em;
   }
 
-  section label > div {
+  section label > div,
+
+  section .form-row > div {
     width: 100%;
   }
 

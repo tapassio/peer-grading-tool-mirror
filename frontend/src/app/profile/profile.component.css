@@ -4,7 +4,8 @@
   gap: 1em;
 }
 
-.changePasswordForm label {
+.changePasswordForm label,
+.changePasswordForm .form-row {
   display: flex;
   white-space: nowrap;
   justify-content: space-between;
@@ -12,7 +13,8 @@
   gap: 1em;
 }
 
-.changePasswordForm label div {
+.changePasswordForm label div,
+.changePasswordForm .form-row div {
   width: 70%;
 }
 
@@ -37,7 +39,8 @@ input {
 }
 
 @media screen and (max-width: 480px) {
-  .changePasswordForm label {
+  .changePasswordForm label,
+  .changePasswordForm .form-row {
     display: block;
   }
 
