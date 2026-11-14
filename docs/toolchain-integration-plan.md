@@ -69,7 +69,7 @@ Deshalb: **Auth + Ergebnis-Publikation über DocPouch, Fachdaten weiterhin in SQ
 ### Frontend
 
 - Angular 17, Login-Formular für Admins.
-- `TokenService` speichert Access-/Refresh-Token in `localStorage`.
+- `TokenService` hält das Access-Token nur im Speicher; das Refresh-Token ist ein HttpOnly-Cookie (früher beide im `localStorage`).
 - `MainInterceptor` hängt das Token an alle API-Requests.
 - `ErrorInterceptor` versucht bei 401 einen Refresh über `/api/auth/refresh`.
 - `authGuard` schützt Admin-Routen; Peer-Link-Routen sind öffentlich.

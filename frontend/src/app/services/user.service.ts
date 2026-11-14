@@ -45,8 +45,8 @@ export class UserService {
       .post(environment.api + '/auth/login', data)
       .pipe(
         switchMap((tokens: any) => {
+          // the refresh token comes as HttpOnly cookie
           this.tokenService.setAccessToken(tokens.accessToken);
-          this.tokenService.setRefreshToken(tokens.refreshToken);
           return this.getUser();
         })
       )

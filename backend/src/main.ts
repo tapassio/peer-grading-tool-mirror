@@ -52,8 +52,9 @@ async function bootstrap() {
   if (corsOrigins.length > 0) {
     app.enableCors({ origin: corsOrigins, credentials: true });
   } else if (!production) {
-    // Development only: allow every origin.
-    app.enableCors();
+    // Development only: allow every origin. With credentials, so that the
+    // refresh cookie also works from the dev server (localhost:4200).
+    app.enableCors({ origin: true, credentials: true });
   }
   // Production without CORS_ORIGINS: no CORS, only same-origin requests.
 

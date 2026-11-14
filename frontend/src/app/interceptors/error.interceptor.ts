@@ -90,9 +90,8 @@ export class ErrorInterceptor implements HttpInterceptor {
       // gets the new tokens
       return this.http.get(environment.api + '/auth/refresh').pipe(
         switchMap((user: any) => {
-          // Save new Tokens
+          // the new refresh token came as cookie, keep the access token
           this.tokenService.setAccessToken(user.accessToken);
-          this.tokenService.setRefreshToken(user.refreshToken);
 
           ErrorInterceptor.accessTokenError.next(false);
           // Clone the request with new Access Token

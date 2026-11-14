@@ -8,6 +8,7 @@ import {
   Post,
   Req,
   Request,
+  Res,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -22,6 +23,7 @@ import { Throttle } from '@nestjs/throttler';
 import { JoiValidationPipe } from '../validators/joi-validation.pipe';
 import { registerSchema } from '../validators/joi-objects';
 import { RegisterData } from '../interfaces';
+import { clearRefreshCookie, sendTokens } from './refresh-cookie';
 
 @Controller('auth')
 export class AuthController {
@@ -74,6 +76,7 @@ export class AuthController {
   @Post('oidc/exchange')
   async exchangeOidcToken(
     @Req() req,
+    @Res({ passthrough: true }) res,
     @Headers('authorization') authorization?: string,
   ) {
     const token = (authorization || '')
@@ -85,16 +88,20 @@ export class AuthController {
     }
 
     // req.ip is the real client IP when TRUST_PROXY is set behind a proxy
-    return this.authService.exchangeOidcToken(token, req.ip);
+    const tokens = await this.authService.exchangeOidcToken(token, req.ip);
+    // OIDC: no refresh token for the browser. The session is renewed with a
+    // fresh DocPouch token (exchange), so DocPouch decides every time.
+    clearRefreshCookie(res);
+    return { accessToken: tokens.accessToken };
   }
 
   // max. 5 login attempts per minute and IP (brute force protection)
   @Throttle(5, 60)
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req) {
+  async login(@Request() req, @Res({ passthrough: true }) res) {
     this.assertLocalAuthEnabled();
-    return this.authService.login(req.user);
+    return sendTokens(res, await this.authService.login(req.user));
   }
 
   @UseGuards(JwtAuthGuard)
@@ -108,8 +115,10 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  logout(@Req() req) {
-    return this.authService.logout(req.user.email);
+  async logout(@Req() req, @Res({ passthrough: true }) res) {
+    clearRefreshCookie(res);
+    await this.authService.logout(req.user.email);
+    return {};
   }
 
   // every registration sends an e-mail: limit it to avoid mail spam
@@ -135,14 +144,17 @@ export class AuthController {
 
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
-  refreshTokens(@Req() req) {
+  async refreshTokens(@Req() req, @Res({ passthrough: true }) res) {
     // OIDC: sessions are only renewed via /auth/oidc/exchange, so DocPouch
     // decides on every renewal (blocked accounts / removed roles take effect
     // when the access token expires, not only after the refresh token).
     this.assertLocalAuthEnabled();
     const email = req.user.email;
     const refreshToken = req.user['refreshToken'];
-    return this.authService.refreshTokens(email, refreshToken);
+    return sendTokens(
+      res,
+      await this.authService.refreshTokens(email, refreshToken),
+    );
   }
 
   private assertLocalAuthEnabled() {

@@ -12,6 +12,7 @@ This page explains what changed and what has to be done when deploying.
 | Passwords | unsalted MD5 | bcrypt (12 rounds); old MD5 hashes are upgraded on the next login |
 | Peer accounts | created with password `"p"` | no password |
 | Refresh tokens | MD5, compared with `==` | SHA-256, constant-time comparison |
+| Token storage in the browser | access and refresh token in `localStorage` (readable by any XSS) | access token only in memory; refresh token as `HttpOnly; SameSite=Strict` cookie (`Secure` in production), path `<base>/api/auth`; OIDC mode: no refresh token in the browser at all |
 | Registration | overwrote password/names of an existing account before e-mail confirmation | data is only applied after confirmation; input is validated |
 | Rate limiting | none | 100 req/min per IP; login 5/min, register 3/min, confirm 10/min |
 | JWT secrets | example values like `secretKey` accepted | production refuses weak, short or identical secrets |
@@ -45,9 +46,9 @@ This page explains what changed and what has to be done when deploying.
 
 ## Still open
 
-- Tokens are stored in `localStorage`. Better: refresh token as
-  `HttpOnly` cookie. Needs changes in frontend and backend.
-- Access token lifetime is 8h in OIDC mode (`PGT_ACCESS_TOKEN_TTL`).
+- `docpouch-client` (1.3.1) stores its own OIDC session (DocPouch access and
+  refresh token) in `localStorage` (`docpouch_oidc_session`). This can only be
+  changed in DocPouch / docpouch-client.
 - The container runs as root (changing it requires a writable data
   directory for the SQLite database, see `compose.yml`).
 - Major updates: NestJS 9 → 10/11, Prisma 4 → 5/6, Angular 17 → current.

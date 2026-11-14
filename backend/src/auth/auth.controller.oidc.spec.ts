@@ -10,31 +10,57 @@ describe('AuthController in OIDC mode', () => {
   const backup = { ...process.env };
   afterEach(() => (process.env = { ...backup }));
 
+  const fakeRes = () => ({ cookie: jest.fn(), clearCookie: jest.fn() });
+
   const controller = (authService: any = {}) =>
     new AuthController(authService, {} as any);
 
-  it('GET /auth/refresh is disabled (sessions only via DocPouch exchange)', () => {
+  it('GET /auth/refresh is disabled (sessions only via DocPouch exchange)', async () => {
     process.env.AUTH_MODE = 'oidc';
     const refreshTokens = jest.fn();
-    expect(() =>
-      controller({ refreshTokens }).refreshTokens({ user: { email: 'a@b.ch', refreshToken: 'x' } }),
-    ).toThrow(NotFoundException);
+    await expect(
+      controller({ refreshTokens }).refreshTokens(
+        { user: { email: 'a@b.ch', refreshToken: 'x' } },
+        fakeRes(),
+      ),
+    ).rejects.toThrow(NotFoundException);
     expect(refreshTokens).not.toHaveBeenCalled();
   });
 
-  it('GET /auth/refresh still works in local mode', () => {
+  it('GET /auth/refresh still works in local mode (new refresh token as cookie)', async () => {
     process.env.AUTH_MODE = 'local';
-    const refreshTokens = jest.fn().mockReturnValue('tokens');
-    expect(
-      controller({ refreshTokens }).refreshTokens({ user: { email: 'a@b.ch', refreshToken: 'x' } }),
-    ).toBe('tokens');
+    const refreshTokens = jest
+      .fn()
+      .mockResolvedValue({ accessToken: 'new-a', refreshToken: 'new-r' });
+    const res = fakeRes();
+    await expect(
+      controller({ refreshTokens }).refreshTokens(
+        { user: { email: 'a@b.ch', refreshToken: 'x' } },
+        res,
+      ),
+    ).resolves.toEqual({ accessToken: 'new-a' });
+    expect(res.cookie).toHaveBeenCalledWith(
+      'pgt_refresh',
+      'new-r',
+      expect.objectContaining({ httpOnly: true, sameSite: 'strict' }),
+    );
   });
 
   it('exchange passes the client IP (for blocking repeated invalid tokens)', async () => {
     process.env.AUTH_MODE = 'oidc';
-    const exchangeOidcToken = jest.fn().mockResolvedValue('tokens');
-    await controller({ exchangeOidcToken }).exchangeOidcToken({ ip: '1.2.3.4' }, 'Bearer abc');
+    const exchangeOidcToken = jest
+      .fn()
+      .mockResolvedValue({ accessToken: 'a', refreshToken: 'r' });
+    const res = fakeRes();
+    const result = await controller({ exchangeOidcToken }).exchangeOidcToken(
+      { ip: '1.2.3.4' },
+      res,
+      'Bearer abc',
+    );
     expect(exchangeOidcToken).toHaveBeenCalledWith('abc', '1.2.3.4');
+    // OIDC: only the access token; no refresh token reaches the browser
+    expect(result).toEqual({ accessToken: 'a' });
+    expect(res.cookie).not.toHaveBeenCalled();
   });
 
   it('config tells the frontend where to publish', () => {
