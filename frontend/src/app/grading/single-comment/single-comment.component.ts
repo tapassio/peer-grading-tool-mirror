@@ -1,12 +1,14 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Peer, User } from 'src/app/interfaces';
+import { ToolTipComponent } from '../../tool-tip/tool-tip.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
     selector: 'pgt-single-comment',
     templateUrl: './single-comment.component.html',
     styleUrl: './single-comment.component.css',
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [ToolTipComponent, ReactiveFormsModule]
 })
 export class SingleCommentComponent implements OnInit {
   @Input() toUser: User;

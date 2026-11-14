@@ -8,11 +8,10 @@ describe('GroupMetaComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [...testImports],
-      declarations: [GroupMetaComponent],
-      providers: [],
-      schemas: testSchemas,
-    }).compileComponents();
+    imports: [...testImports, GroupMetaComponent],
+    providers: [],
+    schemas: testSchemas,
+}).compileComponents();
 
     fixture = TestBed.createComponent(GroupMetaComponent);
     component = fixture.componentInstance;

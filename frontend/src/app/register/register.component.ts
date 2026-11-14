@@ -1,33 +1,27 @@
-import { Component, WritableSignal, signal, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { Component, WritableSignal, signal, ChangeDetectionStrategy, OnInit, inject } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
 import { SnackBarService } from '../services/snack-bar.service';
+import { FormErrorComponent } from '../form-error/form-error.component';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
     selector: 'pgt-register',
     templateUrl: './register.component.html',
     styleUrl: './register.component.css',
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [ReactiveFormsModule, FormErrorComponent, MatButton, MatIcon]
 })
 export class RegisterComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  userService = inject(UserService);
+  private snackBarService = inject(SnackBarService);
+  private router = inject(Router);
+
   registerForm: FormGroup;
   sent: WritableSignal<boolean> = signal(false);
-
-  constructor(
-    private formBuilder: FormBuilder,
-    public userService: UserService,
-    private snackBarService: SnackBarService,
-    private router: Router
-  ) {}
 
   /**
    * upon initialization the registerForm is built

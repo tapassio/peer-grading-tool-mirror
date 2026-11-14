@@ -1,27 +1,28 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CampaignStatus, Group, Peer } from '../../../interfaces';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CreateCampaignService } from '../../create-campaign.service';
+import { FormErrorComponent } from '../../../form-error/form-error.component';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
     // attribute selector on purpose: the component is a table row (<tr pgt-peer>)
-  // eslint-disable-next-line @angular-eslint/component-selector
-  selector: '[pgt-peer]',
+    // eslint-disable-next-line @angular-eslint/component-selector
+    selector: '[pgt-peer]',
     templateUrl: './peer.component.html',
     styleUrls: ['../../../app.component.css', './peer.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [ReactiveFormsModule, FormErrorComponent, MatButton, MatIcon]
 })
 export class PeerComponent implements OnInit {
+  private createCampaignService = inject(CreateCampaignService);
+  private formBuilder = inject(FormBuilder);
+
   @Input() peer: Peer;
   @Input() group: Group;
   @Input() campaignStatus: CampaignStatus;
   peerEditForm: FormGroup;
-
-  constructor(
-    private createCampaignService: CreateCampaignService,
-    private formBuilder: FormBuilder
-  ) {}
 
   ngOnInit(): void {
     this.peerEditForm = this.formBuilder.group({

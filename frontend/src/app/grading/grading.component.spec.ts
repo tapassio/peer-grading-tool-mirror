@@ -13,12 +13,11 @@ describe('GradingComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [GradingComponent],
     imports: [MatSnackBarModule,
         RouterModule.forRoot([]),
         MatDialogModule,
         ReactiveFormsModule,
-        FormsModule],
+        FormsModule, GradingComponent],
     providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
 }).compileComponents();
 

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Campaign, CampaignStatus, MailsSent } from '../interfaces';
 import { Router } from '@angular/router';
 import { PGTService } from '../services/pgt.service';
@@ -7,26 +7,27 @@ import { CampaignService } from '../services/campaign.service';
 import { WarnDialogComponent } from '../warn-dialog/warn-dialog.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
     selector: 'pgt-campaign-buttons',
     templateUrl: './campaign-buttons.component.html',
     styleUrls: ['./campaign-buttons.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [MatButton, MatIcon, MatTooltip]
 })
 export class CampaignButtonsComponent {
+  private router = inject(Router);
+  private dialog = inject(MatDialog);
+  private pgtService = inject(PGTService);
+  private snackBarService = inject(SnackBarService);
+  private campaignService = inject(CampaignService);
+
   @Input() campaign: Campaign;
   @Input() viewState: 'dashboard' | 'summary';
   @Output() reloadEvent: EventEmitter<string> = new EventEmitter<string>();
-
-  constructor(
-    private router: Router,
-    private dialog: MatDialog,
-    private pgtService: PGTService,
-    private snackBarService: SnackBarService,
-    private campaignService: CampaignService
-  ) {}
 
   edit() {
     this.router.navigate(['/create-campaign/' + this.campaign.campaignId]);

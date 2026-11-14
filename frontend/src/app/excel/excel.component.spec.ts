@@ -12,10 +12,9 @@ describe('ExcelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [ExcelComponent],
     imports: [MatSnackBarModule,
         RouterModule.forRoot([]),
-        ReactiveFormsModule],
+        ReactiveFormsModule, ExcelComponent],
     providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
 }).compileComponents();
 

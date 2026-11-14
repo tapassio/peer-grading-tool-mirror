@@ -1,5 +1,7 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 /**
  * this component is a page explaining the PGT
  */
@@ -8,10 +10,11 @@ import { Router } from '@angular/router';
     templateUrl: './about.component.html',
     styleUrls: ['./about.component.css', '../app.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [MatButton, MatIcon]
 })
 export class AboutComponent {
-  constructor(private router: Router) {}
+  private router = inject(Router);
+
 
   backToLogin() {
     this.router.navigate(['/login']);

@@ -14,12 +14,11 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [LoginComponent, FormErrorComponent],
     imports: [FormsModule,
         ReactiveFormsModule,
         MatSnackBarModule,
         RouterModule.forRoot([]),
-        MatIconModule],
+        MatIconModule, LoginComponent, FormErrorComponent],
     providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
 }).compileComponents();
 
