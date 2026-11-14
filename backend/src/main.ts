@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 import { toolchainManifest } from './toolchain/manifest';
 import helmet from 'helmet';
 import { checkSecrets } from './security/check-secrets';
+import { docPouchOrigin, frameAncestors } from './security/csp';
 
 async function bootstrap() {
   checkSecrets(process.env.PRODUCTION === 'true');
@@ -69,11 +70,16 @@ async function bootstrap() {
   // Toolchain Family manifest. Served with CORS so the Toolchain Tool Manager
   // (TTM) can fetch and validate it from another origin. It lives outside the
   // API global prefix.
-  server.get(`${basePath}/manifest.json`, (req, res) => {
+  // Also under the language paths, because operators often copy the URL
+  // with the language (…/de/) into the Tool Manager.
+  const sendManifest = (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
     res.json(toolchainManifest);
-  });
+  };
+  for (const prefix of ['', '/de', '/en']) {
+    server.get(`${basePath}${prefix}/manifest.json`, sendManifest);
+  }
 
   // SPA fallback: deep links (e.g. the OIDC callback or peer grading links)
   // are handled by Angular, not by the backend. The language-specific index
@@ -110,26 +116,4 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ? +process.env.PORT : 3000);
 }
-/** the frontend talks to DocPouch directly during the OIDC login */
-function docPouchOrigin(): string[] {
-  try {
-    return process.env.DOCPOUCH_URL
-      ? [new URL(process.env.DOCPOUCH_URL).origin]
-      : [];
-  } catch {
-    return [];
-  }
-}
-
-/**
- * Pages that may embed the app in an iframe (e.g. the Toolchain host).
- * Comma separated list in FRAME_ANCESTORS, default: none.
- */
-function frameAncestors(): string[] {
-  return (process.env.FRAME_ANCESTORS || '')
-    .split(',')
-    .map((o) => o.trim())
-    .filter((o) => o.length > 0);
-}
-
 bootstrap();

@@ -6,12 +6,16 @@
  * versions because they become keys in `content.assignments` of the Tool
  * Details Document in DocPouch.
  */
+import { TOOLCHAIN_ICON } from './icon';
+
 export const toolchainManifest = {
   tool: 'Peer Grading',
-  version: '1.0.0',
+  // 1.1.0: half grades (points in steps of 0.5)
+  version: '1.1.0',
   matchBy: 'content.assignments',
   description:
     'Peer-Grading für Gruppenarbeiten: Kriterien, Gewichtung, anonyme Bewertung und aggregierte Auswertung.',
+  icon: TOOLCHAIN_ICON,
   roles: [
     {
       key: 'peerGradingResult',
