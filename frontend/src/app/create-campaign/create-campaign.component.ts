@@ -20,6 +20,11 @@ import { CreateCampaignService } from './create-campaign.service';
 /**
  * This component lets admin users create or edit campaigns
  */
+import {
+  DEFAULT_GRADE_ROUNDING,
+  gradeRoundingOf,
+} from '../services/campaign.service';
+
 @Component({
   selector: 'pgt-create-campaign',
   templateUrl: './create-campaign.component.html',
@@ -75,6 +80,7 @@ export class CreateCampaignComponent implements OnInit, DeactivatableComponent {
       ],
       language: [, Validators.required],
       allowCommentsForPeers: [, Validators.required],
+      gradeRounding: [DEFAULT_GRADE_ROUNDING, Validators.required],
     });
 
     // triggering the campaign loading in the service
@@ -112,6 +118,18 @@ export class CreateCampaignComponent implements OnInit, DeactivatableComponent {
     return !this.createCampaignService.unsavedChanges();
   }
 
+  /**
+   * How the final grade (and the deviation) is rounded. Default: half grades
+   * (Swiss grading). Other schools / grading systems can choose another step.
+   */
+  readonly gradeRoundingOptions = [
+    { step: 0.5, text: $localize`Halbe Noten (z. B. 4.5) – Standard` },
+    { step: 0.25, text: $localize`Viertelnoten (z. B. 4.25)` },
+    { step: 0.1, text: $localize`Zehntelnoten (z. B. 4.3)` },
+    { step: 1, text: $localize`Ganze Noten (z. B. 4)` },
+    { step: 0, text: $localize`Nicht runden (2 Nachkommastellen)` },
+  ];
+
   getP2PToggleString() {
     return this.campaignForm.controls['allowCommentsForPeers'].value
       ? $localize`Ja`
@@ -127,6 +145,7 @@ export class CreateCampaignComponent implements OnInit, DeactivatableComponent {
         maxPoints: campaign.maxPoints,
         language: campaign.language,
         allowCommentsForPeers: campaign.allowCommentsForPeers,
+        gradeRounding: gradeRoundingOf(campaign),
       },
       {
         emitEvent: false,

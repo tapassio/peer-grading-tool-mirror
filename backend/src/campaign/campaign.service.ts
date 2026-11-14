@@ -191,6 +191,7 @@ export class CampaignService {
             maxPoints: campaignData.maxPoints,
             language: campaignData.language,
             allowCommentsForPeers: campaignData.allowCommentsForPeers,
+            gradeRounding: campaignData.gradeRounding,
             // connecting to the user
             users: {
               connect: {
@@ -389,6 +390,7 @@ export class CampaignService {
             maxPoints: campaignData.maxPoints,
             language: campaignData.language,
             allowCommentsForPeers: campaignData.allowCommentsForPeers,
+            gradeRounding: campaignData.gradeRounding,
           },
         });
 

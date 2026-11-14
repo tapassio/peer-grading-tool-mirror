@@ -9,6 +9,8 @@ export interface Campaign {
   maxPoints: number;
   language: string;
   allowCommentsForPeers: boolean;
+  /** rounding step of the final grade: 0.5 (default), 0.25, 0.1, 1 or 0 = none */
+  gradeRounding?: number;
   creationDate: Date;
   openingDate?: Date;
   closingDate?: Date;

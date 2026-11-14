@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Campaign, Criteria, Group, Peer, PeerComment } from 'src/interfaces';
 import * as ExcelJS from 'exceljs';
-import { CalculationsService } from '../calculations/calculations.service';
+import { CalculationsService, gradeRoundingOf } from '../calculations/calculations.service';
 import { CampaignService } from '../campaign/campaign.service';
 import { I18nService } from 'nestjs-i18n';
 import { SanitizeService } from '../sanitize/sanitize.service';
@@ -274,11 +274,13 @@ export class ExcelService {
             col4: group.number,
             col5: this.gradingsComplete(group, campaign) ? yes : no,
             col6: this.calculationsService.getGroupAverage(group),
-            col7: this.calculationsService.getPeersThirdPartyAverage(
+            // final grade and deviation, rounded like set in the campaign
+            col7: this.calculationsService.getPeersGrade(campaign, group, peer),
+            col8: this.calculationsService.getPeerReviewDifference(
               group,
               peer,
+              gradeRoundingOf(campaign),
             ),
-            col8: this.calculationsService.getPeerReviewDifference(group, peer),
           }),
         );
       }
@@ -439,7 +441,7 @@ export class ExcelService {
           col4: peer.email,
           col5: gradingsSent ? yes : no,
           col6: this.calculationsService.getPeersSelfAverage(group, peer),
-          col7: this.calculationsService.getPeersThirdPartyAverage(group, peer),
+          col7: this.calculationsService.getPeersGrade(campaign, group, peer),
         }),
       ]);
     }
@@ -490,10 +492,7 @@ export class ExcelService {
     });
     for (let i = 0; i < group.peers.length; i++) {
       gradingSummaryRow['col' + (i + 2)] =
-        this.calculationsService.getPeersThirdPartyAverage(
-          group,
-          group.peers[i],
-        );
+        this.calculationsService.getPeersGrade(campaign, group, group.peers[i]);
     }
     gradingSummaryRow = groupSheet.addRow(gradingSummaryRow);
     borderRows.push([gradingSummaryRow]);

@@ -158,6 +158,20 @@ describe('StatisticsService', () => {
     expect(steps.find((s) => s.value === 5.5)!.count).toBe(1);
   });
 
+  it('deviation uses the rounding of the campaign', () => {
+    // A: 4 - 4.333 = -0.333 -> 0.1: -0.3, none: -0.33, whole: 0
+    const peerA = (c: RawCampaign) =>
+      service.calculate([c]).peers.find((p) => p.peerId === 1)!.deviation;
+    expect(peerA(campaign)).toBe(-0.5); // default: half grades
+    expect(peerA({ ...campaign, gradeRounding: 0.1 })).toBe(-0.3);
+    expect(peerA({ ...campaign, gradeRounding: 0 })).toBe(-0.33);
+    expect(peerA({ ...campaign, gradeRounding: 1 })).toBe(0);
+    // finer rounding: histogram in quarter steps
+    const d = service.calculate([{ ...campaign, gradeRounding: 0.1 }]).deviationDistribution!;
+    expect(d.steps.map((s) => s.value)).toEqual([-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1]);
+    expect(d.steps.find((s) => s.value === -0.25)!.count).toBe(1);
+  });
+
   it('missing gradings', () => {
     const incomplete: RawCampaign = {
       ...campaign,

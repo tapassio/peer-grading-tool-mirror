@@ -10,7 +10,10 @@ import {
   User,
 } from '../interfaces';
 
-import { CalculationsService } from '../calculations/calculations.service';
+import {
+  CalculationsService,
+  gradeRoundingOf,
+} from '../calculations/calculations.service';
 import { I18nService } from 'nestjs-i18n';
 import { AppService } from '../app.service';
 import { CampaignService } from '../campaign/campaign.service';
@@ -175,7 +178,13 @@ export class PdfService {
           </div>
         </div>
       </div>
-      ${this.getGroupHTML(user, campaign.groups, campaign.criteria, lang)}
+      ${this.getGroupHTML(
+        user,
+        campaign.groups,
+        campaign.criteria,
+        lang,
+        gradeRoundingOf(campaign),
+      )}
       <ul>
         <li>${this.i18n.t('pdf.overviewPeerAssessmentAverageExplanation', {
           lang: lang,
@@ -196,6 +205,7 @@ export class PdfService {
     groups: Group[],
     criteria: Criteria[],
     lang: string,
+    gradeRounding = 0.5,
   ): string {
     let groupHTML = '';
     groups.forEach((group) => {
@@ -208,7 +218,7 @@ export class PdfService {
               groupNumber: group.number
             } 
           })}</h3>
-            ${this.getPeersHTML(group.peers, group, lang)}
+            ${this.getPeersHTML(group.peers, group, lang, gradeRounding)}
             <p><b>${this.i18n.t('pdf.groupAverage', { 
               lang: lang,
               args: {
@@ -225,7 +235,11 @@ export class PdfService {
     return groupHTML;
   }
 
-  getPeersHTML(peers: Peer[], group: Group, lang: string) {
+  getPeersHTML(peers: Peer[], group: Group, lang: string, gradeRounding = 0.5) {
+    // final grade of a peer, rounded like set in the campaign
+    const grade = (peer: Peer) =>
+      this.calculationsService.getPeersGrade({ gradeRounding }, group, peer);
+
     let peersHTML = '';
     if (peers.length > 7) {
       const midIndex = Math.ceil(peers.length / 2);
@@ -310,18 +324,12 @@ export class PdfService {
         if (index < midIndex)
           leftSide += `
               <td>
-                ${this.calculationsService.getPeersThirdPartyAverage(
-                  group,
-                  peer,
-                )}
+                ${grade(peer)}
               </td>`;
         else
           rightSide += `
               <td>
-                ${this.calculationsService.getPeersThirdPartyAverage(
-                  group,
-                  peer,
-                )}
+                ${grade(peer)}
               </td>`;
       });
 
@@ -371,7 +379,7 @@ export class PdfService {
       peers.forEach((peer) => {
         peersHTML +=
           '<td>' +
-          this.calculationsService.getPeersThirdPartyAverage(group, peer) +
+          grade(peer) +
           '</td>';
       });
       peersHTML += '</tr></table>';
@@ -744,7 +752,8 @@ export class PdfService {
         <svg viewBox="-100 -30 660 180" width="660" height="180">
           <g>
             <rect x="0" y="0" width="120" height="100" fill="#c1c9d1"></rect>
-            <text x="60" y="60" text-anchor="middle" font-size="35" font-family="Lucida" fill="black">${this.calculationsService.getPeersThirdPartyAverage(
+            <text x="60" y="60" text-anchor="middle" font-size="35" font-family="Lucida" fill="black">${this.calculationsService.getPeersGrade(
+              review.campaign,
               review.group,
               review.peer,
             )}</text>
@@ -768,6 +777,7 @@ export class PdfService {
             <text x="490" y="60" text-anchor="middle" font-size="35" font-family="Lucida" fill="black">${this.calculationsService.getPeerReviewDifference(
               review.group,
               review.peer,
+              gradeRoundingOf(review.campaign),
             )}</text>
             <text x="490" y="120" text-anchor="middle" font-size="10" font-family="Lucida" fill="black">${this.i18n.t(
               'pdf.devation',
@@ -845,7 +855,8 @@ export class PdfService {
     });
     html +=
       `<th>` +
-      this.calculationsService.getPeersThirdPartyAverage(
+      this.calculationsService.getPeersGrade(
+        review.campaign,
         review.group,
         review.peer,
       ) +

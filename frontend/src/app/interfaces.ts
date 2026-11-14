@@ -7,6 +7,11 @@ export interface Campaign {
   openingDate?: Date;
   language: Language;
   allowCommentsForPeers: boolean;
+  /**
+   * rounding step of the final grade: 0.5 = half grades (default),
+   * 0.25, 0.1, 1 = whole grades, 0 = no rounding
+   */
+  gradeRounding?: number;
   closingDate?: Date;
   creationDate: Date;
   criteria: Criteria[];

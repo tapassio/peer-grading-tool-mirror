@@ -35,7 +35,7 @@
   "groupOverview": "overview of group {groupNumber}",
   "gradingTo": "grading to",
   "gradingFrom": "grading from",
-  "peerAssessmentAverage": "peer grading average",
+  "peerAssessmentAverage": "grade (rounded peer grading average)",
   "pendingPeers": "peers with defaulting gradings",
   "comments": "comments"
 }

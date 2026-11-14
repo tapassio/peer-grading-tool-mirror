@@ -1,7 +1,10 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { SendgridService } from '../sendgrid/sendgrid.service';
 import { PrismaService } from '../prisma.service';
-import { CalculationsService } from '../calculations/calculations.service';
+import {
+  CalculationsService,
+  gradeRoundingOf,
+} from '../calculations/calculations.service';
 
 /**
  * Only these user fields may be sent to peers (public, no login).
@@ -319,13 +322,20 @@ export class GroupService {
       peer: peer,
       thirdPartyAverages: thirdPartyAverages,
       selfGradings: selfGradings,
+      // unrounded average (for comparisons) and the final grade
       thirdPartyAverage: this.calculationsService.getPeersThirdPartyAverage(
         group,
         peer,
       ),
+      grade: this.calculationsService.getPeersGrade(campaign, group, peer),
+      gradeRounding: gradeRoundingOf(campaign),
       selfAverage: this.calculationsService.getPeersSelfAverage(group, peer),
       groupAverage: this.calculationsService.getGroupAverage(group),
-      difference: this.calculationsService.getPeerReviewDifference(group, peer),
+      difference: this.calculationsService.getPeerReviewDifference(
+        group,
+        peer,
+        gradeRoundingOf(campaign),
+      ),
       comments: commentsToPeer,
     };
 

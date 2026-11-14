@@ -15,14 +15,37 @@ import {
  * campaign service handles everything regarding campaign logic
  */
 /**
- * Rounds to the nearest half (commercial rounding, symmetric around 0):
- * 0.24 -> 0, 0.25 -> 0.5, 0.74 -> 0.5, 0.75 -> 1, -0.25 -> -0.5
- * Same function as in the backend (calculations.service.ts).
+ * Possible rounding steps of the final grade (setting per campaign).
+ * Same values as in the backend (calculations.service.ts).
  */
+export const GRADE_ROUNDING_STEPS = [0.5, 0.25, 0.1, 1, 0];
+export const DEFAULT_GRADE_ROUNDING = 0.5;
+
+/**
+ * Rounds to the nearest multiple of `step` (commercial rounding, symmetric
+ * around 0). Step 0.5: 4.24 -> 4, 4.25 -> 4.5, 4.75 -> 5, -0.25 -> -0.5.
+ * Step 0: 2 decimals. Same function as in the backend.
+ */
+export function roundToStep(value: number, step: number): number {
+  const s = step > 0 ? step : 0.01;
+  // the small epsilon avoids errors like 4.7499999999 for 4.75
+  const rounded = Math.round(Math.abs(value) / s + 1e-9) * s;
+  // remove floating point noise (e.g. 0.30000000000000004)
+  const clean = Math.round(rounded * 1e6) / 1e6;
+  return clean === 0 ? 0 : Math.sign(value) * clean;
+}
+
+/** rounds to half points (Swiss half grades) */
 export function roundToHalf(value: number): number {
-  // the small epsilon avoids errors like 0.7499999999 for 0.75
-  const rounded = Math.round(Math.abs(value) * 2 + 1e-9) / 2;
-  return rounded === 0 ? 0 : Math.sign(value) * rounded;
+  return roundToStep(value, 0.5);
+}
+
+/** rounding step of a campaign; old data without the field: half grades */
+export function gradeRoundingOf(campaign?: { gradeRounding?: number | null }): number {
+  const step = campaign?.gradeRounding;
+  return typeof step === 'number' && GRADE_ROUNDING_STEPS.includes(step)
+    ? step
+    : DEFAULT_GRADE_ROUNDING;
 }
 
 @Injectable({
@@ -51,6 +74,8 @@ export class CampaignService {
       language: language,
       allowCommentsForPeers: allowCommentsForPeers,
       maxPoints: maxPoints,
+      // default: half grades (Swiss grading)
+      gradeRounding: DEFAULT_GRADE_ROUNDING,
       creationDate: creationDate,
       openingDate: openingDate,
       closingDate: closingDate,
@@ -333,12 +358,28 @@ export class CampaignService {
   }
 
   /**
-   * Deviation of a peer = third-party average - group average,
-   * rounded to half points (same as the backend, see roundToHalf).
+   * Deviation of a peer = third-party average - group average, rounded with
+   * the rounding step of the campaign (same as the backend).
    */
-  getPeerReviewDifference(group: Group, peer: Peer): number {
-    return roundToHalf(
-      this.getPeersThirdPartyAverage(group, peer) - this.getGroupAverage(group)
+  getPeerReviewDifference(
+    group: Group,
+    peer: Peer,
+    step: number = DEFAULT_GRADE_ROUNDING
+  ): number {
+    return roundToStep(
+      this.getPeersThirdPartyAverage(group, peer) - this.getGroupAverage(group),
+      step
+    );
+  }
+
+  /**
+   * Final grade of a peer = weighted average of the gradings by the others,
+   * rounded with the rounding step of the campaign (default: half grades).
+   */
+  getPeersGrade(campaign: Campaign, group: Group, peer: Peer): number {
+    return roundToStep(
+      this.getPeersThirdPartyAverage(group, peer),
+      gradeRoundingOf(campaign)
     );
   }
 

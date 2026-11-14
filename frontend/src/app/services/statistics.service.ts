@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { roundToHalf } from './campaign.service';
+import { gradeRoundingOf, roundToStep } from './campaign.service';
 
 /*
  * Statistics for the dashboard ("Statistik" page).
@@ -15,8 +15,9 @@ import { roundToHalf } from './campaign.service';
  *   OTHER members of the group (self-grading excluded)
  * - "group average" = average of all third-party gradings in the group
  * - "deviation" = third-party average - group average
- * - all deviations / differences are rounded to half points (roundToHalf),
- *   like the Swiss half grades; points can be whole or half (4.5)
+ * - all deviations / differences are rounded with the rounding step of the
+ *   campaign (setting "Rundung der Note", default half grades); points can
+ *   be whole or half (4.5)
  */
 
 // ---- input types (shape of the API response) ----
@@ -51,6 +52,8 @@ export interface RawCampaign {
   campaignId: number;
   name: string;
   maxPoints: number;
+  /** rounding step of the final grade (default 0.5) */
+  gradeRounding?: number | null;
   openingDate?: Date | string | null;
   closingDate?: Date | string | null;
   criteria: RawCriteria[];
@@ -236,6 +239,7 @@ export class StatisticsService {
 
     for (const c of campaigns) {
       const weights = new Map(c.criteria.map((cr) => [cr.criteriaId, cr.weight]));
+      const step = gradeRoundingOf(c);
       const criteriaNames = new Map(c.criteria.map((cr) => [cr.criteriaId, cr.name]));
       let campaignCompleted = 0;
       let campaignStudents = 0;
@@ -272,7 +276,7 @@ export class StatisticsService {
           const thirdPartyAverage = weightedAverage(received, weights);
           const deviation =
             thirdPartyAverage !== null && groupAverage !== null
-              ? roundToHalf(thirdPartyAverage - groupAverage)
+              ? roundToStep(thirdPartyAverage - groupAverage, step)
               : null;
 
           peers.push({
@@ -291,7 +295,7 @@ export class StatisticsService {
 
           // self image vs. image of the others
           if (selfAverage !== null && thirdPartyAverage !== null) {
-            const diff = roundToHalf(selfAverage - thirdPartyAverage);
+            const diff = roundToStep(selfAverage - thirdPartyAverage, step);
             if (diff >= thresholds.deviation)
               findings.push({ ...base, type: 'selfHigher', value: diff });
             if (diff <= -thresholds.deviation)
@@ -330,8 +334,9 @@ export class StatisticsService {
             if (avg !== null) raterAverages.push(avg);
           }
           if (raterAverages.length >= 2) {
-            const spread = roundToHalf(
-              Math.max(...raterAverages) - Math.min(...raterAverages)
+            const spread = roundToStep(
+              Math.max(...raterAverages) - Math.min(...raterAverages),
+              step
             );
             if (spread >= thresholds.spread)
               findings.push({ ...base, type: 'raterSpread', value: spread });
@@ -417,15 +422,18 @@ export class StatisticsService {
         };
       });
 
-    // one histogram for all selected campaigns; symmetric, at least -1 .. +1
+    // one histogram for all selected campaigns; symmetric, at least -1 .. +1.
+    // Bars in half steps; if a campaign rounds finer (0.25, 0.1, none),
+    // in quarter steps. The values are put into the nearest bar.
     const withDeviation = peers.filter((p) => p.deviation !== null);
     let deviationDistribution: DeviationDistribution | null = null;
     if (withDeviation.length > 0) {
-      const values = withDeviation.map((p) => p.deviation as number);
+      const binStep = campaigns.every((c) => gradeRoundingOf(c) >= 0.5) ? 0.5 : 0.25;
+      const values = withDeviation.map((p) => roundToStep(p.deviation as number, binStep));
       const range = Math.max(1, ...values.map((v) => Math.abs(v)));
       const steps: { value: number; count: number }[] = [];
-      for (let v = -range; v <= range + 1e-9; v += 0.5) {
-        const value = Math.round(v * 2) / 2 || 0; // avoid -0
+      for (let v = -range; v <= range + 1e-9; v += binStep) {
+        const value = roundToStep(v, binStep); // no floating point noise, no -0
         steps.push({ value, count: values.filter((d) => d === value).length });
       }
       deviationDistribution = {
