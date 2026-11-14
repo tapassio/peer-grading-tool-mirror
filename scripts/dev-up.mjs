@@ -403,7 +403,10 @@ function spawnBackend({ backendPort, docpouchPort, frontendPort, clientId }) {
     process.execPath,
     [join(repoRoot, 'backend', 'dist', 'main.js')],
     {
-      cwd: repoRoot,
+      // Prisma 7 resolves a relative DATABASE_URL (file:./dev.db) against
+      // <cwd>/prisma and @nestjs/config loads .env from cwd, so the backend
+      // has to run from backend/ (not the repo root).
+      cwd: join(repoRoot, 'backend'),
       env: envOut,
       stdio: ['ignore', out, out],
       detached: true,
