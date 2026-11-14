@@ -23,7 +23,6 @@ export interface PgtAuthConfig {
 
 interface TokenPair {
   accessToken: string;
-  refreshToken: string;
 }
 
 const RETURN_URL_KEY = 'pgt_return_url';
@@ -174,6 +173,7 @@ export class AuthService {
     }
 
     if (!this.isOidcMode()) {
+      await this.restoreLocalSession();
       return;
     }
 
@@ -196,14 +196,8 @@ export class AuthService {
       return;
     }
 
-    // 2. PGT session already exists (page reload). Restore the DocPouch
-    //    session in the background so logout/refresh keep working.
-    if (this.tokenService.hasToken()) {
-      client.restoreOidcSession();
-      return;
-    }
-
-    // 3. DocPouch session exists: silent re-login.
+    // 2. Page reload or new tab: the PGT access token is only kept in memory,
+    //    so it is fetched again with the DocPouch session (silent re-login).
     if (client.restoreOidcSession()) {
       try {
         await this.exchange();
@@ -229,7 +223,23 @@ export class AuthService {
     );
 
     this.tokenService.setAccessToken(tokens.accessToken);
-    this.tokenService.setRefreshToken(tokens.refreshToken);
+  }
+
+  /**
+   * Local mode: the access token is only kept in memory, so after a page
+   * reload it is fetched again with the HttpOnly refresh cookie.
+   */
+  private async restoreLocalSession(): Promise<void> {
+    try {
+      const tokens = await firstValueFrom(
+        this.http.get<TokenPair>(environment.api + '/auth/refresh', {
+          withCredentials: true,
+        })
+      );
+      this.tokenService.setAccessToken(tokens.accessToken);
+    } catch {
+      // no (valid) cookie: not logged in
+    }
   }
 
   private docPouchClient(): DocPouchClient {

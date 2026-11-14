@@ -23,7 +23,7 @@ export class MainInterceptor implements HttpInterceptor {
     // setting up variables
     const token = this.tokenService.getToken();
     const isApiUrl = request.url.startsWith(environment.api);
-    const isRefresh = request.url.endsWith('auth/refresh');
+    const isAuthUrl = isApiUrl && request.url.includes('/auth/');
     const skipAuth = request.headers.has('skipAuth');
 
     // checking if there is a token and the request goes to the backend
@@ -32,14 +32,13 @@ export class MainInterceptor implements HttpInterceptor {
       request = request.clone({
         setHeaders: { Authorization: `Bearer ${token}` },
       });
-      // the refresh token is used if a refresh is needed
-      if (isRefresh) {
-        request = request.clone({
-          setHeaders: {
-            Authorization: `Bearer ${this.tokenService.getRefreshToken()}`,
-          },
-        });
-      }
+    }
+
+    // the refresh token is an HttpOnly cookie for <api>/auth/... The browser
+    // sends and stores it by itself; withCredentials is needed when the API
+    // runs on another port (dev server).
+    if (isAuthUrl) {
+      request = request.clone({ withCredentials: true });
     }
 
     // next up is the error interceptor
