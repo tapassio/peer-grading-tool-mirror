@@ -9,7 +9,7 @@ import { MatIcon } from '@angular/material/icon';
     selector: 'pgt-about',
     templateUrl: './about.component.html',
     styleUrls: ['./about.component.css', '../app.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatButton, MatIcon]
 })
 export class AboutComponent {

@@ -10,7 +10,7 @@ import { MatIcon } from '@angular/material/icon';
     selector: 'pgt-warnung',
     templateUrl: './warn-dialog.component.html',
     styleUrls: ['./warn-dialog.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatDialogTitle, CdkScrollable, MatDialogContent, MatDialogActions, MatButton, MatDialogClose, MatIcon]
 })
 export class WarnDialogComponent {

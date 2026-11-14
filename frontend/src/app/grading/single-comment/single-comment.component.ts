@@ -7,7 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     selector: 'pgt-single-comment',
     templateUrl: './single-comment.component.html',
     styleUrl: './single-comment.component.css',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ToolTipComponent, ReactiveFormsModule]
 })
 export class SingleCommentComponent implements OnInit {

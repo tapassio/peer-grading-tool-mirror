@@ -7,7 +7,7 @@ import { DatePipe } from '@angular/common';
     selector: 'pgt-group-meta',
     templateUrl: './group-meta.component.html',
     styleUrls: ['./group-meta.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [DatePipe]
 })
 export class GroupMetaComponent {

@@ -12,7 +12,7 @@ import { MatIcon } from '@angular/material/icon';
     selector: '[pgt-peer]',
     templateUrl: './peer.component.html',
     styleUrls: ['../../../app.component.css', './peer.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, FormErrorComponent, MatButton, MatIcon]
 })
 export class PeerComponent implements OnInit {

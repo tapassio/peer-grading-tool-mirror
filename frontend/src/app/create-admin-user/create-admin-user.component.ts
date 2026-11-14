@@ -17,7 +17,7 @@ import { MatIcon } from '@angular/material/icon';
     selector: 'pgt-create-user',
     templateUrl: './create-admin-user.component.html',
     styleUrls: ['./create-admin-user.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, FormErrorComponent, MatButton, MatIcon]
 })
 export class CreateAdminUserComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, signal, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs';
@@ -22,7 +22,7 @@ import { LanguageSwitchComponent } from '../language-switch/language-switch.comp
     selector: 'pgt-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RouterLink, RouterLinkActive, LanguageSwitchComponent]
 })
 export class HeaderComponent implements OnInit {
@@ -32,9 +32,32 @@ export class HeaderComponent implements OnInit {
   private authService = inject(AuthService);
   private pgtService = inject(PGTService);
 
-  user: User | null = null;
-  campaignCount: number | null = null;
-  participantCount = 0;
+  // signals: the header uses OnPush and redraws when one of them changes
+  readonly user = signal<User | null>(null);
+  readonly campaignCount = signal<number | null>(null);
+  readonly participantCount = signal(0);
+  /** current URL, updated after every navigation */
+  private readonly url = signal(this.router.url);
+
+  readonly isAdmin = computed(
+    () => !!this.user()?.roles.includes(UserRole.ADMIN)
+  );
+
+  /** pages for peers (opened via their personal link) and the login pages */
+  readonly isPublicPage = computed(() => {
+    const url = this.url();
+    return (
+      url.includes('/peer-grading') ||
+      url.includes('/login') ||
+      url.includes('/register') ||
+      url.includes('/auth/callback')
+    );
+  });
+
+  /** the title leads back to the start page */
+  readonly homeLink = computed(() =>
+    this.isAdmin() ? '/admin-dashboard' : '/login'
+  );
 
   UserRole = UserRole;
   toolchainUrl = environment.toolchainUrl;
@@ -48,44 +71,27 @@ export class HeaderComponent implements OnInit {
         filter((e) => e instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(() => this.refresh());
-  }
-
-  get isAdmin(): boolean {
-    return !!this.user?.roles.includes(UserRole.ADMIN);
-  }
-
-  /** pages for peers (opened via their personal link) and the login pages */
-  get isPublicPage(): boolean {
-    const url = this.router.url;
-    return (
-      url.includes('/peer-grading') ||
-      url.includes('/login') ||
-      url.includes('/register') ||
-      url.includes('/auth/callback')
-    );
-  }
-
-  /** the title leads back to the start page */
-  get homeLink(): string {
-    return this.isAdmin ? '/admin-dashboard' : '/login';
+      .subscribe(() => {
+        this.url.set(this.router.url);
+        this.refresh();
+      });
   }
 
   private refresh() {
     // only ask the backend if there is a session, otherwise peers
     // (who have no login) would be sent to the login page
     if (!this.tokenService.hasToken()) {
-      this.user = null;
-      this.campaignCount = null;
+      this.user.set(null);
+      this.campaignCount.set(null);
       return;
     }
 
     this.userService.getUser().subscribe({
       next: (user: User) => {
-        this.user = user;
-        if (this.isAdmin) this.loadMetrics();
+        this.user.set(user);
+        if (this.isAdmin()) this.loadMetrics();
       },
-      error: () => (this.user = null),
+      error: () => this.user.set(null),
     });
   }
 
@@ -93,20 +99,22 @@ export class HeaderComponent implements OnInit {
   private loadMetrics() {
     this.pgtService.getCampaignsByUser().subscribe({
       next: (campaigns: Campaign[]) => {
-        this.campaignCount = campaigns.length;
-        this.participantCount = campaigns.reduce(
-          (sum, c) =>
-            sum + c.groups.reduce((s, g) => s + (g.peers?.length ?? 0), 0),
-          0
+        this.campaignCount.set(campaigns.length);
+        this.participantCount.set(
+          campaigns.reduce(
+            (sum, c) =>
+              sum + c.groups.reduce((s, g) => s + (g.peers?.length ?? 0), 0),
+            0
+          )
         );
       },
-      error: () => (this.campaignCount = null),
+      error: () => this.campaignCount.set(null),
     });
   }
 
   logout() {
     this.authService.logout();
-    this.user = null;
-    this.campaignCount = null;
+    this.user.set(null);
+    this.campaignCount.set(null);
   }
 }

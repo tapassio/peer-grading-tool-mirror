@@ -9,7 +9,7 @@ import { MatIcon } from '@angular/material/icon';
     selector: 'pgt-confirm-email',
     templateUrl: './confirm-email.component.html',
     styleUrl: './confirm-email.component.css',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatButton, MatIcon]
 })
 export class ConfirmEmailComponent implements OnInit {

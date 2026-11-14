@@ -5,7 +5,7 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 @Component({
     selector: 'pgt-language-switch',
     templateUrl: './language-switch.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './language-switch.component.css',
     imports: [
         MatMenuTrigger,

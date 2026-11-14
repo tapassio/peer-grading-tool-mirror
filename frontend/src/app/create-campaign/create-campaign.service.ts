@@ -137,6 +137,8 @@ export class CreateCampaignService {
           campaign.criteria = JSON.parse(
             JSON.stringify(this.defaultCriteria[language])
           );
+          // tell the (OnPush) views about the change
+          this.campaign.set(campaign);
         }
       });
   }
@@ -172,11 +174,13 @@ export class CreateCampaignService {
       group,
       this.campaignService.peerConstructor('', '', '', '')
     );
+    this.campaign.set(this.campaign());
   }
 
   removePeer(group: Group, peer: Peer) {
     this.updateUnsavedChanges(true, 'peer removed');
     this.campaignService.removePeerFromGroup(group, peer);
+    this.campaign.set(this.campaign());
   }
 
   importCSV(campaign: Campaign, event: Event) {

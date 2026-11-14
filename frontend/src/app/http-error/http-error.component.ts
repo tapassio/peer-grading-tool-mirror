@@ -7,7 +7,7 @@ import { MatIcon } from '@angular/material/icon';
     selector: 'pgt-http-error',
     templateUrl: './http-error.component.html',
     styleUrls: ['./http-error.component.css', '../app.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatButton, MatIcon]
 })
 export class HttpErrorComponent implements OnInit {

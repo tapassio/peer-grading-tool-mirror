@@ -7,7 +7,7 @@ import { HeaderComponent } from './header/header.component';
     selector: 'pgt-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RouterOutlet, HeaderComponent]
 })
 export class AppComponent implements OnInit {

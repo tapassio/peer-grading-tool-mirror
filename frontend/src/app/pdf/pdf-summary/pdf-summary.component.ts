@@ -12,7 +12,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     selector: 'pgt-pdf-summary',
     templateUrl: './pdf-summary.component.html',
     styleUrls: ['./pdf-summary.component.css', '../../app.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PdfSummaryComponent implements OnInit {
   private pgtService = inject(PGTService);

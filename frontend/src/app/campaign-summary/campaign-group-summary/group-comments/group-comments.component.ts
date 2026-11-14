@@ -5,7 +5,7 @@ import { Peer, PeerComment } from 'src/app/interfaces';
     selector: 'pgt-group-comments',
     templateUrl: './group-comments.component.html',
     styleUrl: './group-comments.component.css',
-    changeDetection: ChangeDetectionStrategy.Eager
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GroupCommentsComponent {
   readonly comments = input.required<PeerComment[]>();

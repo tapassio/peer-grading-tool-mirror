@@ -17,7 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     selector: 'pgt-statistics',
     templateUrl: './statistics.component.html',
     styleUrls: ['./statistics.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule]
 })
 export class StatisticsComponent implements OnInit {

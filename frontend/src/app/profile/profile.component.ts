@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ValidatorFn, AbstractControl, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { User } from '../interfaces';
@@ -16,7 +16,7 @@ import { MatIcon } from '@angular/material/icon';
     selector: 'pgt-profile',
     templateUrl: './profile.component.html',
     styleUrls: ['../app.component.css', './profile.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, FormErrorComponent, MatButton, MatIcon]
 })
 export class ProfileComponent implements OnInit {
@@ -25,7 +25,7 @@ export class ProfileComponent implements OnInit {
   private snackBarService = inject(SnackBarService);
   userService = inject(UserService);
 
-  user: User | null | undefined;
+  readonly user = signal<User | null | undefined>(undefined);
   changePasswordForm: FormGroup;
 
   /**
@@ -34,7 +34,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getUser().subscribe({
       next: (user) => {
-        this.user = user;
+        this.user.set(user);
       },
       error: (error: HttpErrorResponse) => {
         this.snackBarService.openErrorBar(error);
@@ -78,7 +78,7 @@ export class ProfileComponent implements OnInit {
       };
     } else {
       updateAdmin = {
-        userId: this.user?.userId,
+        userId: this.user()?.userId,
       };
     }
     const update = this.userService.changeUserPW(updateAdmin).subscribe({

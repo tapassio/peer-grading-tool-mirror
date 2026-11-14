@@ -7,7 +7,7 @@ import { CampaignButtonsComponent } from '../../campaign-buttons/campaign-button
     selector: 'pgt-campaign',
     templateUrl: './campaign.component.html',
     styleUrls: ['./campaign.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CampaignMetaComponent, CampaignButtonsComponent]
 })
 export class CampaignComponent {

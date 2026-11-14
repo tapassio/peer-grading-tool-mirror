@@ -14,7 +14,7 @@ import { MatIcon } from '@angular/material/icon';
     selector: 'pgt-criteria',
     templateUrl: './criteria.component.html',
     styleUrls: ['../../app.component.css', './criteria.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, FormErrorComponent, MatButton, MatIcon]
 })
 export class CriteriaComponent implements OnInit {
@@ -25,6 +25,15 @@ export class CriteriaComponent implements OnInit {
   criteriaForm: FormGroup;
   readonly campaign = input.required<Campaign>();
   readonly campaignStatus = input.required<CampaignStatus>();
+
+  /**
+   * CreateCampaignService changes the campaign object in place (e.g. resets
+   * the criteria after a language change). Reading its signal here makes this
+   * OnPush component redraw on every change.
+   */
+  criteriaList(): Criteria[] {
+    return this.createCampaignService.campaign().criteria;
+  }
 
   ngOnInit(): void {
     // creating the form for the criteria

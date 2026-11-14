@@ -8,7 +8,7 @@ import { CampaignStatusPipe } from '../pipes/campaign-status.pipe';
     selector: 'pgt-campaign-meta',
     templateUrl: './campaign-meta.component.html',
     styleUrls: ['./campaign-meta.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [UpperCasePipe, DatePipe, CampaignStatusPipe]
 })
 export class CampaignMetaComponent {

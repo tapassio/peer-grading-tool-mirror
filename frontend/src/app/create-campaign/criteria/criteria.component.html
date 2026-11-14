@@ -43,7 +43,7 @@
     <th i18n>Gewichtung</th>
     <th></th>
   </tr>
-  @for (criteria of campaign().criteria; track criteria) {
+  @for (criteria of criteriaList(); track criteria) {
   <tr>
     <td>{{ criteria.name }}</td>
     <td>{{ criteria.weight }}</td>

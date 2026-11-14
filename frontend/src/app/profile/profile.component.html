@@ -1,4 +1,4 @@
-@if (changePasswordForm && user) {
+@if (user(); as user) { @if (changePasswordForm) {
 <main>
   <section>
     <h1 i18n>Profil</h1>
@@ -70,4 +70,5 @@
     </form>
   </section>
 </main>
+}
 }
