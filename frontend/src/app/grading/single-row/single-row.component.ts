@@ -11,7 +11,7 @@ import { DecimalPipe } from '@angular/common';
     selector: 'pgt-single-row',
     templateUrl: './single-row.component.html',
     styleUrls: ['./single-row.component.css', '../../app.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, DecimalPipe]
 })
 export class SingleRowComponent {

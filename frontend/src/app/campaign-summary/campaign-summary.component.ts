@@ -19,7 +19,7 @@ import { CampaignGroupSummaryComponent } from './campaign-group-summary/campaign
     selector: 'pgt-campaign-summary',
     templateUrl: './campaign-summary.component.html',
     styleUrls: ['./campaign-summary.component.css', '../app.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CampaignComponent, MatButton, MatIcon, CampaignGroupSummaryComponent]
 })
 export class CampaignSummaryComponent implements OnInit {

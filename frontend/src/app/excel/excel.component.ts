@@ -8,7 +8,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     selector: 'pgt-excel',
     templateUrl: './excel.component.html',
     styleUrls: ['./excel.component.css', '../app.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExcelComponent implements OnInit {
   private pgtService = inject(PGTService);

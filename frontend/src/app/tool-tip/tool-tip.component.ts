@@ -9,7 +9,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     selector: 'pgt-tool-tip',
     templateUrl: './tool-tip.component.html',
     styleUrls: ['./tool-tip.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatIcon, MatTooltip]
 })
 export class ToolTipComponent {

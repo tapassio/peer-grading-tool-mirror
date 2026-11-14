@@ -17,7 +17,7 @@ import { FormErrorComponent } from '../form-error/form-error.component';
     selector: 'pgt-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatButton, MatIcon, ReactiveFormsModule, FormErrorComponent]
 })
 export class LoginComponent implements OnInit {

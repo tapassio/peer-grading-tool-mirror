@@ -36,7 +36,7 @@
           <th i18n>E-Mail</th>
           <th></th>
         </tr>
-        @for (peer of group().peers; track peer) {
+        @for (peer of peers(); track peer) {
         <tr
           pgt-peer
           [peer]="peer"

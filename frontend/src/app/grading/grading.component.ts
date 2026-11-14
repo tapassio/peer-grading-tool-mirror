@@ -36,7 +36,7 @@ interface GradingData {
     selector: 'pgt-grading',
     templateUrl: './grading.component.html',
     styleUrls: ['./grading.component.css', '../app.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [GroupMetaComponent, ReactiveFormsModule, SingleRowComponent, SingleCommentComponent, MatButton, MatIcon]
 })
 export class GradingComponent implements OnInit {

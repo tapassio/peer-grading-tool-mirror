@@ -10,7 +10,7 @@ import { AuthService } from '../services/auth.service';
     selector: 'pgt-auth-callback',
     templateUrl: './auth-callback.component.html',
     styleUrls: ['./auth-callback.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthCallbackComponent implements OnInit {
   private authService = inject(AuthService);

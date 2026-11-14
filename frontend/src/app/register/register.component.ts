@@ -11,7 +11,7 @@ import { MatIcon } from '@angular/material/icon';
     selector: 'pgt-register',
     templateUrl: './register.component.html',
     styleUrl: './register.component.css',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, FormErrorComponent, MatButton, MatIcon]
 })
 export class RegisterComponent implements OnInit {

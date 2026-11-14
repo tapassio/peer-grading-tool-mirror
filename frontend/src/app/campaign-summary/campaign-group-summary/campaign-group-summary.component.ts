@@ -16,7 +16,7 @@ import { GroupCommentsComponent } from './group-comments/group-comments.componen
         '../../app.component.css',
         './campaign-group-summary.component.css',
     ],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatTooltip, ToolTipComponent, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, GroupCommentsComponent]
 })
 export class CampaignGroupSummaryComponent {

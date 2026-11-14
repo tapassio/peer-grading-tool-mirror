@@ -33,7 +33,7 @@ import { CampaignStatusPipe } from '../pipes/campaign-status.pipe';
     selector: 'pgt-create-campaign',
     templateUrl: './create-campaign.component.html',
     styleUrls: ['../app.component.css', './create-campaign.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, FormErrorComponent, ToolTipComponent, MatSlideToggle, CriteriaComponent, MatButton, MatTooltip, MatIcon, GroupComponent, MatProgressSpinner, DatePipe, CampaignStatusPipe]
 })
 export class CreateCampaignComponent implements OnInit, DeactivatableComponent {

@@ -16,7 +16,7 @@ import { CampaignComponent } from './campaign/campaign.component';
     selector: 'pgt-admin-dashboard',
     templateUrl: './admin-dashboard.component.html',
     styleUrls: ['./admin-dashboard.component.css', '../app.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatButton, MatIcon, CampaignComponent]
 })
 export class AdminDashboardComponent implements OnInit {

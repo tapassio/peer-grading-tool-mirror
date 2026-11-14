@@ -34,7 +34,7 @@ interface GradingReviewData {
     selector: 'pgt-grading-review',
     templateUrl: './grading-review.component.html',
     styleUrls: ['../app.component.css', './grading-review.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [GroupMetaComponent, ToolTipComponent, MatButton, MatIcon, DatePipe]
 })
 export class PeerGradingReviewComponent implements OnInit {

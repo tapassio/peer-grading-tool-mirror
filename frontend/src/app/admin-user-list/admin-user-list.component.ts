@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { WarnDialogComponent } from '../warn-dialog/warn-dialog.component';
 import { SuperService } from '../services/super.service';
@@ -21,7 +21,7 @@ import { CampaignStatusPipe } from '../pipes/campaign-status.pipe';
     selector: 'pgt-user-list',
     templateUrl: './admin-user-list.component.html',
     styleUrls: ['./admin-user-list.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatButton, MatIcon, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription, CampaignMetaComponent, UpperCasePipe, DatePipe, CampaignStatusPipe]
 })
 export class AdminUserListComponent implements OnInit {
@@ -31,7 +31,7 @@ export class AdminUserListComponent implements OnInit {
   dialog = inject(MatDialog);
   private campaignService = inject(CampaignService);
 
-  admins: User[];
+  readonly admins = signal<User[]>([]);
 
   /**
    * gets all admins from the backend through adminService
@@ -48,7 +48,7 @@ export class AdminUserListComponent implements OnInit {
           }
         }
 
-        this.admins = admins;
+        this.admins.set(admins);
         adminList.unsubscribe();
       },
       error: (error: HttpErrorResponse) => {

@@ -15,7 +15,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     selector: 'pgt-campaign-buttons',
     templateUrl: './campaign-buttons.component.html',
     styleUrls: ['./campaign-buttons.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatButton, MatIcon, MatTooltip]
 })
 export class CampaignButtonsComponent {

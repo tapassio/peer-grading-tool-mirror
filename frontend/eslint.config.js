@@ -25,12 +25,8 @@ module.exports = defineConfig([
         'error',
         { type: 'element', prefix: 'pgt', style: 'kebab-case' },
       ],
-      // Modern Angular style (inject(), standalone components, OnPush).
-      // Switching would mean rewriting every component: a separate project,
-      // not a lint fix. Off for now.
-      '@angular-eslint/prefer-inject': 'off',
-      '@angular-eslint/prefer-standalone': 'off',
-      '@angular-eslint/prefer-on-push-component-change-detection': 'off',
+      // Modern Angular style is enforced: inject(), standalone components,
+      // OnPush and signal inputs/outputs (from the angular-eslint defaults).
       // same as in the backend
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': [

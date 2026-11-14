@@ -9,7 +9,7 @@ import { PGTService } from '../../services/pgt.service';
     selector: 'pgt-pdf-review',
     templateUrl: './pdf-review.component.html',
     styleUrls: ['./pdf-review.component.css', '../../app.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PdfReviewComponent implements OnInit {
   private pgtService = inject(PGTService);
