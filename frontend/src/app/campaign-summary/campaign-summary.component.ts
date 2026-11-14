@@ -1,4 +1,4 @@
-import { Component, OnInit, WritableSignal, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, WritableSignal, signal, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Campaign } from '../interfaces';
 import { PGTService } from '../services/pgt.service';
@@ -6,6 +6,10 @@ import { SnackBarService } from '../services/snack-bar.service';
 import { CampaignService } from '../services/campaign.service';
 import { ToolchainService } from '../services/toolchain.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CampaignComponent } from '../admin-dashboard/campaign/campaign.component';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { CampaignGroupSummaryComponent } from './campaign-group-summary/campaign-group-summary.component';
 
 /**
  * this component displays all data of a single campaign. only accessible for admin users
@@ -16,24 +20,22 @@ import { HttpErrorResponse } from '@angular/common/http';
     templateUrl: './campaign-summary.component.html',
     styleUrls: ['./campaign-summary.component.css', '../app.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [CampaignComponent, MatButton, MatIcon, CampaignGroupSummaryComponent]
 })
 export class CampaignSummaryComponent implements OnInit {
+  pgtService = inject(PGTService);
+  private activatedRoute = inject(ActivatedRoute);
+  private snackBarService = inject(SnackBarService);
+  private router = inject(Router);
+  private campaignService = inject(CampaignService);
+  private toolchainService = inject(ToolchainService);
+
   campaignId: WritableSignal<number> = signal(
     this.activatedRoute.snapshot.params['id']
   );
   campaign: WritableSignal<Campaign | undefined> = signal(undefined);
   publishing: WritableSignal<boolean> = signal(false);
   published: WritableSignal<boolean> = signal(false);
-
-  constructor(
-    public pgtService: PGTService,
-    private activatedRoute: ActivatedRoute,
-    private snackBarService: SnackBarService,
-    private router: Router,
-    private campaignService: CampaignService,
-    private toolchainService: ToolchainService
-  ) {}
 
   get canPublish(): boolean {
     return this.toolchainService.canPublish();

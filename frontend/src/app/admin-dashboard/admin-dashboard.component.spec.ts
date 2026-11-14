@@ -12,10 +12,9 @@ describe('AdminDashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [AdminDashboardComponent],
     imports: [MatSnackBarModule,
         MatDialogModule,
-        MatIconModule],
+        MatIconModule, AdminDashboardComponent],
     providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
 }).compileComponents();
 

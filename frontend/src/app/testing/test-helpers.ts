@@ -13,24 +13,25 @@ import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 import { Campaign, Criteria, Group, Peer, User, UserRole } from '../interfaces';
 
-/** HTTP for tests without a backend (replaces HttpClientTestingModule) */
+/** HTTP without a backend and an empty router, for component tests */
 @NgModule({
-  providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
+  providers: [
+    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClientTesting(),
+    provideRouter([]),
+  ],
 })
 class TestHttpModule {}
 
 export const testImports = [
   TestHttpModule,
-  RouterTestingModule,
   FormsModule,
   ReactiveFormsModule,
   MatDialogModule,
   MatSnackBarModule,
-  NoopAnimationsModule,
 ];
 
 export const testSchemas = [NO_ERRORS_SCHEMA];

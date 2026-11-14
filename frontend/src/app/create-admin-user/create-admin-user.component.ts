@@ -1,24 +1,13 @@
-import {
-  Component,
-  OnInit,
-  WritableSignal,
-  effect,
-  signal,
-  ChangeDetectionStrategy
-} from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { Component, OnInit, WritableSignal, effect, signal, ChangeDetectionStrategy, inject } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '../interfaces';
 import { SuperService } from '../services/super.service';
 import { SnackBarService } from '../services/snack-bar.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { FormErrorComponent } from '../form-error/form-error.component';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 /**
  * this component is only accessible for super users
@@ -29,9 +18,15 @@ import { HttpErrorResponse } from '@angular/common/http';
     templateUrl: './create-admin-user.component.html',
     styleUrls: ['./create-admin-user.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [ReactiveFormsModule, FormErrorComponent, MatButton, MatIcon]
 })
 export class CreateAdminUserComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private adminService = inject(SuperService);
+  private router = inject(Router);
+  private snackBarService = inject(SnackBarService);
+  private activatedRoute = inject(ActivatedRoute);
+
   userId: WritableSignal<number> = signal(
     this.activatedRoute.snapshot.params['id']
   );
@@ -56,14 +51,6 @@ export class CreateAdminUserComponent implements OnInit {
       this.adminForm.controls['adminPWRepeat'].updateValueAndValidity();
     }
   });
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private adminService: SuperService,
-    private router: Router,
-    private snackBarService: SnackBarService,
-    private activatedRoute: ActivatedRoute
-  ) {}
 
   ngOnInit(): void {
     // building admin form

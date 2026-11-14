@@ -1,18 +1,15 @@
-import {
-  Component,
-  OnInit,
-  Signal,
-  WritableSignal,
-  computed,
-  signal,
-  ChangeDetectionStrategy
-} from '@angular/core';
+import { Component, OnInit, Signal, WritableSignal, computed, signal, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Campaign, Group, Peer, PeerComment } from '../interfaces';
 import { CampaignService } from '../services/campaign.service';
 import { PGTService } from '../services/pgt.service';
 import { SnackBarService } from '../services/snack-bar.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { GroupMetaComponent } from '../group-meta/group-meta.component';
+import { ToolTipComponent } from '../tool-tip/tool-tip.component';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { DatePipe } from '@angular/common';
 
 interface GradingReviewData {
   campaign: Campaign;
@@ -38,9 +35,15 @@ interface GradingReviewData {
     templateUrl: './grading-review.component.html',
     styleUrls: ['../app.component.css', './grading-review.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [GroupMetaComponent, ToolTipComponent, MatButton, MatIcon, DatePipe]
 })
 export class PeerGradingReviewComponent implements OnInit {
+  pgtService = inject(PGTService);
+  campaignService = inject(CampaignService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private snackBarService = inject(SnackBarService);
+
   url: Signal<string> = signal(this.activatedRoute.snapshot.params['url']);
 
   gradingReviewData: WritableSignal<GradingReviewData> = signal({
@@ -64,14 +67,6 @@ export class PeerGradingReviewComponent implements OnInit {
   group: Signal<Group> = computed(() => this.gradingReviewData().group);
 
   today: Date = new Date();
-
-  constructor(
-    public pgtService: PGTService,
-    public campaignService: CampaignService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private snackBarService: SnackBarService
-  ) {}
 
   /**
    * when the component is initialized, it uses the url to get the data from the backend

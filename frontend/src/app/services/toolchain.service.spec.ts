@@ -1,4 +1,20 @@
+import { TestBed } from '@angular/core/testing';
+import { AuthService } from './auth.service';
+import { CampaignService } from './campaign.service';
 import { ToolchainService, normalizeToolUrl } from './toolchain.service';
+
+/** ToolchainService with fake dependencies (it uses inject()) */
+function makeService(authService: any, campaignService: any): ToolchainService {
+  TestBed.resetTestingModule();
+  TestBed.configureTestingModule({
+    providers: [
+      ToolchainService,
+      { provide: AuthService, useValue: authService },
+      { provide: CampaignService, useValue: campaignService },
+    ],
+  });
+  return TestBed.inject(ToolchainService);
+}
 
 /** fake DocPouch client with tool documents and structures */
 function fakeClient(toolDocuments: any[], structures: any[]) {
@@ -10,7 +26,7 @@ function fakeClient(toolDocuments: any[], structures: any[]) {
 
 function service(config: any) {
   const authService: any = { getConfig: () => ({ mode: 'oidc', ...config }) };
-  return new ToolchainService(authService, {} as any);
+  return makeService(authService, {} as any);
 }
 
 const tdd = (url: string, structureId: string, type = 7, subType = 0, name = 'Peer Grading') => ({
@@ -103,14 +119,14 @@ describe('ToolchainService.buildResult (anonymisation)', () => {
   };
 
   it('contains no names or e-mails', () => {
-    const s = new ToolchainService({} as any, campaignService);
+    const s = makeService({} as any, campaignService);
     const json = JSON.stringify(s.buildResult(campaignWithScores()));
     expect(json).not.toMatch(/Aebi|Bucher|Caflisch|example\.org/);
     expect(json).toContain('Peer 1');
   });
 
   it('"Peer 1" is not always the first person of the class list', () => {
-    const s = new ToolchainService({} as any, campaignService);
+    const s = makeService({} as any, campaignService);
     s.random = () => 0; // shuffle with fixed numbers: order 2, 3, 1
     const rows = s.buildResult(campaignWithScores()).results;
     expect(rows.map((r) => r.peerLabel)).toEqual(['Peer 1', 'Peer 2', 'Peer 3']);
@@ -119,7 +135,7 @@ describe('ToolchainService.buildResult (anonymisation)', () => {
   });
 
   it('uses crypto random numbers by default', () => {
-    const s = new ToolchainService({} as any, campaignService);
+    const s = makeService({} as any, campaignService);
     const values = Array.from({ length: 20 }, () => s.random());
     expect(values.every((v) => v >= 0 && v < 1)).toBe(true);
     expect(new Set(values).size).toBeGreaterThan(1);

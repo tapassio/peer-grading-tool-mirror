@@ -1,20 +1,22 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Campaign, CampaignStatus } from '../interfaces';
 import { CampaignService } from '../services/campaign.service';
+import { UpperCasePipe, DatePipe } from '@angular/common';
+import { CampaignStatusPipe } from '../pipes/campaign-status.pipe';
 
 @Component({
     selector: 'pgt-campaign-meta',
     templateUrl: './campaign-meta.component.html',
     styleUrls: ['./campaign-meta.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [UpperCasePipe, DatePipe, CampaignStatusPipe]
 })
 export class CampaignMetaComponent {
+  private campaignService = inject(CampaignService);
+
   @Input() campaign: Campaign;
   @Input() showName = false;
   @Input() viewState: 'dashboard' | 'summary';
-
-  constructor(private campaignService: CampaignService) {}
 
   getCampaignStatus(): CampaignStatus {
     return this.campaignService.getCampaignStatus(this.campaign);

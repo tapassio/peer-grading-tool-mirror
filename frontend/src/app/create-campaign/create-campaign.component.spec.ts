@@ -1,5 +1,4 @@
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CreateCampaignComponent } from './create-campaign.component';
@@ -20,12 +19,6 @@ describe('CreateCampaignComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [
-        CreateCampaignComponent,
-        FormErrorComponent,
-        CriteriaComponent,
-        ToolTipComponent,
-    ],
     imports: [FormsModule,
         ReactiveFormsModule,
         RouterModule.forRoot([]),
@@ -34,7 +27,10 @@ describe('CreateCampaignComponent', () => {
         MatIconModule,
         MatTooltipModule,
         MatSlideToggleModule,
-        NoopAnimationsModule],
+        CreateCampaignComponent,
+        FormErrorComponent,
+        CriteriaComponent,
+        ToolTipComponent],
     providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
 }).compileComponents();
 

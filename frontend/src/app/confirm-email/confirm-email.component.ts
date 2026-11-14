@@ -1,27 +1,27 @@
-import { Component, Signal, WritableSignal, signal, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, Signal, WritableSignal, signal, ChangeDetectionStrategy, OnInit, inject } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SnackBarService } from '../services/snack-bar.service';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
     selector: 'pgt-confirm-email',
     templateUrl: './confirm-email.component.html',
     styleUrl: './confirm-email.component.css',
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [MatButton, MatIcon]
 })
 export class ConfirmEmailComponent implements OnInit {
+  private router = inject(Router);
+  userService = inject(UserService);
+  private activatedRoute = inject(ActivatedRoute);
+  private snackBarService = inject(SnackBarService);
+
   registerToken: Signal<string> = signal(
     this.activatedRoute.snapshot.params['token']
   );
   responseMessage: WritableSignal<any | undefined> = signal(undefined);
-
-  constructor(
-    private router: Router,
-    public userService: UserService,
-    private activatedRoute: ActivatedRoute,
-    private snackBarService: SnackBarService
-  ) {}
 
   /**
    * upon initialization the url is used to confirm the email adress in the backend

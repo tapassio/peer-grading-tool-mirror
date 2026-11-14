@@ -8,11 +8,10 @@ describe('CampaignButtonsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [...testImports],
-      declarations: [CampaignButtonsComponent],
-      providers: [],
-      schemas: testSchemas,
-    }).compileComponents();
+    imports: [...testImports, CampaignButtonsComponent],
+    providers: [],
+    schemas: testSchemas,
+}).compileComponents();
 
     fixture = TestBed.createComponent(CampaignButtonsComponent);
     component = fixture.componentInstance;

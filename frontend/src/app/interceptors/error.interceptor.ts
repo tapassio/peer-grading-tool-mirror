@@ -1,4 +1,4 @@
-import { Injector, Injectable } from '@angular/core';
+import { Injector, Injectable, inject } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
   BehaviorSubject,
@@ -16,14 +16,12 @@ import { environment } from '../../environments/environment';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
+  private http = inject(HttpClient);
+  private tokenService = inject(TokenService);
+  private injector = inject(Injector);
+
   static accessTokenError: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(false);
-
-  constructor(
-    private http: HttpClient,
-    private tokenService: TokenService,
-    private injector: Injector
-  ) {}
 
   intercept(
     request: HttpRequest<unknown>,

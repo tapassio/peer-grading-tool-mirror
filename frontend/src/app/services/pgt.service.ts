@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UserService } from './user.service';
 import { Campaign, Grading, MailsSent } from '../interfaces';
 import { HttpClient } from '@angular/common/http';
@@ -12,7 +12,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class PGTService {
-  constructor(private http: HttpClient, private userService: UserService) {}
+  private http = inject(HttpClient);
+  private userService = inject(UserService);
+
 
   deleteCampaign(campaign: Campaign) {
     return this.http.delete<Campaign>(

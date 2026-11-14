@@ -1,9 +1,12 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SnackBarService } from '../services/snack-bar.service';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { FormErrorComponent } from '../form-error/form-error.component';
 /**
  * the login component handles user logins
  * currently only admin users can login.
@@ -15,20 +18,18 @@ import { AuthService } from '../services/auth.service';
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [MatButton, MatIcon, ReactiveFormsModule, FormErrorComponent]
 })
 export class LoginComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  userService = inject(UserService);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  private snackBarService = inject(SnackBarService);
+  private authService = inject(AuthService);
+
   loginForm: FormGroup;
   oidcMode = false;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    public userService: UserService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private snackBarService: SnackBarService,
-    private authService: AuthService
-  ) {}
 
   /**
    * upon initialization the loginform is built

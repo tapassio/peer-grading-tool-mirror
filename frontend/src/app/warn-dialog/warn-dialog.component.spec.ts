@@ -9,14 +9,13 @@ describe('WarnDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [...testImports],
-      declarations: [WarnDialogComponent],
-      providers: [
+    imports: [...testImports, WarnDialogComponent],
+    providers: [
         { provide: MatDialogRef, useValue: { close: jest.fn() } },
         { provide: MAT_DIALOG_DATA, useValue: { text: 'Sicher?' } },
-      ],
-      schemas: testSchemas,
-    }).compileComponents();
+    ],
+    schemas: testSchemas,
+}).compileComponents();
 
     fixture = TestBed.createComponent(WarnDialogComponent);
     component = fixture.componentInstance;

@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  Signal,
-  WritableSignal,
-  computed,
-  signal,
-} from '@angular/core';
+import { Injectable, Signal, WritableSignal, computed, signal, inject } from '@angular/core';
 import {
   Campaign,
   CampaignStatus,
@@ -30,6 +24,13 @@ export const SWISS_GRADE_SCALE_MAX = 6;
   providedIn: 'root',
 })
 export class CreateCampaignService {
+  private pgtService = inject(PGTService);
+  private campaignService = inject(CampaignService);
+  private csvService = inject(CsvService);
+  private snackBarService = inject(SnackBarService);
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
+
   defaultCriteria: { de: Criteria[]; en: Criteria[] } = DEFAULT_CRITERIA;
 
   campaign: WritableSignal<Campaign> = signal(this.createNewCampaign(), {
@@ -57,15 +58,6 @@ export class CreateCampaignService {
   saving: WritableSignal<boolean> = signal(false);
 
   csvErrors: Signal<string[]> = this.csvService.csvErrors.asReadonly();
-
-  constructor(
-    private pgtService: PGTService,
-    private campaignService: CampaignService,
-    private csvService: CsvService,
-    private snackBarService: SnackBarService,
-    private dialog: MatDialog,
-    private router: Router
-  ) {}
 
   loadCampaign(campaignId: number | undefined) {
     // if there was a campaignId, try to load the campaign

@@ -5,8 +5,7 @@ import { Peer, PeerComment } from 'src/app/interfaces';
     selector: 'pgt-group-comments',
     templateUrl: './group-comments.component.html',
     styleUrl: './group-comments.component.css',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    changeDetection: ChangeDetectionStrategy.Eager
 })
 export class GroupCommentsComponent {
   @Input() comments: PeerComment[];

@@ -11,10 +11,9 @@ describe('AdminUserListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [AdminUserListComponent],
     imports: [MatSnackBarModule,
         MatDialogModule,
-        MatIconModule],
+        MatIconModule, AdminUserListComponent],
     providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
 }).compileComponents();
 

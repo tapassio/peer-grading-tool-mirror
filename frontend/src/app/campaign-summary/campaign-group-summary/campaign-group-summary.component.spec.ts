@@ -8,8 +8,8 @@ describe('CampaignGroupSummaryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CampaignGroupSummaryComponent ]
-    })
+    imports: [CampaignGroupSummaryComponent]
+})
     .compileComponents();
 
     fixture = TestBed.createComponent(CampaignGroupSummaryComponent);

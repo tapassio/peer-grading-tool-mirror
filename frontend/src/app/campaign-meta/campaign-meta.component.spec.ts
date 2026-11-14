@@ -9,11 +9,10 @@ describe('CampaignMetaComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [...testImports],
-      declarations: [CampaignMetaComponent, CampaignStatusPipe],
-      providers: [],
-      schemas: testSchemas,
-    }).compileComponents();
+    imports: [...testImports, CampaignMetaComponent, CampaignStatusPipe],
+    providers: [],
+    schemas: testSchemas,
+}).compileComponents();
 
     fixture = TestBed.createComponent(CampaignMetaComponent);
     component = fixture.componentInstance;

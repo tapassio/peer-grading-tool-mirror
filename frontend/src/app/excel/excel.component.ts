@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Signal, signal, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PGTService } from '../services/pgt.service';
 import { SnackBarService } from '../services/snack-bar.service';
@@ -8,20 +8,17 @@ import { HttpErrorResponse } from '@angular/common/http';
     selector: 'pgt-excel',
     templateUrl: './excel.component.html',
     styleUrls: ['./excel.component.css', '../app.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    changeDetection: ChangeDetectionStrategy.Eager
 })
 export class ExcelComponent implements OnInit {
+  private pgtService = inject(PGTService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private snackBarService = inject(SnackBarService);
+
   campaignId: Signal<number> = signal(
     this.activatedRoute.snapshot.params['id']
   );
-
-  constructor(
-    private pgtService: PGTService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private snackBarService: SnackBarService
-  ) {}
 
   ngOnInit(): void {
     this.pgtService.getCampaignSummaryExcel(this.campaignId()).subscribe({

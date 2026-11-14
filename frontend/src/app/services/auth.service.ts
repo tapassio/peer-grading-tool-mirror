@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import DocPouchClient, { I_OidcConfig } from 'docpouch-client';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -37,16 +37,14 @@ const RETURN_BASE_KEY = 'pgt_return_base';
   providedIn: 'root',
 })
 export class AuthService {
+  private http = inject(HttpClient);
+  private tokenService = inject(TokenService);
+
   private config: PgtAuthConfig = { mode: 'local' };
   private client: DocPouchClient | null = null;
   private initPromise: Promise<void> | null = null;
   private callbackHandled = false;
   private callbackError: string | null = null;
-
-  constructor(
-    private http: HttpClient,
-    private tokenService: TokenService
-  ) {}
 
   /**
    * Called from APP_INITIALIZER. Loads the public auth configuration and
