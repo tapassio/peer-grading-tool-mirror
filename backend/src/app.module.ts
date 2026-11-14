@@ -23,6 +23,7 @@ import { ExcelController } from './excel/excel.controller';
 import { HeaderResolver, I18nModule } from 'nestjs-i18n';
 import { SanitizeService } from './sanitize/sanitize.service';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { skipRateLimit } from './security/rate-limit';
 import { APP_GUARD } from '@nestjs/core';
 
 @Module({
@@ -31,7 +32,11 @@ import { APP_GUARD } from '@nestjs/core';
     // Rate limit: max. 100 requests per minute and IP for every route.
     // Login and registration have stricter limits (see auth.controller.ts).
     // (@nestjs/throttler 6: ttl in milliseconds)
-    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
+    ThrottlerModule.forRoot({
+      throttlers: [{ ttl: 60_000, limit: 100 }],
+      // only for end-to-end tests, see security/rate-limit.ts
+      skipIf: skipRateLimit,
+    }),
     ConfigModule.forRoot({
       load: [config],
       isGlobal: true,

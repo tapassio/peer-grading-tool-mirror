@@ -53,11 +53,13 @@ If a change has been made to the database model, i.e. to the file `/backend/pris
 ```sh
 cd backend && npm test    # NestJS / Jest
 cd frontend && npm test   # Angular / Jest
+cd e2e && npm test        # real browser (Playwright), see e2e/README.md
 ```
 
 Every pull request runs the GitHub Actions workflow `.github/workflows/ci.yml`:
-backend (Prisma client, type check, tests, build), frontend (type check, tests,
-production build) and the Docker image. Do not merge while a check is red.
+backend (Prisma client, migrations, type check, lint, tests, build), frontend
+(type check, lint, tests, production build), end-to-end tests in a real browser
+and the Docker image. Do not merge while a check is red.
 
 ## Local Deploy
 

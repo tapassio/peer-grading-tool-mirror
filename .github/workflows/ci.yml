@@ -2,6 +2,7 @@
 #
 # backend:  install, Prisma client, migrations = schema, type check, lint, tests, build
 # frontend: install, type check, lint, tests, production build (de + en)
+# e2e:      real browser (Playwright) against the built app, see e2e/README.md
 # docker:   the production image builds (Dockerfile)
 #
 # A red check means: do not merge before it is fixed.
@@ -89,10 +90,51 @@ jobs:
       - name: Production build (all languages)
         run: npx ng build --configuration production
 
+  e2e:
+    name: End-to-end tests (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+            e2e/package-lock.json
+
+      - name: Build backend
+        working-directory: backend
+        run: npm ci && npx prisma generate && npm run build
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm ci && npx ng build --configuration production
+
+      - name: Install Playwright and Chromium
+        working-directory: e2e
+        run: npm ci && npx playwright install --with-deps chromium
+
+      - name: Run end-to-end tests
+        working-directory: e2e
+        run: npx playwright test
+
+      - name: Upload report (screenshots, traces) on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report/
+            e2e/test-results/
+          retention-days: 14
+
   docker:
     name: Docker image builds
     runs-on: ubuntu-latest
-    needs: [backend, frontend]
+    needs: [backend, frontend, e2e]
     steps:
       - uses: actions/checkout@v4
       - name: Build image (not pushed)
