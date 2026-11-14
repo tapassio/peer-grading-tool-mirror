@@ -19,7 +19,7 @@ export class CampaignValidationPipe implements PipeTransform {
     this.schema = createCampaignSchema(campaign.maxPoints);
   }
 
-  transform(campaign: any, metadata: ArgumentMetadata) {
+  transform(campaign: any, _metadata: ArgumentMetadata) {
     const validation = this.schema.validate(campaign);
     if (validation.error) {
       console.log('validation error', validation.error);
@@ -27,7 +27,7 @@ export class CampaignValidationPipe implements PipeTransform {
     }
 
     /// cecking for errors in campaign data
-    const campaignErrors = this.getCampaignErrors(campaign, this.isCreate);
+    const campaignErrors = this.getCampaignErrors(campaign);
 
     if (campaignErrors.length > 0)
       throw new BadRequestException(
@@ -41,7 +41,7 @@ export class CampaignValidationPipe implements PipeTransform {
   /**
    * this method checks if the data of the campaign makes sense and returns the errors as an array of strings
    */
-  private getCampaignErrors(campaign: any, isCreate: boolean = false) {
+  private getCampaignErrors(campaign: any) {
     const campaignErrors = [];
 
     if (!Number.isInteger(campaign.maxPoints)) {
@@ -56,7 +56,7 @@ export class CampaignValidationPipe implements PipeTransform {
       campaignErrors.push('Keine Gruppen erfasst.');
     }
 
-    for (let group of campaign.groups) {
+    for (const group of campaign.groups) {
       if (group.peers.length == 0) {
         campaignErrors.push(`Keine Teilnehmenden in Gruppe ${group.number}.`);
       }
@@ -79,7 +79,7 @@ export class CampaignValidationPipe implements PipeTransform {
     minute: number,
     second: number,
   ): Date {
-    let outputDate = new Date(inputDate);
+    const outputDate = new Date(inputDate);
 
     // the offset is the hours that the CET is off by UTC (daylight saving time taken into account)
     const offset = parseInt(

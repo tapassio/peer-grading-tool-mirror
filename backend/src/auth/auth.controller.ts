@@ -79,9 +79,7 @@ export class AuthController {
     @Res({ passthrough: true }) res,
     @Headers('authorization') authorization?: string,
   ) {
-    const token = (authorization || '')
-      .replace(/^Bearer\s+/i, '')
-      .trim();
+    const token = (authorization || '').replace(/^Bearer\s+/i, '').trim();
 
     if (!token) {
       throw new UnauthorizedException('DOCPOUCH_TOKEN_REQUIRED');

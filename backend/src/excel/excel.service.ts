@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Campaign, Criteria, Group, Peer, PeerComment } from '../interfaces';
 import * as ExcelJS from 'exceljs';
-import { CalculationsService, gradeRoundingOf } from '../calculations/calculations.service';
+import {
+  CalculationsService,
+  gradeRoundingOf,
+} from '../calculations/calculations.service';
 import { CampaignService } from '../campaign/campaign.service';
 import { I18nService } from 'nestjs-i18n';
 import { SanitizeService } from '../sanitize/sanitize.service';
@@ -24,13 +27,13 @@ export class ExcelService {
    * @returns the excel workbook
    */
   public async getCampaignExcel(campaignId: number, lang: string) {
-    let campaign = await this.campaignService.getCampaignById(campaignId);
+    const campaign = await this.campaignService.getCampaignById(campaignId);
 
     const workbook = new ExcelJS.Workbook();
 
     this.addSummaryWorkSheet(workbook, campaign, lang);
 
-    for (let group of campaign.groups) {
+    for (const group of campaign.groups) {
       this.addGroupWorkSheet(workbook, campaign, group, lang);
     }
 
@@ -173,7 +176,7 @@ export class ExcelService {
     });
     boldRows.push(criteriaHeaderRow);
     borderRows.push([criteriaHeaderRow]);
-    for (let criteria of campaign.criteria) {
+    for (const criteria of campaign.criteria) {
       borderRows.push([
         summarySheet.addRow({
           col1: this.sanService.sanitize(criteria.name),
@@ -214,7 +217,7 @@ export class ExcelService {
     boldRows.push(groupsSummaryHeaderRow);
     borderRows.push([groupsSummaryHeaderRow]);
 
-    for (let group of campaign.groups) {
+    for (const group of campaign.groups) {
       borderRows.push([
         summarySheet.addRow({
           col1: group.number,
@@ -260,8 +263,8 @@ export class ExcelService {
     boldRows.push(studentsHeaderRow);
     borderRows.push([studentsHeaderRow]);
 
-    for (let group of campaign.groups) {
-      let groupPeerRows: ExcelJS.Row[] = [];
+    for (const group of campaign.groups) {
+      const groupPeerRows: ExcelJS.Row[] = [];
 
       for (const peer of group.peers) {
         groupPeerRows.push(
@@ -339,7 +342,7 @@ export class ExcelService {
       numberOfCols = campaign.criteria.length + 1;
     }
 
-    let columns = [];
+    const columns = [];
     for (let i = 1; i <= numberOfCols; i++) {
       columns.push({ key: 'col' + i, width: 20 });
     }
@@ -424,7 +427,7 @@ export class ExcelService {
     boldRows.push(participantsHeaderRow);
     borderRows.push([participantsHeaderRow]);
 
-    for (let peer of group.peers) {
+    for (const peer of group.peers) {
       const gradingsSent =
         group.gradings.filter(
           (grading) => grading.fromPeer.peerId == peer.peerId,
@@ -630,7 +633,7 @@ export class ExcelService {
     mergeRows.push(criteriaTitle);
 
     // generating the header row
-    let headerRowObject = {
+    const headerRowObject = {
       col1: `${this.i18n.t('excel.gradingTo', {
         lang: lang,
       })} → \r\n ${this.i18n.t('excel.gradingFrom', {
@@ -650,7 +653,7 @@ export class ExcelService {
 
     // generating the body rows
     for (const fromPeer of group.peers) {
-      let gradingRowObject = {
+      const gradingRowObject = {
         col1: this.formatName(fromPeer),
       };
 
@@ -664,7 +667,7 @@ export class ExcelService {
           );
       }
 
-      let gradingRow = groupSheet.addRow(gradingRowObject);
+      const gradingRow = groupSheet.addRow(gradingRowObject);
       borderRows.push([gradingRow]);
       firstBoldRows.push(gradingRow);
     }
@@ -721,7 +724,7 @@ export class ExcelService {
     mergeRows.push(titleRow);
 
     // generating the header row
-    let headerRowObject = {
+    const headerRowObject = {
       col1: `${this.i18n.t('excel.criterion', {
         lang: lang,
       })} (${this.i18n.t('excel.weight', {
@@ -741,7 +744,7 @@ export class ExcelService {
 
     // generating the body rows
     for (const toPeer of group.peers) {
-      let gradingRowObject = {
+      const gradingRowObject = {
         col1: this.formatName(toPeer),
       };
 
@@ -794,14 +797,14 @@ export class ExcelService {
     });
 
     // setting boldRows to bold and wrapText
-    for (let row of boldRows) {
+    for (const row of boldRows) {
       row.font = { name: 'Calibri', family: 2, bold: true };
       row.alignment = { vertical: 'top', horizontal: 'left', wrapText: true };
     }
 
     // setting borderRows border and alternating colors
-    for (let [index, rowArray] of borderRows.entries()) {
-      for (let row of rowArray) {
+    for (const [index, rowArray] of borderRows.entries()) {
+      for (const row of rowArray) {
         row.eachCell((cell) => {
           cell.border = {
             top: { style: 'thin' },

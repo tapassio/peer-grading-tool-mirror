@@ -65,13 +65,22 @@ interface Student {
 }
 
 function readClass(file: string): Student[] {
-  const lines = readFileSync(join(__dirname, '..', '..', 'testdata', file), 'utf-8')
+  const lines = readFileSync(
+    join(__dirname, '..', '..', 'testdata', file),
+    'utf-8',
+  )
     .split(/\r?\n/)
     .filter((l) => l.trim() !== '');
   return lines.slice(1).map((line) => {
     const [lastName, firstName, email, group, matriculationNumber] =
       line.split(';');
-    return { lastName, firstName, email, group: Number(group), matriculationNumber };
+    return {
+      lastName,
+      firstName,
+      email,
+      group: Number(group),
+      matriculationNumber,
+    };
   });
 }
 
@@ -127,11 +136,17 @@ interface PlannedGroup {
 function planClass(cfg: ClassConfig): PlannedGroup[] {
   const rand = mulberry32(cfg.seed);
   const students = readClass(cfg.file);
-  const numbers = [...new Set(students.map((s) => s.group))].sort((a, b) => a - b);
+  const numbers = [...new Set(students.map((s) => s.group))].sort(
+    (a, b) => a - b,
+  );
 
   // "true" performance of every student and the strictness of every rater
-  const quality = new Map(students.map((s) => [s.email, clamp(gauss(rand, 4.6, 0.55), 2.5, 6)]));
-  const strictness = new Map(students.map((s) => [s.email, gauss(rand, 0, 0.25)]));
+  const quality = new Map(
+    students.map((s) => [s.email, clamp(gauss(rand, 4.6, 0.55), 2.5, 6)]),
+  );
+  const strictness = new Map(
+    students.map((s) => [s.email, gauss(rand, 0, 0.25)]),
+  );
 
   // patterns for the statistics page
   const shuffled = [...students].sort(() => rand() - 0.5);
@@ -204,7 +219,8 @@ function dryRun(jsonFile?: string) {
         `${graded} have graded, ${groups.reduce((n, g) => n + g.gradings.length, 0)} gradings`,
     );
     for (const g of groups)
-      for (const s of g.students) if (!ids.has(s.email)) ids.set(s.email, peerId++);
+      for (const s of g.students)
+        if (!ids.has(s.email)) ids.set(s.email, peerId++);
     return {
       campaignId: i + 1,
       name: cfg.name,
@@ -214,14 +230,22 @@ function dryRun(jsonFile?: string) {
       creationDate: daysFromNow(cfg.running ? -10 : -70),
       openingDate: daysFromNow(cfg.running ? -5 : -60),
       closingDate: cfg.running ? null : daysFromNow(-30),
-      criteria: CRITERIA.map((c, ci) => ({ criteriaId: (i + 1) * 10 + ci, ...c })),
+      criteria: CRITERIA.map((c, ci) => ({
+        criteriaId: (i + 1) * 10 + ci,
+        ...c,
+      })),
       groups: groups.map((g, gi) => ({
         groupId: (i + 1) * 100 + gi,
         number: g.number,
         completed: g.completed,
         peers: g.students.map((s) => ({
           peerId: ids.get(s.email),
-          peer: { peerId: ids.get(s.email), firstName: s.firstName, lastName: s.lastName, email: s.email },
+          peer: {
+            peerId: ids.get(s.email),
+            firstName: s.firstName,
+            lastName: s.lastName,
+            email: s.email,
+          },
         })),
         gradings: g.gradings.map((x) => ({
           fromPeerId: ids.get(x.from),
@@ -243,7 +267,7 @@ function dryRun(jsonFile?: string) {
 
 async function seed() {
   // loaded only here, so that --dry-run works without a database
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { createPrismaClient } = require('../src/prisma-client');
   const prisma = createPrismaClient();
 
@@ -297,7 +321,11 @@ async function seed() {
 
       for (const g of groups) {
         const group = await prisma.group.create({
-          data: { number: g.number, completed: g.completed, campaignId: campaign.campaignId },
+          data: {
+            number: g.number,
+            completed: g.completed,
+            campaignId: campaign.campaignId,
+          },
         });
 
         const peerIds = new Map<string, number>();
@@ -350,7 +378,9 @@ async function seed() {
         );
       }
 
-      console.log(`created: ${cfg.name} (campaignId ${campaign.campaignId}) for ${admin.email}`);
+      console.log(
+        `created: ${cfg.name} (campaignId ${campaign.campaignId}) for ${admin.email}`,
+      );
     }
   } finally {
     await prisma.$disconnect();

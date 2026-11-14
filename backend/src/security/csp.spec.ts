@@ -40,6 +40,8 @@ describe('Toolchain manifest', () => {
   });
 
   it('keeps the stable role key', () => {
-    expect(toolchainManifest.roles.map((r) => r.key)).toEqual(['peerGradingResult']);
+    expect(toolchainManifest.roles.map((r) => r.key)).toEqual([
+      'peerGradingResult',
+    ]);
   });
 });

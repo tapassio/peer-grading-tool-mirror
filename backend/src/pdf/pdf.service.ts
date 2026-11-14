@@ -18,12 +18,11 @@ import { I18nService } from 'nestjs-i18n';
 import { AppService } from '../app.service';
 import { CampaignService } from '../campaign/campaign.service';
 import { SanitizeService } from '../sanitize/sanitize.service';
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+import htmlToPdfMake from 'html-to-pdfmake';
+import { JSDOM } from 'jsdom';
+import * as path from 'path';
+import PdfPrinter from 'pdfmake';
 const { window } = new JSDOM('');
-const htmlToPdfMake = require('html-to-pdfmake');
-const path = require('path');
-const PdfPrinter = require('pdfmake');
 
 interface ReviewData {
   peer: Peer;
@@ -138,7 +137,7 @@ export class PdfService {
         <div class="campaignProperties">
           <div>
             <p><b>${this.i18n.t('pdf.status', { lang: lang })}</b>: ${this.i18n.t(`status.${this.calculationsService.getCampaignStatus(campaign)}`, { lang: lang })}</p>
-            <p><b>${this.i18n.t('pdf.createdOn', { lang: lang })}</b>: ${this.appService.formatLocaleDate(new Date(), lang)}</p>`
+            <p><b>${this.i18n.t('pdf.createdOn', { lang: lang })}</b>: ${this.appService.formatLocaleDate(new Date(), lang)}</p>`;
 
     if (campaign.openingDate) {
       html += `<p><b>${this.i18n.t('pdf.start', {
@@ -160,20 +159,20 @@ export class PdfService {
       lang: lang,
     })}</b>: 1 - ${campaign.maxPoints}</p>
             <p><b>${this.i18n.t('pdf.numberOfGroups', { lang: lang })}</b>: ${
-      campaign.groups.length
-    }</p><p><b>${this.i18n.t('pdf.language', {
-      lang: lang,
-    })}</b>: ${campaign.language.toUpperCase()}</p><p><b>${
-      campaign.allowCommentsForPeers
-        ? this.i18n.t('pdf.P2PCommentsAllowed', { lang: lang })
-        : this.i18n.t('pdf.P2PCommentsDisallowed', { lang: lang })
-    }</b></p>
+              campaign.groups.length
+            }</p><p><b>${this.i18n.t('pdf.language', {
+              lang: lang,
+            })}</b>: ${campaign.language.toUpperCase()}</p><p><b>${
+              campaign.allowCommentsForPeers
+                ? this.i18n.t('pdf.P2PCommentsAllowed', { lang: lang })
+                : this.i18n.t('pdf.P2PCommentsDisallowed', { lang: lang })
+            }</b></p>
           </div>
           <div>
             <p><b>${this.i18n.t('pdf.criteria', { lang: lang })}(${this.i18n.t(
-      'pdf.weight',
-      { lang: lang },
-    )})</b></p>
+              'pdf.weight',
+              { lang: lang },
+            )})</b></p>
               ${this.getCriteriaHTML(campaign.criteria)}
           </div>
         </div>
@@ -195,7 +194,7 @@ export class PdfService {
       </ul>`;
 
     // replaces new lines and tabs with empty strings
-    html = html.replace(/(\n|\s{2,})/g, (str) => '');
+    html = html.replace(/(\n|\s{2,})/g, '');
 
     return html;
   }
@@ -251,8 +250,8 @@ export class PdfService {
               <span>${this.i18n.t('pdf.gradingTo', {
                 lang: lang,
               })}</span><span>${this.i18n.t('pdf.gradingFrom', {
-        lang: lang,
-      })}</span>
+                lang: lang,
+              })}</span>
             </th>`;
       let rightSide = `<table>
           <tr>
@@ -260,8 +259,8 @@ export class PdfService {
               <span>${this.i18n.t('pdf.gradingTo', {
                 lang: lang,
               })}</span><span>${this.i18n.t('pdf.gradingFrom', {
-        lang: lang,
-      })}</span>
+                lang: lang,
+              })}</span>
             </th>`;
 
       peers.forEach((peer: Peer, index: number) => {
@@ -279,7 +278,7 @@ export class PdfService {
       rightSide += '</tr>';
 
       // mid rows
-      peers.forEach((peer: Peer, index: number) => {
+      peers.forEach((peer: Peer) => {
         leftSide += `
           <tr>
             <td>
@@ -346,8 +345,8 @@ export class PdfService {
               <span>${this.i18n.t('pdf.gradingTo', {
                 lang: lang,
               })}</span><span>${this.i18n.t('pdf.gradingFrom', {
-        lang: lang,
-      })}</span>
+                lang: lang,
+              })}</span>
             </th>`;
       peers.forEach((peer) => {
         peersHTML +=
@@ -377,10 +376,7 @@ export class PdfService {
         lang: lang,
       })}:</td>`;
       peers.forEach((peer) => {
-        peersHTML +=
-          '<td>' +
-          grade(peer) +
-          '</td>';
+        peersHTML += '<td>' + grade(peer) + '</td>';
       });
       peersHTML += '</tr></table>';
     }
@@ -470,7 +466,7 @@ export class PdfService {
   }
 
   addCampaignStylePropertyToElements(elements: any) {
-    for (let [index, element] of elements.entries()) {
+    for (const [index, element] of elements.entries()) {
       element.style = element.nodeName;
       if (
         element.nodeName == 'H1' ||
@@ -493,15 +489,11 @@ export class PdfService {
         element.margin = [0, 0, 2, 20];
         // zebra style of table and definition of line drawing
         element.layout = {
-          fillColor: function (rowIndex: any, node: any, columnIndex: number) {
+          fillColor: function (rowIndex: any) {
             return rowIndex % 2 === 0 ? null : '#c1c9d1';
           },
-          hLineWidth: function (i: number, node: any) {
-            return 0;
-          },
-          vLineWidth: function (i: number, node: any) {
-            return 0;
-          },
+          hLineWidth: () => 0,
+          vLineWidth: () => 0,
         };
 
         //auto width of tables
@@ -712,7 +704,7 @@ export class PdfService {
             <p><strong>${this.i18n.t("pdf.campaignName", {lang: lang})}:</strong> ${this.sanService.sanitize(review.campaign.name)}</p>
             <p><b>${this.i18n.t("pdf.groupNumber", {lang: lang})}:</b> ${review.group.number}</p>
             <p><b>${this.i18n.t("pdf.groupSize", {lang: lang})}:</b> ${review.group.peers.length}</p>
-            <p><b>${this.i18n.t("pdf.gradingScale", {lang: lang})}:</b> 1 - ${review.campaign.maxPoints}</p>`
+            <p><b>${this.i18n.t("pdf.gradingScale", {lang: lang})}:</b> 1 - ${review.campaign.maxPoints}</p>`;
 
     if (
       this.calculationsService.getCampaignStatus(review.campaign as Campaign) ==
@@ -738,9 +730,9 @@ export class PdfService {
           <div>
             <p>
               <b>${this.i18n.t('pdf.criteria', { lang: lang })} (${this.i18n.t(
-      'pdf.weight',
-      { lang: lang },
-    )}):</b>
+                'pdf.weight',
+                { lang: lang },
+              )}):</b>
             </p>
             ${this.getCriteriaHTML(review.campaign.criteria)}
           </div>
@@ -792,18 +784,18 @@ export class PdfService {
           <li>${this.i18n.t('pdf.peerAssessment', {
             lang: lang,
           })}: ${this.i18n.t('pdf.peerAssessmentExplanation', {
-      lang: lang,
-    })}</li>
+            lang: lang,
+          })}</li>
           <li>${this.i18n.t('pdf.groupAverage', {
             lang: lang,
           })}: ${this.i18n.t('pdf.groupAverageExplanation', {
-      lang: lang,
-    })}</li>
+            lang: lang,
+          })}</li>
           <li>${this.i18n.t('pdf.devation', {
             lang: lang,
           })}: ${this.i18n.t('pdf.devationExplanation', {
-      lang: lang,
-    })}</li>
+            lang: lang,
+          })}</li>
         </ul>
       </div>`;
 
@@ -815,7 +807,7 @@ export class PdfService {
     }
 
     // replaces new lines and tabs with empty strings
-    html = html.replace(/(\n|\s{2,})/g, (str) => '');
+    html = html.replace(/(\n|\s{2,})/g, '');
 
     return html;
   }
@@ -883,11 +875,12 @@ export class PdfService {
   }
 
   getReviewComments(review: ReviewData, lang: string) {
-    let html = `<h3>${this.i18n.t('pdf.commentsRecieved')}</h3>
+    // (bug fixed: the language was missing, so headings were always English)
+    let html = `<h3>${this.i18n.t('pdf.commentsRecieved', { lang })}</h3>
     <table>
       <tr>
-          <th>${this.i18n.t('pdf.author')}</th>
-          <th>${this.i18n.t('pdf.comment')}</th>
+          <th>${this.i18n.t('pdf.author', { lang })}</th>
+          <th>${this.i18n.t('pdf.comment', { lang })}</th>
       </tr>`;
 
     for (const peer of review.group.peers) {
@@ -928,12 +921,8 @@ export class PdfService {
 
         // setting lineWidths to zero
         element.layout = {
-          hLineWidth: function (i: number, node: any) {
-            return 0;
-          },
-          vLineWidth: function (i: number, node: any) {
-            return 0;
-          },
+          hLineWidth: () => 0,
+          vLineWidth: () => 0,
         };
 
         // setting last line to self grading color if it's the review table

@@ -75,12 +75,14 @@ describe('checkSecrets', () => {
 
 describe('CampaignGuard', () => {
   const context = (req: any) =>
-    ({ switchToHttp: () => ({ getRequest: () => req }) } as any);
+    ({ switchToHttp: () => ({ getRequest: () => req }) }) as any;
 
   const guardWith = (found: boolean) => {
     const prisma: any = {
       campaign: {
-        findFirst: jest.fn().mockResolvedValue(found ? { campaignId: 5 } : null),
+        findFirst: jest
+          .fn()
+          .mockResolvedValue(found ? { campaignId: 5 } : null),
       },
     };
     return { guard: new CampaignGuard(prisma), prisma };
@@ -103,7 +105,11 @@ describe('CampaignGuard', () => {
     const { guard } = guardWith(false);
     await expect(
       guard.canActivate(
-        context({ user: { email: 'a@b.c' }, method: 'DELETE', params: { id: '7' } }),
+        context({
+          user: { email: 'a@b.c' },
+          method: 'DELETE',
+          params: { id: '7' },
+        }),
       ),
     ).resolves.toBe(false);
   });
@@ -112,7 +118,11 @@ describe('CampaignGuard', () => {
     const { guard } = guardWith(true);
     await expect(
       guard.canActivate(
-        context({ user: { email: 'a@b.c' }, method: 'POST', body: { campaignId: 0 } }),
+        context({
+          user: { email: 'a@b.c' },
+          method: 'POST',
+          body: { campaignId: 0 },
+        }),
       ),
     ).resolves.toBe(false);
     await expect(

@@ -109,7 +109,7 @@ export class CampaignService {
         const { campaignId, peers, gradings, comments, ...rest } = group;
 
         const formatPeers = peers.map((groupPeerConnection) => {
-          let res = groupPeerConnection.peer;
+          const res = groupPeerConnection.peer;
           if (withLinks) {
             res['link'] = groupPeerConnection.link;
           }
@@ -185,7 +185,7 @@ export class CampaignService {
     const campaign = await this.prisma.$transaction<Campaign>(
       async (tx) => {
         // initial creation
-        let campaign = await tx.campaign.create({
+        const campaign = await tx.campaign.create({
           data: {
             name: campaignData.name,
             maxPoints: campaignData.maxPoints,
@@ -215,8 +215,8 @@ export class CampaignService {
         });
 
         // updating groups to connect to peers and generate links
-        for (let group of campaign.groups) {
-          let peers = campaignData.groups.find(
+        for (const group of campaign.groups) {
+          const peers = campaignData.groups.find(
             (gr) => gr.number == group.number,
           ).peers;
           await this.finalizeGroup(group, peers, tx);
@@ -279,12 +279,12 @@ export class CampaignService {
     groupId: number,
     tx: Prisma.TransactionClient,
   ): Promise<GroupPeerConnection[]> {
-    let result = [];
+    const result = [];
 
-    for (let peer of peers) {
+    for (const peer of peers) {
       let updatedPeer;
 
-      let foundPeer = await tx.peer.findUnique({
+      const foundPeer = await tx.peer.findUnique({
         where: {
           email: peer.email,
         },
@@ -352,7 +352,7 @@ export class CampaignService {
       `updating campaign "${campaignData.name}". User: ${user.email}`,
     );
 
-    let checkData: UpdateCampaignCheckData = await this.prisma.$transaction(
+    const checkData: UpdateCampaignCheckData = await this.prisma.$transaction(
       async (tx) => {
         // saving current campaign data for comparisons
         const oldCampaign = await this.getCampaignById(
@@ -402,7 +402,11 @@ export class CampaignService {
 
         ///////////////////// handling groups
 
-        let groupData = await this.handleGroups(oldCampaign, campaignData, tx);
+        const groupData = await this.handleGroups(
+          oldCampaign,
+          campaignData,
+          tx,
+        );
 
         await this.deleteUnusedPeerUsers(tx);
 
@@ -459,7 +463,7 @@ export class CampaignService {
     // if there are added criteria, delete all gradings and comments
     if (addedCriteria.length > 0) {
       // creating new criteria
-      for (let crit of addedCriteria) {
+      for (const crit of addedCriteria) {
         await tx.criteria.create({
           data: {
             name: crit.name,
@@ -509,7 +513,7 @@ export class CampaignService {
 
     // staying criteria get updated values
     // currently not used because of the way the frontend works
-    for (let crit of stayedCriteria) {
+    for (const crit of stayedCriteria) {
       await tx.criteria.update({
         where: {
           criteriaId: crit.criteriaId,
@@ -548,8 +552,8 @@ export class CampaignService {
     const changedGroups = [];
 
     // adding in groups
-    for (let group of addedGroups) {
-      let newGroup = await tx.group.create({
+    for (const group of addedGroups) {
+      const newGroup = await tx.group.create({
         data: {
           campaignId: campaignData.campaignId,
           number: group.number,
@@ -557,7 +561,7 @@ export class CampaignService {
         },
       });
 
-      let peersToAdd = campaignData.groups.find(
+      const peersToAdd = campaignData.groups.find(
         (gr) => gr.number == group.number,
       ).peers;
       await this.finalizeGroup(newGroup, peersToAdd, tx);
@@ -575,15 +579,19 @@ export class CampaignService {
     }
 
     // staying groups get their number as well as their peers updated
-    for (let group of stayedGroups) {
-      let peerCheckData = await this.handleStayedGroup(group, campaignData, tx);
+    for (const group of stayedGroups) {
+      const peerCheckData = await this.handleStayedGroup(
+        group,
+        campaignData,
+        tx,
+      );
 
       if (
         peerCheckData.addedPeers.length > 0 ||
         peerCheckData.changedPeers.length > 0 ||
         peerCheckData.removedPeers.length > 0
       ) {
-        let changedGroup = campaignData.groups.find(
+        const changedGroup = campaignData.groups.find(
           (gr) => gr.groupId == group.groupId,
         );
         changedGroup['addedPeers'] = peerCheckData.addedPeers;
@@ -1088,13 +1096,13 @@ export class CampaignService {
     this.logger.log(`campaign with id ${where.campaignId} deleted`);
 
     return await this.prisma.$transaction(async (tx) => {
-      const criteria = await tx.criteria.deleteMany({
+      await tx.criteria.deleteMany({
         where: { campaignId: where.campaignId },
       });
-      const groups = await tx.group.deleteMany({
+      await tx.group.deleteMany({
         where: { campaignId: where.campaignId },
       });
-      const query = await tx.campaign.delete({
+      await tx.campaign.delete({
         where,
       });
 

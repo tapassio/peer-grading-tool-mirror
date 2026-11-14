@@ -28,7 +28,11 @@ describe('DocPouchRequestGuard (protects the DocPouch rate limit)', () => {
 
   it('limits DocPouch requests per 15 minutes for the whole server', () => {
     const g = new DocPouchRequestGuard(() => 3, now);
-    expect([g.tryAcquire(), g.tryAcquire(), g.tryAcquire()]).toEqual([true, true, true]);
+    expect([g.tryAcquire(), g.tryAcquire(), g.tryAcquire()]).toEqual([
+      true,
+      true,
+      true,
+    ]);
     expect(g.tryAcquire()).toBe(false);
     time += 15 * 60 * 1000 + 1;
     expect(g.tryAcquire()).toBe(true);

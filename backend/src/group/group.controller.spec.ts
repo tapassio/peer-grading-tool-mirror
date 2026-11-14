@@ -2,7 +2,9 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 // no database needed: replace the services that talk to Prisma
 jest.mock('../prisma.service', () => ({ PrismaService: class {} }));
-jest.mock('../campaign/campaign.service', () => ({ CampaignService: class {} }));
+jest.mock('../campaign/campaign.service', () => ({
+  CampaignService: class {},
+}));
 jest.mock('../calculations/calculations.service', () => ({
   CalculationsService: class {},
 }));
