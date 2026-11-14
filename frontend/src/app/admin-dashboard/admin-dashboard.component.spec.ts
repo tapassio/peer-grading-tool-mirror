@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AdminDashboardComponent } from './admin-dashboard.component';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -12,14 +12,12 @@ describe('AdminDashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        HttpClientModule,
-        MatSnackBarModule,
+    declarations: [AdminDashboardComponent],
+    imports: [MatSnackBarModule,
         MatDialogModule,
-        MatIconModule,
-      ],
-      declarations: [AdminDashboardComponent],
-    }).compileComponents();
+        MatIconModule],
+    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
+}).compileComponents();
 
     fixture = TestBed.createComponent(AdminDashboardComponent);
     component = fixture.componentInstance;

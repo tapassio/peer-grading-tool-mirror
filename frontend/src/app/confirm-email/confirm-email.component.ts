@@ -1,12 +1,14 @@
-import { Component, Signal, WritableSignal, signal } from '@angular/core';
+import { Component, Signal, WritableSignal, signal, ChangeDetectionStrategy } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SnackBarService } from '../services/snack-bar.service';
 
 @Component({
-  selector: 'pgt-confirm-email',
-  templateUrl: './confirm-email.component.html',
-  styleUrl: './confirm-email.component.css',
+    selector: 'pgt-confirm-email',
+    templateUrl: './confirm-email.component.html',
+    styleUrl: './confirm-email.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ConfirmEmailComponent {
   registerToken: Signal<string> = signal(

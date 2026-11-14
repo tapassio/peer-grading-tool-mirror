@@ -1,4 +1,4 @@
-import { Component, WritableSignal, signal } from '@angular/core';
+import { Component, WritableSignal, signal, ChangeDetectionStrategy } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -12,9 +12,11 @@ import { Router } from '@angular/router';
 import { SnackBarService } from '../services/snack-bar.service';
 
 @Component({
-  selector: 'pgt-register',
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.css',
+    selector: 'pgt-register',
+    templateUrl: './register.component.html',
+    styleUrl: './register.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class RegisterComponent {
   registerForm: FormGroup;

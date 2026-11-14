@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PeerGradingReviewComponent } from './grading-review.component';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
@@ -11,9 +11,10 @@ describe('PeerGradingReviewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientModule, MatSnackBarModule, RouterModule.forRoot([])],
-      declarations: [PeerGradingReviewComponent],
-    }).compileComponents();
+    declarations: [PeerGradingReviewComponent],
+    imports: [MatSnackBarModule, RouterModule.forRoot([])],
+    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
+}).compileComponents();
 
     fixture = TestBed.createComponent(PeerGradingReviewComponent);
     component = fixture.componentInstance;

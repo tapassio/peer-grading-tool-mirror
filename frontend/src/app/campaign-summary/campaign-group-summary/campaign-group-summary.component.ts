@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Campaign, Group, Peer } from 'src/app/interfaces';
 import { CampaignService } from 'src/app/services/campaign.service';
 /**
@@ -6,12 +6,14 @@ import { CampaignService } from 'src/app/services/campaign.service';
  * it handles displaying each group
  */
 @Component({
-  selector: 'pgt-campaign-group-summary',
-  templateUrl: './campaign-group-summary.component.html',
-  styleUrls: [
-    '../../app.component.css',
-    './campaign-group-summary.component.css',
-  ],
+    selector: 'pgt-campaign-group-summary',
+    templateUrl: './campaign-group-summary.component.html',
+    styleUrls: [
+        '../../app.component.css',
+        './campaign-group-summary.component.css',
+    ],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CampaignGroupSummaryComponent implements OnInit {
   @Input() group?: Group;

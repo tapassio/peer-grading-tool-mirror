@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, signal, ChangeDetectionStrategy } from '@angular/core';
 import { PGTService } from '../services/pgt.service';
 import {
   DEFAULT_THRESHOLDS,
@@ -13,9 +13,11 @@ import {
  * notable results for the campaigns of the logged in lecturer.
  */
 @Component({
-  selector: 'pgt-statistics',
-  templateUrl: './statistics.component.html',
-  styleUrls: ['./statistics.component.css'],
+    selector: 'pgt-statistics',
+    templateUrl: './statistics.component.html',
+    styleUrls: ['./statistics.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class StatisticsComponent implements OnInit {
   campaigns = signal<RawCampaign[]>([]);

@@ -1,12 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CampaignStatus, Group, Peer } from '../../../interfaces';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CreateCampaignService } from '../../create-campaign.service';
 
 @Component({
-  selector: '[pgt-peer]',
-  templateUrl: './peer.component.html',
-  styleUrls: ['../../../app.component.css', './peer.component.css'],
+    selector: '[pgt-peer]',
+    templateUrl: './peer.component.html',
+    styleUrls: ['../../../app.component.css', './peer.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PeerComponent implements OnInit {
   @Input('peer') peer: Peer;

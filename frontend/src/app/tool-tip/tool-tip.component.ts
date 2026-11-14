@@ -1,12 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 /**
  * the tooltip component is a component displays a box with a "?" sign
  * text is displayed when hovering over it
  */
 @Component({
-  selector: 'pgt-tool-tip',
-  templateUrl: './tool-tip.component.html',
-  styleUrls: ['./tool-tip.component.css'],
+    selector: 'pgt-tool-tip',
+    templateUrl: './tool-tip.component.html',
+    styleUrls: ['./tool-tip.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ToolTipComponent implements OnInit {
   @Input('text') text: string;

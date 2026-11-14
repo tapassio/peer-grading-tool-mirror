@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
-  selector: 'pgt-http-error',
-  templateUrl: './http-error.component.html',
-  styleUrls: ['./http-error.component.css', '../app.component.css'],
+    selector: 'pgt-http-error',
+    templateUrl: './http-error.component.html',
+    styleUrls: ['./http-error.component.css', '../app.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class HttpErrorComponent implements OnInit {
   status: string;

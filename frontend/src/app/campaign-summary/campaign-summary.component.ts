@@ -1,4 +1,4 @@
-import { Component, OnInit, WritableSignal, signal } from '@angular/core';
+import { Component, OnInit, WritableSignal, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Campaign } from '../interfaces';
 import { PGTService } from '../services/pgt.service';
@@ -14,9 +14,11 @@ const pdfFonts = require('../../assets/fonts');
  * it has a child component to display each individual group in the campaign
  */
 @Component({
-  selector: 'pgt-campaign-summary',
-  templateUrl: './campaign-summary.component.html',
-  styleUrls: ['./campaign-summary.component.css', '../app.component.css'],
+    selector: 'pgt-campaign-summary',
+    templateUrl: './campaign-summary.component.html',
+    styleUrls: ['./campaign-summary.component.css', '../app.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CampaignSummaryComponent implements OnInit {
   campaignId: WritableSignal<number> = signal(

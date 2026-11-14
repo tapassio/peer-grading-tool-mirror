@@ -5,7 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CreateCampaignComponent } from './create-campaign.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { FormErrorComponent } from '../form-error/form-error.component';
 import { CriteriaComponent } from './criteria/criteria.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,25 +20,23 @@ describe('CreateCampaignComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
+    declarations: [
+        CreateCampaignComponent,
+        FormErrorComponent,
+        CriteriaComponent,
+        ToolTipComponent,
+    ],
+    imports: [FormsModule,
         ReactiveFormsModule,
         RouterModule.forRoot([]),
-        HttpClientModule,
         MatSnackBarModule,
         MatDialogModule,
         MatIconModule,
         MatTooltipModule,
         MatSlideToggleModule,
-        NoopAnimationsModule,
-      ],
-      declarations: [
-        CreateCampaignComponent,
-        FormErrorComponent,
-        CriteriaComponent,
-        ToolTipComponent,
-      ],
-    }).compileComponents();
+        NoopAnimationsModule],
+    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
+}).compileComponents();
 
     fixture = TestBed.createComponent(CreateCampaignComponent);
     component = fixture.componentInstance;

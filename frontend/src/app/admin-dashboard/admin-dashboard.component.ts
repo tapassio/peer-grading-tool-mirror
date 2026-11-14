@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal } from '@angular/core';
+import { Component, OnInit, Signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { take } from 'rxjs';
 import { Campaign } from '../interfaces';
@@ -10,9 +10,11 @@ import { AdminDashboardService } from './admin-dashboard.service';
  * you can create a new campaign too.
  */
 @Component({
-  selector: 'pgt-admin-dashboard',
-  templateUrl: './admin-dashboard.component.html',
-  styleUrls: ['./admin-dashboard.component.css', '../app.component.css'],
+    selector: 'pgt-admin-dashboard',
+    templateUrl: './admin-dashboard.component.html',
+    styleUrls: ['./admin-dashboard.component.css', '../app.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AdminDashboardComponent implements OnInit {
   // a behavior subject that stores all the campaigns of the user

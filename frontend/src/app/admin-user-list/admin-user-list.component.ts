@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { WarnDialogComponent } from '../warn-dialog/warn-dialog.component';
 import { SuperService } from '../services/super.service';
@@ -12,9 +12,11 @@ import { MatDialog } from '@angular/material/dialog';
  * there you get a list of all admin users and can edit or delete them
  */
 @Component({
-  selector: 'pgt-user-list',
-  templateUrl: './admin-user-list.component.html',
-  styleUrls: ['./admin-user-list.component.css'],
+    selector: 'pgt-user-list',
+    templateUrl: './admin-user-list.component.html',
+    styleUrls: ['./admin-user-list.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AdminUserListComponent implements OnInit {
   admins: User[];

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AdminUserListComponent } from './admin-user-list.component';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -11,14 +11,12 @@ describe('AdminUserListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        HttpClientModule,
-        MatSnackBarModule,
+    declarations: [AdminUserListComponent],
+    imports: [MatSnackBarModule,
         MatDialogModule,
-        MatIconModule,
-      ],
-      declarations: [AdminUserListComponent],
-    }).compileComponents();
+        MatIconModule],
+    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
+}).compileComponents();
 
     fixture = TestBed.createComponent(AdminUserListComponent);
     component = fixture.componentInstance;

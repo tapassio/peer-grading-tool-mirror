@@ -1,13 +1,15 @@
-import { Component, OnInit, Signal, signal } from '@angular/core';
+import { Component, OnInit, Signal, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PGTService } from '../services/pgt.service';
 import { SnackBarService } from '../services/snack-bar.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-  selector: 'pgt-excel',
-  templateUrl: './excel.component.html',
-  styleUrls: ['./excel.component.css', '../app.component.css'],
+    selector: 'pgt-excel',
+    templateUrl: './excel.component.html',
+    styleUrls: ['./excel.component.css', '../app.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ExcelComponent implements OnInit {
   campaignId: Signal<number> = signal(

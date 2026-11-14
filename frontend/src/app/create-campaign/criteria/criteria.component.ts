@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Campaign, CampaignStatus, Criteria } from 'src/app/interfaces';
 import { CampaignService } from '../../services/campaign.service';
@@ -8,9 +8,11 @@ import { CreateCampaignService } from '../create-campaign.service';
  * It handles displaying all data regarding criteria
  */
 @Component({
-  selector: 'pgt-criteria',
-  templateUrl: './criteria.component.html',
-  styleUrls: ['../../app.component.css', './criteria.component.css'],
+    selector: 'pgt-criteria',
+    templateUrl: './criteria.component.html',
+    styleUrls: ['../../app.component.css', './criteria.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CriteriaComponent implements OnInit {
   criteriaForm: FormGroup;

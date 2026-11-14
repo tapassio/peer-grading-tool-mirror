@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CreateAdminUserComponent } from './create-admin-user.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { FormErrorComponent } from '../form-error/form-error.component';
@@ -13,16 +13,14 @@ describe('CreateUserComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
+    declarations: [CreateAdminUserComponent, FormErrorComponent],
+    imports: [FormsModule,
         ReactiveFormsModule,
-        HttpClientModule,
         MatSnackBarModule,
         RouterModule.forRoot([]),
-        MatIconModule,
-      ],
-      declarations: [CreateAdminUserComponent, FormErrorComponent],
-    }).compileComponents();
+        MatIconModule],
+    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
+}).compileComponents();
 
     fixture = TestBed.createComponent(CreateAdminUserComponent);
     component = fixture.componentInstance;

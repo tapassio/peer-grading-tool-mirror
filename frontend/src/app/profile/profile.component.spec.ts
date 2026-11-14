@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProfileComponent } from './profile.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 describe('AdminPwComponent', () => {
@@ -11,14 +11,12 @@ describe('AdminPwComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
+    declarations: [ProfileComponent],
+    imports: [FormsModule,
         ReactiveFormsModule,
-        MatSnackBarModule,
-        HttpClientModule,
-      ],
-      declarations: [ProfileComponent],
-    }).compileComponents();
+        MatSnackBarModule],
+    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())]
+}).compileComponents();
 
     fixture = TestBed.createComponent(ProfileComponent);
     component = fixture.componentInstance;

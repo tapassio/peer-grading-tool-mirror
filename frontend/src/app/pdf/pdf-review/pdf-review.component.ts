@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal, signal } from '@angular/core';
+import { Component, OnInit, Signal, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PGTService } from '../../services/pgt.service';
 /**
@@ -6,9 +6,11 @@ import { PGTService } from '../../services/pgt.service';
  * the pdf is generated in the backend and immediately downloaded
  */
 @Component({
-  selector: 'pgt-pdf-review',
-  templateUrl: './pdf-review.component.html',
-  styleUrls: ['./pdf-review.component.css', '../../app.component.css'],
+    selector: 'pgt-pdf-review',
+    templateUrl: './pdf-review.component.html',
+    styleUrls: ['./pdf-review.component.css', '../../app.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PdfReviewComponent implements OnInit {
   url: Signal<string> = signal(this.activatedRoute.snapshot.params['url']);

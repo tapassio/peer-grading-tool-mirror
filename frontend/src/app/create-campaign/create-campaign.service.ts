@@ -128,7 +128,8 @@ export class CreateCampaignService {
   }
 
   handleCampaignLanguageChange(campaign: Campaign, language: Language) {
-    const languageName = 'de' ? $localize`Deutsch` : $localize`Englisch`;
+    // (bug fixed: compared the constant 'de' instead of the new language)
+    const languageName = language === 'de' ? $localize`Deutsch` : $localize`Englisch`;
     this.dialog
       .open(WarnDialogComponent, {
         data: {

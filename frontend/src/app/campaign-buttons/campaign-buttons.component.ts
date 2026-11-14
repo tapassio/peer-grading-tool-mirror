@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import { Campaign, CampaignStatus, MailsSent } from '../interfaces';
 import { Router } from '@angular/router';
 import { PGTService } from '../services/pgt.service';
@@ -9,9 +9,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'pgt-campaign-buttons',
-  templateUrl: './campaign-buttons.component.html',
-  styleUrls: ['./campaign-buttons.component.css'],
+    selector: 'pgt-campaign-buttons',
+    templateUrl: './campaign-buttons.component.html',
+    styleUrls: ['./campaign-buttons.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CampaignButtonsComponent implements OnInit {
   @Input('campaign') campaign: Campaign;

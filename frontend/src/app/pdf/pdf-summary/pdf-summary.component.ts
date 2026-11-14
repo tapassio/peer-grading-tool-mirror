@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal, signal } from '@angular/core';
+import { Component, OnInit, Signal, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PGTService } from '../../services/pgt.service';
 import { SnackBarService } from '../../services/snack-bar.service';
@@ -9,9 +9,11 @@ import { HttpErrorResponse } from '@angular/common/http';
  * the pdf is generated in the backend and immediately downloaded
  */
 @Component({
-  selector: 'pgt-pdf-summary',
-  templateUrl: './pdf-summary.component.html',
-  styleUrls: ['./pdf-summary.component.css', '../../app.component.css'],
+    selector: 'pgt-pdf-summary',
+    templateUrl: './pdf-summary.component.html',
+    styleUrls: ['./pdf-summary.component.css', '../../app.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PdfSummaryComponent implements OnInit {
   campaignId: Signal<number> = signal(

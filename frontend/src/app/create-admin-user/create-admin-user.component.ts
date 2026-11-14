@@ -4,6 +4,7 @@ import {
   WritableSignal,
   effect,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {
   AbstractControl,
@@ -24,9 +25,11 @@ import { HttpErrorResponse } from '@angular/common/http';
  * admin users can be created or edited
  */
 @Component({
-  selector: 'pgt-create-user',
-  templateUrl: './create-admin-user.component.html',
-  styleUrls: ['./create-admin-user.component.css'],
+    selector: 'pgt-create-user',
+    templateUrl: './create-admin-user.component.html',
+    styleUrls: ['./create-admin-user.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CreateAdminUserComponent implements OnInit {
   userId: WritableSignal<number> = signal(

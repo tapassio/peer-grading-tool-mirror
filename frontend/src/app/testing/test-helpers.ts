@@ -7,8 +7,9 @@
  *   its own component
  * - example data that matches the interfaces in ../interfaces.ts
  */
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -16,8 +17,14 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Campaign, Criteria, Group, Peer, User, UserRole } from '../interfaces';
 
+/** HTTP for tests without a backend (replaces HttpClientTestingModule) */
+@NgModule({
+  providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
+})
+class TestHttpModule {}
+
 export const testImports = [
-  HttpClientTestingModule,
+  TestHttpModule,
   RouterTestingModule,
   FormsModule,
   ReactiveFormsModule,
