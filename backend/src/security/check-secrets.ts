@@ -40,7 +40,9 @@ export function checkSecrets(production: boolean) {
   if (!authMode) {
     problems.push('AUTH_MODE is missing (set "oidc" for DocPouch or "local")');
   } else if (authMode !== 'oidc' && authMode !== 'local') {
-    problems.push(`AUTH_MODE "${process.env.AUTH_MODE}" is invalid (use "oidc" or "local")`);
+    problems.push(
+      `AUTH_MODE "${process.env.AUTH_MODE}" is invalid (use "oidc" or "local")`,
+    );
   }
 
   const values = REQUIRED_SECRETS.map((n) => process.env[n]).filter(Boolean);

@@ -1,6 +1,6 @@
 # Automatic checks for every pull request and for pushes to develop/main.
 #
-# backend:  install, Prisma client, migrations = schema, type check, tests, build
+# backend:  install, Prisma client, migrations = schema, type check, lint, tests, build
 # frontend: install, tests, production build (de + en)
 # docker:   the production image builds (Dockerfile)
 #
@@ -50,6 +50,9 @@ jobs:
 
       - name: Type check
         run: npx tsc --noEmit -p tsconfig.json
+
+      - name: Lint (ESLint + Prettier)
+        run: npm run lint
 
       - name: Tests
         run: npm test -- --ci

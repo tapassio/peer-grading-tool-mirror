@@ -32,7 +32,7 @@ export class SendgridService {
 
     let adminMailsSent = 0;
 
-    for (let user of campaign.users) {
+    for (const user of campaign.users) {
       const html = `<p>${this.i18n.t('mail.greet', {
         lang: lang,
         args: {
@@ -50,13 +50,13 @@ export class SendgridService {
           lang: lang,
         })}</p>
         <p><a href="${url}">${this.i18n.t('mail.toCampaignOverview', {
-        lang: lang,
-      })}</a></p>
+          lang: lang,
+        })}</a></p>
         <p>${this.i18n.t('mail.kindRegards', {
           lang: lang,
         })}<br />${this.i18n.t('mail.pgtTeam', {
-        lang: lang,
-      })}</p>`;
+          lang: lang,
+        })}</p>`;
 
       const mail = {
         to: user.email,
@@ -76,8 +76,8 @@ export class SendgridService {
   async peerOpening(campaign: any): Promise<number> {
     let peerMailsSent = 0;
 
-    for (let group of campaign.groups) {
-      for (let peer of group.peers) {
+    for (const group of campaign.groups) {
+      for (const peer of group.peers) {
         const url = `${env.HOST}/${campaign.language}/peer-grading/${peer.link}`;
         const subject = `Peer Grading Tool - ${this.i18n.t(
           'mail.subject.callForGrading',
@@ -107,8 +107,8 @@ export class SendgridService {
           })}
           </p>
           <p><a href="${url}">${this.i18n.t('mail.gradingLink', {
-          lang: campaign.language,
-        })}</a></p>
+            lang: campaign.language,
+          })}</a></p>
           <p>${this.i18n.t('mail.kindRegards', {
             lang: campaign.language,
           })}<br />
@@ -150,7 +150,7 @@ export class SendgridService {
 
     let adminMailsSent = 0;
 
-    for (let user of campaign.users) {
+    for (const user of campaign.users) {
       const html = `<p>${this.i18n.t('mail.greet', {
         lang: lang,
         args: {
@@ -174,8 +174,8 @@ export class SendgridService {
         <p>${this.i18n.t('mail.kindRegards', {
           lang: lang,
         })}<br />${this.i18n.t('mail.pgtTeam', {
-        lang: lang,
-      })}</p>`;
+          lang: lang,
+        })}</p>`;
 
       const mail = {
         to: user.email,
@@ -196,8 +196,8 @@ export class SendgridService {
   async peerClosing(campaign: any): Promise<number> {
     let peerMailsSent = 0;
 
-    for (let group of campaign.groups) {
-      for (let peer of group.peers) {
+    for (const group of campaign.groups) {
+      for (const peer of group.peers) {
         const pdfUrl = `${env.HOST}/${campaign.language}/pdf/review/${peer.link}`;
         const reviewURL = `${env.HOST}/${campaign.language}/peer-grading-review/${peer.link}`;
 
@@ -262,7 +262,7 @@ export class SendgridService {
         lang: lang,
       },
     )}`;
-    for (let user of campaign.users) {
+    for (const user of campaign.users) {
       let html = `<p>${this.i18n.t('mail.greet', {
         lang: lang,
         args: {
@@ -303,8 +303,8 @@ export class SendgridService {
         <p>${this.i18n.t('mail.kindRegards', {
           lang: lang,
         })}<br />${this.i18n.t('mail.pgtTeam', {
-        lang: lang,
-      })}</p>`;
+          lang: lang,
+        })}</p>`;
 
       const mail = {
         to: user.email,
@@ -323,8 +323,8 @@ export class SendgridService {
   async peerRenewGrading(campaign: any): Promise<number> {
     let peerMailsSent = 0;
 
-    for (let group of campaign.groups) {
-      for (let peer of group.peers) {
+    for (const group of campaign.groups) {
+      for (const peer of group.peers) {
         const url = `${env.HOST}/${campaign.language}/peer-grading/${peer.link}`;
         const subject = `Peer Grading Tool - ${this.i18n.t(
           'mail.subject.renewCallForGrading',
@@ -348,8 +348,8 @@ export class SendgridService {
           })}
           </p>
           <p><a href="${url}">${this.i18n.t('mail.gradingLink', {
-          lang: campaign.language,
-        })}</a></p>
+            lang: campaign.language,
+          })}</a></p>
           <p>${this.i18n.t('mail.kindRegards', {
             lang: campaign.language,
           })}<br />
@@ -435,7 +435,7 @@ export class SendgridService {
   }
 
   private getPeersToRemind(campaign: any): any[] {
-    let result = [];
+    const result = [];
 
     for (const group of campaign.groups) {
       if (!group.gradings) {
@@ -476,7 +476,7 @@ export class SendgridService {
 
     let adminMailsSent = 0;
 
-    for (let user of campaign.users) {
+    for (const user of campaign.users) {
       let html = `<p>${this.i18n.t('mail.greet', {
         lang: lang,
         args: {
@@ -564,8 +564,8 @@ export class SendgridService {
         <p>${this.i18n.t('mail.kindRegards', {
           lang: lang,
         })}<br />${this.i18n.t('mail.pgtTeam', {
-        lang: lang,
-      })}</p>`;
+          lang: lang,
+        })}</p>`;
 
       const mail = {
         to: user.email,
@@ -605,17 +605,17 @@ export class SendgridService {
 
     html += `<table><tr><th></th>`;
 
-    for (let crit of data.campaign.criteria) {
+    for (const crit of data.campaign.criteria) {
       html += `<th>${crit.name}</th>`;
     }
 
     html += `</tr>`;
 
-    for (let peer of data.peers.map((peer) => peer.peer)) {
+    for (const peer of data.peers.map((peer) => peer.peer)) {
       html += `<tr><td>${this.sanService.sanitize(
         peer.lastName,
       )} ${this.sanService.sanitize(peer.firstName)}</td>`;
-      for (let crit of data.campaign.criteria) {
+      for (const crit of data.campaign.criteria) {
         html += `<td>${
           data.gradings.filter(
             (grading) =>

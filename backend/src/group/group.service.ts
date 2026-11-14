@@ -51,9 +51,9 @@ export class GroupService {
     this.logger.log(logMessage);
 
     // upserting gradings one by one
-    let gradingResult = [];
-    for (let grading of gradings) {
-      let res = await this.prisma.grading.upsert({
+    const gradingResult = [];
+    for (const grading of gradings) {
+      const res = await this.prisma.grading.upsert({
         where: {
           GradingId: {
             fromPeerId: fromPeer.peerId,
@@ -127,13 +127,13 @@ export class GroupService {
     }
 
     // sending confirmation mail to peer
-    let peer = await this.prisma.peer.findUnique({
+    const peer = await this.prisma.peer.findUnique({
       where: {
         peerId: fromPeer.peerId,
       },
     });
 
-    let gradingData = await this.prisma.group.findUnique({
+    const gradingData = await this.prisma.group.findUnique({
       where: {
         groupId: groupId,
       },
@@ -181,7 +181,7 @@ export class GroupService {
    * @returns
    */
   private async getGroupByUrl(url: string): Promise<any> {
-    let query = await this.prisma.groupPeerConnection.findUnique({
+    const query = await this.prisma.groupPeerConnection.findUnique({
       where: { link: url },
       include: {
         peer: true,
@@ -220,15 +220,15 @@ export class GroupService {
       throw new NotFoundException();
     }
 
-    let peer = query.peer;
+    const peer = query.peer;
 
     // formatting group data
-    let { peers, comments, gradings, campaignId, campaign, ...rest } =
+    const { peers, comments, gradings, campaignId, campaign, ...rest } =
       query.group;
-    let formatPeers = peers.map((peer) => peer.peer);
+    const formatPeers = peers.map((peer) => peer.peer);
 
-    let formatGradings = [];
-    for (let grading of gradings) {
+    const formatGradings = [];
+    for (const grading of gradings) {
       const { toPeerId, fromPeerId, criteriaId, ...rest } = grading;
       formatGradings.push({
         ...rest,
@@ -241,7 +241,7 @@ export class GroupService {
       ...rest,
     };
 
-    let result = {
+    const result = {
       peer,
       group,
       campaign,
@@ -257,7 +257,7 @@ export class GroupService {
    * @returns
    */
   async getGradingDataByUrl(url: string) {
-    let data = await this.getGroupByUrl(url);
+    const data = await this.getGroupByUrl(url);
 
     // this filters the gradings to only contain the gradings of the peer that made the request
     data.group.gradings = data.group.gradings.filter(
@@ -278,7 +278,7 @@ export class GroupService {
    * @returns
    */
   async getGradingReviewDataByUrl(url: string) {
-    let data = await this.getGroupByUrl(url);
+    const data = await this.getGroupByUrl(url);
 
     const peer = data.peer;
     let group = data.group;
@@ -300,24 +300,24 @@ export class GroupService {
     });
 
     // calculating numbers before sending to the frontend to make sure they are anonymous
-    let thirdPartyAverages = {};
-    let selfGradings = {};
-    for (let crit of campaign.criteria) {
-      (thirdPartyAverages[crit.criteriaId] =
+    const thirdPartyAverages = {};
+    const selfGradings = {};
+    for (const crit of campaign.criteria) {
+      thirdPartyAverages[crit.criteriaId] =
         this.calculationsService.getPeersThirdPartyAverageByCriteria(
           crit,
           group,
           peer,
-        )),
-        (selfGradings[crit.criteriaId] =
-          this.calculationsService.getPeersSelfGradingPointsByCriteria(
-            crit,
-            group,
-            peer,
-          ));
+        );
+      selfGradings[crit.criteriaId] =
+        this.calculationsService.getPeersSelfGradingPointsByCriteria(
+          crit,
+          group,
+          peer,
+        );
     }
 
-    let result = {
+    const result = {
       campaign: campaign,
       peer: peer,
       thirdPartyAverages: thirdPartyAverages,

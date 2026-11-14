@@ -40,7 +40,9 @@ export function roundToHalf(value: number): number {
 }
 
 /** rounding step of a campaign; old data without the field: half grades */
-export function gradeRoundingOf(campaign?: { gradeRounding?: number | null }): number {
+export function gradeRoundingOf(campaign?: {
+  gradeRounding?: number | null;
+}): number {
   const step = campaign?.gradeRounding;
   return typeof step === 'number' && GRADE_ROUNDING_STEPS.includes(step)
     ? step
@@ -85,7 +87,7 @@ export class CalculationsService {
         grading.toPeer.peerId == peer.peerId &&
         grading.fromPeer.peerId != peer.peerId,
     );
-    for (let grading of filteredGradings) {
+    for (const grading of filteredGradings) {
       sum += grading.points;
       count++;
     }
@@ -103,7 +105,7 @@ export class CalculationsService {
         grading.toPeer.peerId == peer.peerId &&
         grading.fromPeer.peerId != peer.peerId,
     );
-    for (let grading of filteredGradings) {
+    for (const grading of filteredGradings) {
       sum += grading.points * grading.criteria.weight;
       count += grading.criteria.weight;
     }
@@ -155,7 +157,7 @@ export class CalculationsService {
     const filteredGradings = group.gradings.filter(
       (grading) => grading.toPeer.peerId != grading.fromPeer.peerId,
     );
-    for (let grading of filteredGradings) {
+    for (const grading of filteredGradings) {
       sum += grading.points * grading.criteria.weight;
       count += grading.criteria.weight;
     }
@@ -195,7 +197,7 @@ export class CalculationsService {
     } else {
       let sum = 0;
       let count = 0;
-      for (let grading of gradings) {
+      for (const grading of gradings) {
         sum += grading.points * grading.criteria.weight;
         count += grading.criteria.weight;
       }

@@ -59,7 +59,7 @@ function generateDate(
   seconds: number = 0,
   milliseconds: number = 0,
 ): Date {
-  let resDate = new Date();
+  const resDate = new Date();
   resDate.setDate(resDate.getDate() + daysAdded);
   resDate.setHours(hours, minutes, seconds, milliseconds);
   return resDate;
@@ -89,7 +89,7 @@ async function createCampaign(
 
 function generateRandomComment(): string {
   // randomize words
-  const randomWords = words.sort((a: string, b: string) => Math.random() - 0.5);
+  const randomWords = words.sort(() => Math.random() - 0.5);
 
   return randomWords.join(' ') + '.';
 }
@@ -99,7 +99,7 @@ async function createCriteria(
   campaign: Campaign,
   weight: number = 1,
 ) {
-  let name = critNames[index][campaign.language];
+  const name = critNames[index][campaign.language];
 
   if (name)
     await prisma.criteria.create({
@@ -294,10 +294,10 @@ async function generateGradings(
 ) {
   const groupId = peers[0].groups[0].groupId;
 
-  for (let [index, fromPeer] of peers.entries()) {
+  for (const [index, fromPeer] of peers.entries()) {
     if (index != 0 || !leaveOutFirst) {
-      for (let toPeer of peers) {
-        for (let crit of criteria) {
+      for (const toPeer of peers) {
+        for (const crit of criteria) {
           await prisma.grading.create({
             data: {
               fromPeerId: fromPeer.peerId,
@@ -364,7 +364,7 @@ async function main() {
     undefined,
   );
 
-  const eduardDummyCampaign = await createCampaign(
+  await createCampaign(
     'Edis Dummy Campaign',
     openingDateNotStarted,
     undefined,
@@ -510,21 +510,21 @@ async function main() {
   ];
 
   // looping through the peer user array to initialize the peer users, their corresponding peers and give them the correct role
-  for (let user of peerUserArray) {
+  for (const user of peerUserArray) {
     await createPeerUser(user, peerRole.roleId);
   }
 
   // getting all peers
-  let peers = await prisma.peer.findMany({});
+  const peers = await prisma.peer.findMany({});
 
   // getting all groups
 
-  let groups = await prisma.group.findMany({});
+  const groups = await prisma.group.findMany({});
 
   // connecting peers to groups
-  for (let peer of peers) {
-    let foundUser = peerUserArray.find((p) => p.email == peer.email);
-    for (let group of groups.filter((gr) => gr.number === foundUser.group)) {
+  for (const peer of peers) {
+    const foundUser = peerUserArray.find((p) => p.email == peer.email);
+    for (const group of groups.filter((gr) => gr.number === foundUser.group)) {
       if (foundUser) {
         await prisma.groupPeerConnection.create({
           data: {

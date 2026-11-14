@@ -166,7 +166,7 @@ export class UserService {
   }
 
   async getUser(email: string): Promise<any | undefined> {
-    let query = await this.prisma.user.findUnique({
+    const query = await this.prisma.user.findUnique({
       where: {
         email: email,
       },
@@ -176,8 +176,8 @@ export class UserService {
       },
     });
     if (query) {
-      let { roles, ...rest } = query;
-      let newRoles = roles.map((role) => role.role);
+      const { roles, ...rest } = query;
+      const newRoles = roles.map((role) => role.role);
       return {
         roles: newRoles,
         ...rest,
@@ -453,7 +453,7 @@ export class UserService {
 
     // if the user didn't exist, create him
     if (!admin) {
-      admin = await this.prisma.user.create({
+      await this.prisma.user.create({
         data: { ...data },
       });
     }
@@ -518,7 +518,9 @@ export class UserService {
       });
     } catch (error) {
       // before, this error was silently ignored
-      this.logger.error(`updating admin ${data.userId} failed: ${error.message}`);
+      this.logger.error(
+        `updating admin ${data.userId} failed: ${error.message}`,
+      );
       throw new InternalServerErrorException('UPDATE_FAILED');
     }
     this.logger.log('admin user ' + data.email + ' updated');

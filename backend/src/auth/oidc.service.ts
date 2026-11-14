@@ -53,7 +53,9 @@ export class DocPouchRequestGuard {
 
     if (ip) {
       if (this.failures.size >= 10000) this.failures.clear();
-      const recent = (this.failures.get(ip) ?? []).filter((f) => f > t - WINDOW_MS);
+      const recent = (this.failures.get(ip) ?? []).filter(
+        (f) => f > t - WINDOW_MS,
+      );
       recent.push(t);
       this.failures.set(ip, recent);
     }
@@ -62,7 +64,9 @@ export class DocPouchRequestGuard {
   isBlockedIp(ip?: string): boolean {
     if (!ip) return false;
     const t = this.now();
-    const recent = (this.failures.get(ip) ?? []).filter((f) => f > t - WINDOW_MS);
+    const recent = (this.failures.get(ip) ?? []).filter(
+      (f) => f > t - WINDOW_MS,
+    );
     return recent.length >= DocPouchRequestGuard.MAX_FAILURES_PER_IP;
   }
 

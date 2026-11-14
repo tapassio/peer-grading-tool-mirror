@@ -83,8 +83,6 @@ export function getOidcConfig(): DocPouchOidcConfig {
     refreshTokenTtl: process.env['PGT_REFRESH_TOKEN_TTL'] || '2d',
     publicUrl,
     resultStructureId: process.env['PGT_RESULT_STRUCTURE_ID'] || '',
-    docPouchRequestBudget: Number(
-      process.env['DOCPOUCH_REQUEST_BUDGET'] || 60,
-    ),
+    docPouchRequestBudget: Number(process.env['DOCPOUCH_REQUEST_BUDGET'] || 60),
   };
 }
